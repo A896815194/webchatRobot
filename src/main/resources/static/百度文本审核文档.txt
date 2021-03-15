@@ -1,0 +1,120 @@
+响应参数说明
+更新时间：2020-12-18
+响应参数说明：
+参数名称	数据类型	是否必须	备注
+log_id	Long	Y	请求唯一id
+error_code	Long	N	错误提示码，失败才返回，成功不返回
+error_msg	String	N	错误提示信息，失败才返回，成功不返回
+conclusion	String	N	审核结果，可取值：合规、不合规、疑似、审核失败
+conclusionType	Integer	N	审核结果类型，可取值1.合规，2.不合规，3.疑似，4.审核失败
+data	Array	N	不合规/疑似/命中白名单项详细信息。响应成功并且conclusion为疑似或不合规或命中白名单时才返回，响应失败或conclusion为合规且未命中白名单时不返回。
++error_code	Integer	否	内层错误提示码，底层服务失败才返回，成功不返回
++error_msg	String	否	内层错误提示信息，底层服务失败才返回，成功不返回
++type	Integer	N	审核主类型，11：百度官方违禁词库、12：文本反作弊、13:自定义文本黑名单、14:自定义文本白名单
++subType	Integer	N	审核子类型，此字段需参照type主类型字段决定其含义：
+当type=11时subType取值含义：
+0:百度官方默认违禁词库 
+当type=12时subType取值含义：
+0:低质灌水、1:暴恐违禁、2:文本色情、3:政治敏感、4:恶意推广、5:低俗辱骂 6:恶意推广-联系方式、7:恶意推广-软文推广、8:广告法审核
+当type=13时subType取值含义：
+0:自定义文本黑名单 
+当type=14时subType取值含义：
+0:自定义文本白名单
++msg	String	N	不合规项描述信息
++probability	Float	N	不合规项置信度
++datasetName	String	N	违规项目所属数据集名称
+++probability	Float	N	人脸相似度
+++datasetName	String	N	人脸所属数据集名称
++hits	Array	N	命中关键词信息
+++words	Array	N	违规文本关键字
+成功响应示例 ——合规：
+{
+	"log_id": 15556561295920002,
+	"conclusion": "合规",
+	"conclusionType": 1
+}
+
+或者
+
+{
+    "log_id": 15572142621780024,
+    "conclusion": "合规",
+    "conclusionType": 1,
+    "data": [{
+        "type": 14,
+        "subType": 0,
+        "conclusion": "合规",
+        "conclusionType": 1,
+        "msg": "自定义文本白名单审核通过",
+        "hits": [{
+            "datasetName": "SLK-测试-自定义文本白名单",
+            "words": ["袁运筹"]
+        }]
+    }]
+}
+成功响应示例——不合规：
+{
+    "log_id": 123456789,
+    "conclusion": "不合规",
+    "conclusionType": 2,
+    "data": [{
+        "type": 11,
+        "subType": 0,
+        "conclusion": "不合规",
+        "conclusionType": 2,
+        "msg": "存在百度官方默认违禁词库不合规",
+        "hits": [{
+            "datasetName": "百度默认黑词库",
+            "words": ["免费翻墙"]
+        }]
+    }, {
+        "type": 12,
+        "subType": 2,
+        "conclusion": "不合规",
+        "conclusionType": 2,
+        "msg": "存在文本色情不合规",
+        "hits": [{
+            "datasetName": "百度默认文本反作弊库",
+            "probability": 1.0,
+            "words": ["电话 找小姐"]
+        }]
+    }, {
+        "type": 12,
+        "subType": 3,
+        "conclusion": "不合规",
+        "conclusionType": 2,
+        "msg": "存在政治敏感不合规",
+        "hits": [{
+            "probability": 1.0,
+            "datasetName": "百度默认文本反作弊库",
+            "words": ["敏感人物A"]
+        }]
+    }, {
+        "type": 12,
+        "subType": 4,
+        "conclusion": "不合规",
+        "conclusionType": 2,
+        "msg": "存在恶意推广不合规",
+        "hits": [{
+            "probability": 1.0,
+            "datasetName": "百度默认文本反作弊库",
+            "words": [""]
+        }]
+    }, {
+        "type": 13,
+        "subType": 0,
+        "conclusion": "不合规",
+        "conclusionType": 2,
+        "msg": "存在自定义文本黑名单不合规",
+        "hits": [{
+            "datasetName": "SLK-测试-自定义黑名单",
+            "words": ["我是你爹", "他妈的"]
+        }]
+    }]
+}
+失败响应示例：
+{
+    "log_id": 149319909347709, 
+    "error_code": 0,
+    "error_msg":"configId error"
+}

@@ -1,0 +1,128 @@
+事件推送消息
+可爱猫各种消息事件都将以POST方式推送到设置的远程接口地址，内容为json格式
+如群消息：
+{
+	"Event": "EventGroupMsg",					//事件名
+	"robot_wxid": "wxid_XXXXXXXXX",				//机器人ID
+	"type": 1,									//消息类型
+	"from_wxid": "321563431321",				//来源群
+	"from_name": "测试群",						//群名
+	"final_from_wxid": "wxic_eeeeeeeeee",		//发送人
+	"final_from_name": "发送人",				//发送人名
+	"to_wxid": "wxid_XXXXXXXXX",				//接收人ID
+	"msg": "这是消息内容"						//消息内容
+}
+
+POST返回内容可空，也可为json格式数据，必要参数Code=-1为拦截此次推送，不再推送到下一接口地址（高配版有效）
+json数据可直接调用API，详细说明请参考httpAPI接口文档
+
+
+事件名=EventLogin	新的账号登录成功/下线时，运行这里
+rob_wxid, 文本型
+rob_name, 文本型
+type, 整数型, , 0 登录成功 / 1 即将离线
+msg, 文本型, , 当前账号的JSON对象，具体JSON结构请查看日志
+
+
+事件名=EventGroupMsg	群消息事件（收到群消息时，运行这里）
+robot_wxid, 文本型, , 机器人账号id（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+type, 整数型, , 1/文本消息 3/图片消息 34/语音消息  42/名片消息  43/视频 47/动态表情 48/地理位置  49/分享链接  2001/红包  2002/小程序  2003/群邀请 更多请参考sdk模块常量值
+from_wxid, 文本型, , 来源群id
+from_name, 文本型, , 来源群昵称
+final_from_wxid, 文本型, , 具体发消息的群成员id
+final_from_name, 文本型, , 具体发消息的群成员昵称
+to_wxid, 文本型, , 接收消息的人id，（一般是机器人收到了，也有可能是机器人发出的消息，别人收到了，那就是别人）
+msg, 文本型, , 消息内容
+
+
+事件名=EventFriendMsg	私聊消息事件（收到私聊消息时，运行这里）
+robot_wxid, 文本型, , 机器人账号id（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+type, 整数型, , 1/文本消息 3/图片消息 34/语音消息  42/名片消息  43/视频 47/动态表情 48/地理位置  49/分享链接  2001/红包  2002/小程序  2003/群邀请 
+from_wxid, 文本型, , 来源用户ID
+from_name, 文本型, , 来源用户昵称
+to_wxid, 文本型, , 接收消息的人ID（一般都是机器人收到了，所以这里是机器人ID，如果是机器人发出的，这里就是对方的ID）
+msg, 文本型, , 消息内容
+
+
+事件名=EventReceivedTransfer	收到转账事件（收到好友转账时，运行这里）
+robot_wxid, 文本型, , 机器人账号ID（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+from_wxid, 文本型, , 来源用户ID
+from_name, 文本型, , 来源用户昵称
+to_wxid, 文本型, , 接收消息的人ID（一般都是机器人收到了，所以这里是机器人ID，如果是机器人发出的，也就是接收转账，这里就是对方的ID）
+money, 文本型, , 金额
+json_msg, 文本型, , 收到转账的详细JSON信息，具体JSON结构请查看日志
+
+
+事件名=EventScanCashMoney	面对面收款（二维码收款时，运行这里）
+robot_wxid, 文本型, , 收钱的人
+pay_wxid, 文本型, , 消息来源id
+pay_name, 文本型, , 消息来源昵称
+money, 文本型, , 金额
+json_msg, 文本型, , 更多详细的收款信息，具体JSON结构请查看日志
+
+
+事件名=EventFriendVerify	好友请求事件（插件3.0版本及以上）
+robot_wxid, 文本型, , 机器人账号id（这条消息是哪个机器人的，因为可能登录多个机器人）
+from_wxid, 文本型, , 陌生人用户id
+from_name, 文本型, , 陌生人用户昵称
+to_wxid, 文本型, , 忽略
+json_msg, 文本型, , 好友验证信息JSON对象（1/群内添加时，包含群id   2/名片推荐添加时，包含推荐人id及昵称  3/微信号、手机号搜索添加时），具体JSON结构请查看日志
+
+
+事件名=EventContactsChange	朋友变动事件（插件4.0版本及以上，当前为测试版，还未启用，留以备用）
+robot_wxid, 文本型
+type, 整数型
+from_wxid, 文本型, , 来源用户id
+from_name, 文本型, , 来源用户昵称
+msg, 文本型, , 消息内容
+
+
+事件名=EventGroupMemberAdd	群成员增加事件（新人进群）
+robot_wxid, 文本型, , 机器人账号id（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+from_wxid, 文本型, , 来源群id
+from_name, 文本型, , 来源群名称
+json_msg, 文本型, , 新成员增加消息JSON对象，具体JSON结构请查看日志
+
+
+事件名=EventGroupMemberDecrease	群成员减少事件（群成员退出）
+robot_wxid, 文本型, , 机器人账号id（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+from_wxid, 文本型, , 来源群id
+from_name, 文本型, , 来源群名称
+json_msg, 文本型, , 退出人的id|退出人的昵称
+
+
+事件名=EventSysMsg	系统消息事件
+robot_wxid, 文本型, , 机器人账号id（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+type, 整数型
+json_msg, 文本型
+
+
+事件名=EventModify	用户设置或调试消息
+robot_wxid, 文本型, , 机器人账号id（就是这条消息是哪个机器人的，因为可能登录多个机器人）
+from_wxid, 文本型, , 相关群id
+final_from_wxid, 文本型, , 相关人id
+title, 文本型, , 设置的键名
+text, 文本型, , 设置的键内容
+事件说明：此事件是由插件界面发送。用于调试接口状态或用于设置用户数据（比如设置插件功能的开关）
+
+
+
+接口例子：http://hlqsc.cn/lexicon/kam/\\聊天插件
+默认此接口不会返回任何内容
+
+在配置/调试界面按以下填写即可设置开通某个群的聊天功能
+	调试接口：http://hlqsc.cn/lexicon/kam/
+	机器账号：wxid_XXXXXXXXX（你的机器人ID）
+	相关群号：123456789@chatroom（你要开通的群ID，写：默认。将设置所有群的默认开关）
+	相关微信：空
+	配置键名：开关
+	配置键值：开
+
+在配置/调试界面按以下填写即可设置开通某个群的聊天功能
+	调试接口：http://hlqsc.cn/lexicon/kam/
+	机器账号：wxid_XXXXXXXXX（你的机器人ID）
+	相关群号：123456789@chatroom（你要开通的群ID）
+	相关微信：空
+	配置键名：前缀
+	配置键值：#（设置此前缀时才回复）
+

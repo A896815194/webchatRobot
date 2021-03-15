@@ -1,0 +1,46 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.0.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+	id "io.franzbecker.gradle-lombok" version "3.1.0"
+}
+
+group = 'com.web'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+allprojects {
+	repositories {
+		maven {
+			url 'https://maven.aliyun.com/repository/public/'
+		}
+		mavenLocal()
+		mavenCentral()
+	}
+}
+
+dependencies {
+	group 'com.baidu.speech.restapi.demo'
+	version '1.0-SNAPSHOT'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	compile('mysql:mysql-connector-java')
+	compile 'com.google.code.gson:gson:2.6.2'
+	compile(
+			'net.sf.json-lib:json-lib:2.4:jdk15'
+	)
+	compile 'org.json:json:20160212'
+			testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// https://mvnrepository.com/artifact/org.nutz/nutz
+	implementation group: 'org.nutz', name: 'nutz', version: '1.r.67'
+
+}
+
+test {
+	useJUnitPlatform()
+}
+
+lombok {
+	version = "1.18.8"
+}

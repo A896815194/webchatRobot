@@ -1,0 +1,243 @@
+【远程接口设置】
+
+消息推送地址：就是你要接收可爱猫推送的各种微信消息的地址。即你代码的地址，该地址应为POST UTF8模式
+	地址可以填写多个，插件会轮巡所有地址。地址后可用\\添加别名，用于日志显示便于识别。	返回值说明：如非必要接口地址应该要立即返回。返回内容可空。也可以是以下功能的json格式数据，可直接调用相关API。返回参数中除以下功能说明的参数外，可增加能数名为Code的整数型，该值可设定消息是否（-1:中止，0:继续）继续轮巡到之后的http接口（如果有的话）
+
+接口支持httpAPI和lua脚本
+http接口需以 http开头
+lua接口要以 file://开头的本地文件相对或绝对路径。如：file://app/脚本.lua
+
+【本地服务设置】
+本地端口：即框架接收API调用消息的服务端口，服务器地址将由 服务器IP+端口+/httpAPI 组成
+	例如设置端口为1234，那接口地址：http://1270.0.1:1234/httpAPI
+调用范围：允许调用可爱猫API的来源IP范围。
+开关服务：开关是否框架服务功能，如果关闭，将不再接受API调用。（框架消息不受影响，将继续推送到接口地址）
+
+【授权与验证】（插件高配版将收费运营，授权方式：绑定微信ID）
+授权账号：就是你要授权哪个账号。注意，级别高的包括低级别范围，无论如何消息推送的地址都被允许调用。
+授权卡号：就是你购买的授权卡号，购买授权卡请将你的微信ID告知售卡商。
+调用签名：此签名是对调用API的来源进行校验，如果不填，即不校验，否则调用所有API时都需要增加签名参数。参数名为：sign
+调用密钥：暂时未启用。
+
+【配置与调试】（用来给用户调试接口或设置相当配置）
+调试接口：即要调试的远程接口地址
+机器账号：选择机器人账号
+相关群号：填写该机器人下某个群（比如设置和群相关的内容时就需要用来识别是哪个群）非必要
+相关微信：填写相关微信ID（比如设置和账号有相关的内容时就需要用来识别是哪个人）非必要
+配置键名：此设置的名称
+配置键值：此设置的内容
+具体参数名和包格式查看事件推送中的：EventModify事件
+
+
+参数可以是GET或POST（POST参数为JSON）
+如：
+GET：http://127.0.0.1:1234/httpAPI?api=SendTextMsg&robot_wxid=wxid_XXXXXX&to_wxid=wxid_eeeeee&msg=你好
+POST：
+{
+	"api": "SendTextMsg",			//接口名(发文本消息)
+	"robot_wxid": "wxid_XXXXXX",	//要使用的机器人ID
+	"to_wxid": "wxid_eeeeee",		//发送的目标ID
+	"msg": "你好",					//发送内容
+	"Code": 0,						//不拦截
+	"sing": "xxxxxxxxx",			//验签
+	"origin": "测试接口"			//接口别名
+}
+
+
+【通用非必要参数】
+Code,  整数型, ,是否中止此消息的推送，-1中止 0继续，中止后如果后面还有其它接口将不能收到此消息
+sign,  文本型, ,sign验证，如果后台设置了sign，就一定要带此参数并与之对应，否则将没有权限调用API
+origin,  文本型, ,别名，传送别名可以在日志中更直观显示是谁调用了API，如果后台设置了别名验证，别名一定要和接口设置的别名一样，否则将没有权限调用API
+
+
+功能=发送文本消息
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+msg, 文本型, , 发送的内容
+api=SendTextMsg
+
+
+功能=发送图片消息
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+path, 文本型, , 图片文件的绝对路径/URL/图片数据BASE64（以BASE64:开头）
+api=SendImageMsg
+
+
+功能=发送视频消息
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+path, 文本型, , 视频存放的绝对路径
+api=SendVideoMsg
+
+
+功能=发送文件消息
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+path, 文本型, , 文件的路径
+api=SendFileMsg
+
+
+功能=发送名片消息
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+card_data, 文本型, , 名片格式数据
+api=SendCardMsg
+
+
+功能=发送群消息并艾特
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+group_wxid, 文本型, , 要发送的群ID
+member_wxid, 文本型, , 要艾特成员的ID
+member_name, 文本型, , 要艾特成员的名字
+msg, 文本型, , 消息内容
+api=SendGroupMsgAndAt
+
+
+功能=发送动态表情
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+path, 文本型, , 表情的文件的绝对路径/URL/图片数据BASE64（以BASE64:开头）
+api=SendEmojiMsg
+
+
+功能=发送分享链接
+robot_wxid, 文本型, , 用哪个机器人发这条消息
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+title, 文本型, , 链接标题
+text, 文本型, , 链接内容
+target_url, 文本型, 可空, 跳转链接
+pic_url, 文本型, 可空, 图片的链接
+icon_url, 文本型, 可空, 图标的链接
+api=SendLinkMsg
+
+
+功能=发送音乐分享
+robot_wxid, 文本型
+to_wxid, 文本型, , 对方的ID（支持好友/群ID）
+name, 文本型
+type, 整数型, , 0 随机模式 / 1 网易云音乐 / 2 酷狗音乐
+api=SendMusicMsg
+
+
+功能=取登录账号昵称
+robot_wxid, 文本型
+api=GetRobotName
+
+
+功能=取登录账号头像
+robot_wxid, 文本型
+api=GetRobotHeadimgurl
+
+
+功能=取登录账号列表
+api=GetLoggedAccountList
+
+
+功能=取好友列表
+robot_wxid, 文本型, 可空, 如不填，则取的是所有登录账号的好友列表
+is_refresh, 逻辑型, 可空, 为真将重新加载（注意切记不要频繁加载这里），不然将取缓存，默认为假
+api=GetFriendList
+
+
+功能=取群聊列表
+robot_wxid, 文本型, 可空, 取哪个账号的列表，不填则取全部
+is_refresh, 逻辑型, 可空, 为真将重新加载（注意切记不要频繁加载这里），不然将取缓存，默认为假
+api=GetGroupList
+
+
+功能=取群成员详细
+robot_wxid, 文本型, , 已登机器人账号ID
+group_wxid, 文本型, , 群ID
+member_wxid, 文本型, , 群成员ID
+is_refresh, 逻辑型, 可空, 为真将重新加载（注意切记不要频繁加载这里），不然将取缓存，默认为假
+api=GetGroupMemberDetailInfo
+
+
+功能=取群成员列表
+robot_wxid, 文本型, , 已登账号ID
+group_wxid, 文本型, , 群ID
+is_refresh, 逻辑型, 可空, 为真将重新加载列表（注意切记不要频繁加载这里），不然将取缓存，默认为假
+api=GetGroupMemberList
+
+
+功能=接收好友转账
+robot_wxid, 文本型, , 哪个机器人收到的好友转账，就填那个机器人的ID
+from_wxid, 文本型, , 好友的ID（给你转账的那个人的ID）
+json_msg, 文本型, , 请传入转账事件里的原消息
+api=AcceptTransfer
+
+
+功能=同意群聊邀请
+robot_wxid, 文本型, , 哪个机器人收到的群聊邀请，就填那个机器人的ID号
+json_msg, 文本型, , 请传入事件的原消息
+api=AgreeGroupInvite
+
+
+功能=同意好友请求
+robot_wxid, 文本型, , 哪个机器人收到的好友验证，就填哪个机器人的那个ID
+json_msg, 文本型, , 请传入好友验证事件的原消息
+api=AgreeFriendVerify
+
+
+功能=修改好友备注
+robot_wxid, 文本型, , 要操作的机器人ID
+friend_wxid, 文本型, , 要备注的好友ID
+note, 文本型, , 新的备注
+api=ModifyFriendNote
+
+
+功能=删除好友
+robot_wxid, 文本型, , 要操作的机器人ID
+friend_wxid, 文本型, , 要删除的好友ID
+api=DeleteFriend
+
+
+功能=取应用目录
+api=GetAppDirectory
+
+
+功能=添加日志
+msg1, 文本型
+msg2, 文本型, 可空
+api=AppendLogs
+
+
+功能=踢出群成员
+robot_wxid, 文本型, , 要操作的机器人ID
+group_wxid, 文本型, , 群ID
+member_wxid, 文本型, , 群成员ID
+api=RemoveGroupMember
+
+
+功能=修改群名称
+robot_wxid, 文本型, , 要操作的机器人ID
+group_wxid, 文本型, , 群ID
+group_name, 文本型, , 新的群名称
+api=ModifyGroupName
+
+
+功能=修改群公告
+robot_wxid, 文本型, , 要操作的机器人ID
+group_wxid, 文本型, , 群ID
+content, 文本型, , 新公告内容
+api=ModifyGroupNotice
+
+
+功能=建立新群
+robot_wxid, 文本型, , 要操作的机器人ID
+friendArr, 文本型, 数组, 要建立新群的好友数组，至少要两个人以上
+api=BuildingGroup
+
+
+功能=退出群聊
+robot_wxid, 文本型, , 要操作的机器人ID
+group_wxid, 文本型, , 群ID
+api=QuitGroup
+
+
+功能=邀请加入群聊
+robot_wxid, 文本型, , 要操作的机器人ID
+group_wxid, 文本型, , 群ID
+friend_wxid, 文本型, , 要邀请的好友ID
+api=InviteInGroup

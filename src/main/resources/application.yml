@@ -1,0 +1,27 @@
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: "jdbc:mysql://localhost:3306/webchat?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
+    username: root
+    password:
+  jpa:
+    show-sql: true
+
+server:
+    port: 8081
+
+api:
+    reply-interval: 1000
+    wechat-url: "http://localhost:88/httpAPI"
+    tuLing-api: "http://openapi.tuling123.com/openapi/api/v2"
+    tuLing-api-key: "0dd580fb0128ac0f7584572c642ba312"
+    tuLing-user-id: "xiaoxiao"
+    Baidu-text-review: "https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined"
+    source-voice-root-path: "G://微信群管家/可爱猫4.4.1含开发包/debug/可爱猫4.4.1含开发包/可爱猫4.4.0/data/temp"
+    silk-v3-decoder-path: "G://test/pcm/bin/silk_v3_decoder.exe"
+    ffmpeg-path: "G://test/pcm/bin/ffmpeg.exe"
