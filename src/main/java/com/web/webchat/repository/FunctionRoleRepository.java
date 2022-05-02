@@ -11,5 +11,9 @@ import java.util.List;
 public interface FunctionRoleRepository extends JpaRepository<FunctionRoleEntity, Long> {
 
     List<FunctionRoleEntity> findAll();
+
     List<FunctionRoleEntity> findAllByIsOpen(Integer flag);
+
+    List<FunctionRoleEntity> findAllByChatroomIdAndIsOpen(String chatRooms, Integer isOpen);
+
 }

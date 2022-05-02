@@ -9,7 +9,8 @@ import java.util.Map;
 
 public class StrategyFactory {
 
-    private static Map<String, Handler> strategyMap = new HashMap<>();
+    // 创建不同类型的创建信息数据
+    private static final Map<String, Handler> strategyMap = new HashMap<>();
 
     public static Handler getInvokeStrategy(String name) {
         return strategyMap.get(name);

@@ -21,6 +21,9 @@ public class RequestDto {
     private String from_wxid;
 
     @JsonProperty
+    private String from_name;
+
+    @JsonProperty
     private String to_wxid;
 
     @JsonProperty

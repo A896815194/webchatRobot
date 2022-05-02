@@ -1,5 +1,10 @@
 package com.web.webchat.enums;
 
+
+/**
+ * 微信接收时间的类型
+ *
+ * **/
 public enum PushEvent {
     EventLogin("新的账号登录成功/下线"),
 

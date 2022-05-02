@@ -97,9 +97,10 @@ public class RestTemplateUtil {
         HttpEntity<ResponseDto> formEntity = new HttpEntity<>(request, headers);
         TuLingRobotResponseDto result = null;
         try {
-            result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
+             result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
         } catch (Exception e) {
             System.out.println("报错了");
+            e.printStackTrace();
         }
     }
 

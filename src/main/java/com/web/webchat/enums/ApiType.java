@@ -1,5 +1,9 @@
 package com.web.webchat.enums;
 
+/**
+ * 微信api的类型
+ *
+ * **/
 public enum ApiType {
 
     SendTextMsg("发送文本消息"),

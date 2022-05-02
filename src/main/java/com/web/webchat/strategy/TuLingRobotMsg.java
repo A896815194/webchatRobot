@@ -2,6 +2,7 @@ package com.web.webchat.strategy;
 
 import com.google.gson.Gson;
 import com.web.webchat.config.PropertiesEntity;
+import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotRequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotResponseDto;
 import com.web.webchat.enums.FunctionType;
@@ -22,9 +23,9 @@ public class TuLingRobotMsg implements Handler {
     private PropertiesEntity properties;
 
     @Override
-    public List<String> createMessage(String msg, PropertiesEntity propertiesEntity) {
+    public List<String> createMessage(RequestDto request, PropertiesEntity propertiesEntity) {
         this.properties = propertiesEntity;
-        return getTuLingResponseMsg(msg);
+        return getTuLingResponseMsg(request.getMsg());
     }
 
     @Override

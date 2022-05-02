@@ -1,5 +1,6 @@
 package com.web.webchat.service;
 
+import com.web.webchat.abstractclass.ChatBase;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.FunctionRoleEntity;
@@ -7,7 +8,7 @@ import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Command;
-import com.web.webchat.inteface.ServiceInt;
+import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
 import com.web.webchat.strategyContext.TuLingRobotChat;
 import com.web.webchat.util.RestTemplateUtil;
@@ -26,7 +27,7 @@ import static java.util.Objects.isNull;
 
 
 @Service("EventFriendMsg")
-public class EventFriendMsgService extends ServiceInt implements Command {
+public class EventFriendMsgService extends ChatBase implements Command {
 
     @Autowired
     private PropertiesEntity propertiesEntity;
@@ -36,20 +37,7 @@ public class EventFriendMsgService extends ServiceInt implements Command {
     private FunctionRoleRepository functionRoleRepository;
 
     public void sendMessageToWechat(RequestDto request) {
-        //如果我对我自己说托管
-        if (open(request)) {
-            return;
-        }
-        if (close(request)) {
-            return;
-        }
-        ;
-        if (EventFriendMsgVerification.hasOpen(request,1)) {
-//            Integer flag = new BaiduTextReviewChat(FunctionType.TextReview.name()).chat(request, propertiesEntity);
-//            if (nonNull(flag) && flag == 1) {
-//                return;
-//            }
-            ;
+        if (new EventFriendMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(),1)) {
             if ("tiaotiaoxiaoshuai".equals(request.getRobot_wxid())) {
                 if (isAutoSend(request.getMsg()) && isAdmin(request.getTo_wxid(), request.getRobot_wxid())) {
                     SystemInit.flag = true;
@@ -68,16 +56,16 @@ public class EventFriendMsgService extends ServiceInt implements Command {
     }
 
     @Override
-    public boolean beforeSendMessageToWechat(RequestDto request) {
+    public boolean beforeSendMessageToWechat(RequestDto request, Handler handler) {
         long currentTime = System.currentTimeMillis();
         Long interVal = propertiesEntity.getReplyInterval();
-        if(isNull(SystemInit.lastRequestMap.get(request.getRobot_wxid()))){
+        if (isNull(SystemInit.lastRequestMap.get(request.getRobot_wxid()))) {
             return true;
         }
         RequestDto lastRequest = SystemInit.lastRequestMap.get(request.getRobot_wxid());
-        if(Objects.equals(request.getFrom_wxid(),lastRequest.getFrom_wxid()) &&
+        if (Objects.equals(request.getFrom_wxid(), lastRequest.getFrom_wxid()) &&
                 currentTime - lastRequest.getTimeStamp() < interVal
-        ){
+        ) {
             return false;
         }
         return true;
@@ -85,7 +73,7 @@ public class EventFriendMsgService extends ServiceInt implements Command {
 
     @Override
     public void afterSendMessageToWechat(RequestDto request) {
-        SystemInit.lastRequestMap.put(request.getRobot_wxid(),request);
+        SystemInit.lastRequestMap.put(request.getRobot_wxid(), request);
     }
 
     private boolean isAdmin(String fromWixd, String adminWixd) {
@@ -103,9 +91,9 @@ public class EventFriendMsgService extends ServiceInt implements Command {
 
     @Override
     public boolean open(RequestDto request) {
-        if (("开启"+FunctionType.SendMsgToFriend.getText()).equals(request.getMsg())
+        if (("开启" + FunctionType.SendMsgToFriend.getText()).equals(request.getMsg())
                 && "tiaotiaoxiaoshuai".equals(request.getFrom_wxid())) {
-            if (EventFriendMsgVerification.hasOpen(request,1)) {
+            if (new EventFriendMsgVerification().hasOpen(request, null,1)) {
                 return true;
             }
             Example<FunctionRoleEntity> function = Example.of(FunctionRoleEntity.builder()
@@ -150,8 +138,8 @@ public class EventFriendMsgService extends ServiceInt implements Command {
 
     @Override
     public boolean close(RequestDto request) {
-        if (("关闭"+FunctionType.SendMsgToFriend.getText()).equals(request.getMsg())  && "tiaotiaoxiaoshuai".equals(request.getFrom_wxid())) {
-            if (EventFriendMsgVerification.hasOpen(request,1)) {
+        if (("关闭" + FunctionType.SendMsgToFriend.getText()).equals(request.getMsg()) && "tiaotiaoxiaoshuai".equals(request.getFrom_wxid())) {
+            if (new EventFriendMsgVerification().hasOpen(request, null,1)) {
 
                 Example<FunctionRoleEntity> function = Example.of(FunctionRoleEntity.builder()
                         .functionType("TuLingRobot")
@@ -191,6 +179,6 @@ public class EventFriendMsgService extends ServiceInt implements Command {
                 return true;
             }
         }
-        return EventFriendMsgVerification.hasOpen(request,0);
+        return new EventFriendMsgVerification().hasOpen(request, null,0);
     }
 }

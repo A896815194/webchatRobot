@@ -19,6 +19,9 @@ public class FunctionRoleEntity {
     @Column(name = "function_type")
     private String functionType;
 
+    @Column(name = "function_name")
+    private String functionName;
+
     @Column(name = "chat_type")
     private String chatType;
 

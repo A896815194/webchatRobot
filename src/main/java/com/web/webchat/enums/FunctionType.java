@@ -1,5 +1,10 @@
 package com.web.webchat.enums;
 
+import java.util.Objects;
+
+/**
+ * 所有功能类型
+ **/
 public enum FunctionType {
 
     SendMsgToFriend("私聊"),
@@ -12,7 +17,7 @@ public enum FunctionType {
 
     ASR("语音识别"),
 
-    SINGNIN("群签到");
+    SignIn("群签到");
 
     private String text;
 
@@ -26,7 +31,22 @@ public enum FunctionType {
     }
 
 
-    public String getValue() {
-        return String.valueOf(this.ordinal());
+    public static boolean isFuncationValue(String ml) {
+        for (FunctionType value : values()) {
+            if (Objects.equals(ml, value.getText())) {
+                return true;
+            }
+        }
+        return false;
     }
+
+    public static String getFunctionTypeByMl(String ml) {
+        for (FunctionType value : values()) {
+            if (Objects.equals(ml, value.getText())) {
+                return value.name();
+            }
+        }
+        return "";
+    }
+
 }

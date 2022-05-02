@@ -26,6 +26,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	compile('mysql:mysql-connector-java')
+//	compile ('org.apache.commons:commons-io:2.7')
+	// https://mvnrepository.com/artifact/commons-io/commons-io
+	implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 	compile 'com.google.code.gson:gson:2.6.2'
 	compile(
 			'net.sf.json-lib:json-lib:2.4:jdk15'

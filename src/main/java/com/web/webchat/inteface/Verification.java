@@ -10,5 +10,5 @@ public abstract class Verification {
 
     protected Verification verificationHandler;
 
-    public abstract boolean handleRequest(RequestDto request,int open);
+    public abstract boolean hasOpen(RequestDto request,String functionType,int open);
 }

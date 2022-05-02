@@ -20,7 +20,7 @@ public class BaiduTextReviewChat extends WechatProduct {
     }
     @Override
     public Integer chat(RequestDto request, PropertiesEntity propertiesEntity) {
-        List<String> message = handler.createMessage(request.getMsg(), propertiesEntity);
+        List<String> message = handler.createMessage(request, propertiesEntity);
         if(!isEmpty(message)) {
             request.setMsg(message.get(0));
             if (SystemInit.flag && "tiaotiaoxiaoshuai".equals(request.getRobot_wxid())) {

@@ -1,5 +1,6 @@
 package com.web.webchat.service;
 
+import com.web.webchat.abstractclass.ChatBase;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.FunctionRoleEntity;
@@ -7,7 +8,7 @@ import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Command;
-import com.web.webchat.inteface.ServiceInt;
+import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
 import com.web.webchat.strategyContext.TuLingRobotChat;
 import com.web.webchat.util.BaiduAsrMainUtil;
@@ -15,7 +16,6 @@ import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.VoiceDecoderUtil;
 import com.web.webchat.util.WeChatUtil;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ import static java.util.Objects.isNull;
 
 
 @Service("EventGroupMsg")
-public class EventGroupMsgService extends ServiceInt implements Command {
+public class EventGroupMsgService extends ChatBase implements Command {
 
     @Autowired
     private PropertiesEntity propertiesEntity;
@@ -40,22 +40,17 @@ public class EventGroupMsgService extends ServiceInt implements Command {
     // RequestDto{api='null', robot_wxid='wxid_i5vabkq7vwb222', from_wxid='18955225703@chatroom', to_wxid='wxid_i5vabkq7vwb222', msg='6', Event='EventGroupMsg'}
 
     public void sendMessageToWechat(RequestDto request) {
-        if (EventGroupMsgVerification.hasOpen(request, 1)) {
-            if(request.getMsg().contains(".silk")){
-                if(34 == request.getType()){
-                    String pcmUrl = VoiceDecoderUtil.silkToPcm(request.getMsg(),propertiesEntity.getSourceVoiceRootPath()+"/"+request.getFrom_wxid()+"/",String.valueOf(System.currentTimeMillis()),propertiesEntity.getSilkV3Path());
+        if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
+            if (request.getMsg().contains(".silk")) {
+                if (34 == request.getType()) {
+                    String pcmUrl = VoiceDecoderUtil.silkToPcm(request.getMsg(), propertiesEntity.getSourceVoiceRootPath() + "/" + request.getFrom_wxid() + "/", String.valueOf(System.currentTimeMillis()), propertiesEntity.getSilkV3Path());
                     String msg = BaiduAsrMainUtil.getMsgFromPcm(pcmUrl);
-                    request.setMsg("语音翻译:"+msg);
-                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()),propertiesEntity.getWechatUrl());
-                    return ;
+                    request.setMsg("语音翻译:" + msg);
+                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    return;
                 }
             }
-//            Integer flag = new BaiduTextReviewChat(FunctionType.TextReview.name()).chat(request, propertiesEntity);
-//            if (nonNull(flag) && flag == 1) {
-//                return;
-//            }
-            ;
-            if(isAtRobot(request.getMsg(), request.getRobot_wxid())) {
+            if (isAtRobot(request.getMsg(), request.getRobot_wxid())) {
                 request.setMsg(sendMsg(request.getMsg(), request.getRobot_wxid()));
                 new TuLingRobotChat(FunctionType.TuLingRobot.name()).chat(request, propertiesEntity);
             }
@@ -63,40 +58,20 @@ public class EventGroupMsgService extends ServiceInt implements Command {
     }
 
     @Override
-    public boolean beforeSendMessageToWechat(RequestDto request) {
-        if(isHighFrequency(request)){
+    public boolean beforeSendMessageToWechat(RequestDto request, Handler handler) {
+        if (isHighFrequency(request)) {
             return false;
         }
-        if(34 == request.getType()){
+        if (34 == request.getType()) {
             return true;
-        }
-        if (open(request)) {
-            return false;
-        }
-        if (close(request)) {
-            return false;
         }
         return true;
     }
 
-    private boolean isHighFrequency(RequestDto request){
-        long currentTime = System.currentTimeMillis();
-        Long interVal = propertiesEntity.getReplyInterval();
-        if(isNull(SystemInit.lastRequestMap.get(request.getRobot_wxid()))){
-            return false;
-        }
-        RequestDto lastRequest = SystemInit.lastRequestMap.get(request.getRobot_wxid());
-        if (isAtRobot(request.getMsg(), request.getRobot_wxid()) &&
-                Objects.equals(request.getFrom_wxid(), lastRequest.getFrom_wxid()) &&
-                currentTime - lastRequest.getTimeStamp() < interVal
-        ) {
-            return true;
-        }
-        return false;
-    }
+
     @Override
     public void afterSendMessageToWechat(RequestDto request) {
-        SystemInit.lastRequestMap.put(request.getRobot_wxid(),request);
+        SystemInit.lastRequestMap.put(request.getRobot_wxid(), request);
     }
 
 
@@ -118,7 +93,7 @@ public class EventGroupMsgService extends ServiceInt implements Command {
     @Override
     public boolean open(RequestDto request) {
         if ("开启群聊".equals(request.getMsg()) && "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
-            if (EventGroupMsgVerification.hasOpen(request, 1)) {
+            if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
                 return true;
             }
             Example<FunctionRoleEntity> function = Example.of(FunctionRoleEntity.builder()
@@ -165,7 +140,7 @@ public class EventGroupMsgService extends ServiceInt implements Command {
     @Override
     public boolean close(RequestDto request) {
         if ("关闭群聊".equals(request.getMsg()) && "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
-            if (EventGroupMsgVerification.hasOpen(request, 1)) {
+            if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
 
                 Example<FunctionRoleEntity> function = Example.of(FunctionRoleEntity.builder()
                         .functionType("TuLingRobot")
@@ -206,6 +181,23 @@ public class EventGroupMsgService extends ServiceInt implements Command {
                 return true;
             }
         }
-        return EventGroupMsgVerification.hasOpen(request, 0);
+        return new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 0);
     }
+
+    private boolean isHighFrequency(RequestDto request) {
+        long currentTime = System.currentTimeMillis();
+        Long interVal = propertiesEntity.getReplyInterval();
+        if (isNull(SystemInit.lastRequestMap.get(request.getRobot_wxid()))) {
+            return false;
+        }
+        RequestDto lastRequest = SystemInit.lastRequestMap.get(request.getRobot_wxid());
+        if (isAtRobot(request.getMsg(), request.getRobot_wxid()) &&
+                Objects.equals(request.getFrom_wxid(), lastRequest.getFrom_wxid()) &&
+                currentTime - lastRequest.getTimeStamp() < interVal
+        ) {
+            return true;
+        }
+        return false;
+    }
+
 }

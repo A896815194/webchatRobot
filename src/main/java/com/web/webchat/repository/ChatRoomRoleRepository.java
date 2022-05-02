@@ -11,5 +11,6 @@ import java.util.List;
 public interface ChatRoomRoleRepository extends JpaRepository<ChatRoomRoleEntity, Long> {
 
     List<ChatRoomRoleEntity> findAll();
+
     List<ChatRoomRoleEntity> findAllByIsOpen(Integer flag);
 }

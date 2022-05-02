@@ -1,6 +1,7 @@
 package com.web.webchat.strategy;
 
 import com.web.webchat.config.PropertiesEntity;
+import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.baidutextreview.BaiduTextReviewResponseDto;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.inteface.Handler;
@@ -20,8 +21,8 @@ public class BaiduTextReview implements Handler {
     private PropertiesEntity properties;
 
     @Override
-    public List<String> createMessage(String msg, PropertiesEntity propertiesEntity) {
-        return createFankui(getResponse(msg,properties.getBaiduTextReviewUrl()));
+    public List<String> createMessage(RequestDto request, PropertiesEntity propertiesEntity) {
+        return createFankui(getResponse(request.getMsg(),properties.getBaiduTextReviewUrl()));
 
     }
 
