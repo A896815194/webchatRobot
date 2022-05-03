@@ -20,10 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class AllTypeListener {
@@ -92,6 +89,15 @@ public class AllTypeListener {
         timeFlag = calculateTimeOk(ut);
         boolean functionFlag = false;
         functionFlag = calculateFunction(ut);
+        //如果是自动使用物品，并且时间不在范围内直接失效
+        if (autoFlag && !timeFlag) {
+            Optional<UserBagEntity> useBag = userBagRepository.findById(ut.getUseBagId());
+            if (useBag.isPresent()) {
+                UserBagEntity ub = useBag.get();
+                ub.setIsDelete(1);
+                userBagRepository.save(ub);
+            }
+        }
         //如果是自动使用，且时间在范围内并且有方法才执行
         return autoFlag && timeFlag && functionFlag;
     }

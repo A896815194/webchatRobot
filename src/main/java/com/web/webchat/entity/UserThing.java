@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class UserThing {
+    private Long useBagId;
 
     private String wxidId;
 

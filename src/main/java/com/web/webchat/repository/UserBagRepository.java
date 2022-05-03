@@ -22,6 +22,7 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
     List<UserBagEntity> findAllByWxidIdAndEntityIdAndIsDelete(String wxid, String entityId, Integer isDelete);
 
     @Query(value = "select new com.web.webchat.entity.UserThing(" +
+            "a.id ," +
             "a.wxidId," +
             "a.entityId," +
             "b.thingName," +
@@ -47,6 +48,7 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
 
 
     @Query(value = "select new com.web.webchat.entity.UserThing(" +
+            "a.id," +
             "a.wxidId," +
             "a.entityId," +
             "b.thingName," +
