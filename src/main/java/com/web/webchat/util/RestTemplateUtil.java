@@ -6,6 +6,8 @@ import com.web.webchat.dto.baidutextreview.BaiduTextReviewResponseDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotRequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotResponseDto;
 import com.web.webchat.vo.ResultVO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class RestTemplateUtil {
+    private static final Logger logger = LogManager.getLogger(RestTemplateUtil.class.getName());
 
 
     public static ResultVO sendPostRequest(String url, MultiValueMap<String, String> params, MultiValueMap<String, String> headers) {
@@ -63,33 +66,36 @@ public class RestTemplateUtil {
         HttpHeaders headers = getFormHeaders();
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
-        MultiValueMap<String, String> postParameters= new LinkedMultiValueMap<String, String>();
-        postParameters.add("text",msg);
-        postParameters.add("access_token",assToken);
+        MultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
+        postParameters.add("text", msg);
+        postParameters.add("access_token", assToken);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
         ResponseEntity<BaiduTextReviewResponseDto> response = restTemplate.postForEntity(url, request, BaiduTextReviewResponseDto.class);
         System.out.println(response.getBody());
         return response.getBody();
     }
-    private static AssToken getBaiduASSToken(){
-            String authHost = "https://aip.baidubce.com/oauth/2.0/token";
-            HttpHeaders headers = getFormHeaders();
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
-            MultiValueMap<String, String> postParameters= new LinkedMultiValueMap<String, String>();
-            postParameters.add("grant_type","client_credentials");
-            postParameters.add("client_id","vwcHGBp07lb9uKYR4MCpu733");
-            postParameters.add("client_secret","qmbltNTlBziU7nPh47S59ZdAVM5KAsMI");
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
-            ResponseEntity<AssToken> result = restTemplate.postForEntity(authHost, request, AssToken.class);
+
+    private static AssToken getBaiduASSToken() {
+        String authHost = "https://aip.baidubce.com/oauth/2.0/token";
+        HttpHeaders headers = getFormHeaders();
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
+        MultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
+        postParameters.add("grant_type", "client_credentials");
+        postParameters.add("client_id", "vwcHGBp07lb9uKYR4MCpu733");
+        postParameters.add("client_secret", "qmbltNTlBziU7nPh47S59ZdAVM5KAsMI");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
+        ResponseEntity<AssToken> result = restTemplate.postForEntity(authHost, request, AssToken.class);
         return result.getBody();
     }
+
     public static void main(String[] args) {
         String token = getBaiduASSToken().getAccess_token();
         System.out.println(token);
-        System.out.println(sendMsgToBaiduTextReview("我是你爹,他妈的","https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined"));
+        System.out.println(sendMsgToBaiduTextReview("我是你爹,他妈的", "https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined"));
     }
+
     public static void sendMsgToWeChat(ResponseDto request, String url) {
         HttpHeaders headers = getJsonHeaders();
         RestTemplate restTemplate = new RestTemplate();
@@ -97,10 +103,9 @@ public class RestTemplateUtil {
         HttpEntity<ResponseDto> formEntity = new HttpEntity<>(request, headers);
         TuLingRobotResponseDto result = null;
         try {
-             result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
+            result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
         } catch (Exception e) {
-            System.out.println("报错了");
-            e.printStackTrace();
+            logger.error("回调给微信报错", e);
             throw new RuntimeException("发送消息失败");
         }
     }

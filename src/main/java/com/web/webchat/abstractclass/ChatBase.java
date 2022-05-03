@@ -20,6 +20,8 @@ import com.web.webchat.util.WeChatUtil;
 import com.web.webchat.verifiaction.EventFriendMsgVerification;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
@@ -31,6 +33,7 @@ import static java.util.Objects.isNull;
 
 @Component
 public abstract class ChatBase {
+    private static final Logger logger = LogManager.getLogger(ChatBase.class.getName());
 
     @Autowired
     private PropertiesEntity propertiesEntity;
@@ -53,6 +56,7 @@ public abstract class ChatBase {
     }
 
     public boolean open(RequestDto request, String functionType) {
+        logger.info("开启功能命令.");
         if ("tiaotiaoxiaoshuai".equals(request.getFrom_wxid()) || "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
             if (getVerificationByType(request.getEvent().name(), functionType, request, 1)) {
                 return true;
@@ -130,6 +134,7 @@ public abstract class ChatBase {
     }
 
     public boolean close(RequestDto request, String functionType) {
+        logger.info("关闭功能命令.");
         if ("tiaotiaoxiaoshuai".equals(request.getFrom_wxid()) || "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
             if (getVerificationByType(request.getEvent().name(), functionType, request, 1)) {
 
@@ -229,6 +234,7 @@ public abstract class ChatBase {
 //        //查询有多少个群得到了权限
 //        List<FunctionRoleEntity> roles = getGroupsRole(request);
         // 判断是否是开关命令
+        logger.info("发布物品特性事件");
         pubLisher.pushListener(request);
         if (msg.startsWith("开启")) {
             String ml = msg.substring(2);
@@ -245,6 +251,7 @@ public abstract class ChatBase {
         //判断命令是不是功能命令
         String functionType = SystemInit.getFunctionTypeByMsg(request.getMsg());
         if (StringUtils.isNotBlank(functionType)) {
+            logger.info("functionType{}:", functionType);
             //判断功能开没开
             if (getVerificationByType(request.getEvent().name(), functionType, request, 1)) {
                 //开了执行方法
@@ -254,8 +261,7 @@ public abstract class ChatBase {
                 try {
                     reflectionService.invokeService(command.getClassName(), command.getClassMethod(), resultMap);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println(e);
+                    logger.error("反射执行对应的bean方法失败", e);
                     request.setMsg(Message.REPEAT_SINGIN_MSG);
                     RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 }

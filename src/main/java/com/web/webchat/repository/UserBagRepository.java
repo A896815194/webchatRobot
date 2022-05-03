@@ -15,7 +15,7 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
 
     List<UserBagEntity> findAll();
 
-    List<UserBagEntity> findAllByIdIn(List<Long> ids);
+    List<UserBagEntity> findAllByEntityIdInAndEntityType(@Param("ids") List<String> ids,@Param("entityType")String entityType);
 
     List<UserBagEntity> findAllByWxidIdAndIsDelete(String wxid, Integer isDelete);
 

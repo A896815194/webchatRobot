@@ -8,8 +8,11 @@ import com.web.webchat.entity.UserThing;
 import com.web.webchat.repository.FunctionRoleCommandRepository;
 import com.web.webchat.repository.FunctionRoleRepository;
 import com.web.webchat.repository.UserBagRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -21,7 +24,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
+@EnableScheduling
 public class SystemInit {
+    private static final Logger logger = LogManager.getLogger(SystemInit.class.getName());
 
     public static List<FunctionRoleEntity> functionRoleRole = new ArrayList<>();
 
@@ -52,7 +57,7 @@ public class SystemInit {
     //获取初始化功能列表
     @PostConstruct
     public void init() {
-
+        logger.info("初始化信息。。");
         functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
         functionRoleCommands = functionRoleCommandRepository.findAll();
         if (!CollectionUtils.isEmpty(functionRoleCommands)) {
@@ -63,21 +68,27 @@ public class SystemInit {
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void initTask() {
-        System.out.println("每天0点执行,time:" + new Date());
+        logger.info("每天0点执行,time:{}", new Date());
         List<UserThing> uts = userBagRepository.getUserNoUseCountThings();
         if (CollectionUtils.isEmpty(uts)) {
-            System.out.println("啥也没有执行");
+            logger.info("没有查到要执行的物品特性");
             return;
         }
-        List<Long> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         for (UserThing ut : uts) {
-            ids.add(Long.valueOf(ut.getThingId()));
+            ids.add(ut.getThingId());
         }
-        List<UserBagEntity> ubs = userBagRepository.findAllByIdIn(ids);
+        List<UserBagEntity> ubs = userBagRepository.findAllByEntityIdInAndEntityType(ids, "thing");
+        logger.info("查到要执行的ubs size:{}", ubs.size());
         for (UserBagEntity ub : ubs) {
-             ub.setUseCount(1);
+            ub.setUseCount(1);
         }
-        userBagRepository.saveAll(ubs);
+        try {
+            userBagRepository.saveAll(ubs);
+        } catch (Exception e) {
+            logger.error("保存失败");
+        }
+
     }
 
 
@@ -88,9 +99,11 @@ public class SystemInit {
             String number = getMsgNumber(msg);
             if (Strings.isNotBlank(number)) {
                 command = command + "%s";
+                logger.debug("通过命令:【{}】获得功能类型", command);
                 return commandFunctionType.get(command);
             }
         }
+        logger.debug("通过命令:【{}】获得功能类型", msg);
         return commandFunctionType.get(msg);
     }
 

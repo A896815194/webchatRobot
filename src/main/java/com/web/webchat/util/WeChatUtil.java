@@ -1,10 +1,15 @@
 package com.web.webchat.util;
 
+import com.google.gson.Gson;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.enums.ApiType;
+import com.web.webchat.function.Shop;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class WeChatUtil {
+    private static final Logger logger = LogManager.getLogger(WeChatUtil.class.getName());
 
     public static ResponseDto handleResponse(RequestDto req, String apiType) {
         ResponseDto response = ResponseDto.builder()
@@ -21,7 +26,7 @@ public class WeChatUtil {
             response.setMsg(req.getMsg().split("@_@")[1]);
         }
 
-        System.out.println(response);
+        logger.info("webchatUtil 转换后的实体,req:{}",new Gson().toJson(req));
         return response;
 
 

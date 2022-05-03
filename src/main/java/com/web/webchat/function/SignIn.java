@@ -13,6 +13,8 @@ import com.web.webchat.repository.ChatroomMemberSignRepository;
 import com.web.webchat.repository.UserBagRepository;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -31,6 +33,7 @@ import java.util.Random;
 
 @Component("SignIn")
 public class SignIn {
+    private static final Logger logger = LogManager.getLogger(SignIn.class.getName());
 
     @Autowired
     private PropertiesEntity propertiesEntity;
@@ -45,6 +48,7 @@ public class SignIn {
 
     //签到
     public ResponseDto signin(RequestDto request) {
+        logger.info("wxid:{},name:{}执行签到", request.getFinal_from_wxid(), request.getFinal_from_name());
         String wxid = request.getFinal_from_wxid();
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -145,6 +149,7 @@ public class SignIn {
 
     //魔法背包
     public ResponseDto moneybag(RequestDto request) {
+        logger.info("wxid:{},name:{}执行魔法背包", request.getFinal_from_wxid(), request.getFinal_from_name());
         String wxid = request.getFinal_from_wxid();
         String msg = "";
         try {

@@ -1,7 +1,10 @@
 package com.web.webchat.util;
 
 import com.web.webchat.abstractclass.ChatBase;
+import com.web.webchat.api.WebChatController;
 import com.web.webchat.enums.PushEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
@@ -14,6 +17,8 @@ import java.util.Map;
 @Component
 public class ServiceFactory {
 
+    private static final Logger logger = LogManager.getLogger(ServiceFactory.class.getName());
+
     @Autowired
     private Map<String, ChatBase> serviceStrategyMap = new HashMap<>();
 
@@ -25,7 +30,7 @@ public class ServiceFactory {
                 return serviceStrategyMap.get(PushEvent.EventGroupMsg.name());
 
             default:
-                System.out.println("啥也没有");
+                logger.error("啥也没有");
         }
 
         return null;

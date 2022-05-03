@@ -14,6 +14,8 @@ import com.web.webchat.repository.UserBagRepository;
 import com.web.webchat.util.DateUtil;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,7 @@ import java.util.List;
 
 @Component("Shop")
 public class Shop {
+    private static final Logger logger = LogManager.getLogger(Shop.class.getName());
 
     @Autowired
     private PropertiesEntity propertiesEntity;
@@ -44,6 +47,7 @@ public class Shop {
 
     //魔法商城
     public ResponseDto magicShop(RequestDto request) {
+        logger.info("wxid:{},name:{}执行魔法商城", request.getFinal_from_wxid(), request.getFinal_from_name());
         List<ShopThing> shopThings = shopRepository.getShopThings();
         String msg = "";
         if (CollectionUtils.isEmpty(shopThings)) {
@@ -78,8 +82,9 @@ public class Shop {
         return isOne == 1 ? "（限购）" : "";
     }
 
-    //魔法商城
+    //魔法购买
     public ResponseDto magicBuy(RequestDto request) {
+        logger.info("wxid:{},name:{}执行魔法购买", request.getFinal_from_wxid(), request.getFinal_from_name());
         String msg = request.getMsg();
         String wxid = request.getFinal_from_wxid();
         String number = SystemInit.getMsgNumber(msg);

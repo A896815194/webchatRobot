@@ -2,6 +2,8 @@ package com.web.webchat.util;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -13,12 +15,12 @@ import java.util.*;
 
 @Component
 public class ReflectionService {
+    private static final Logger logger = LogManager.getLogger(ReflectionService.class.getName());
 
     @Autowired
     private SpringContextUtil springbeans;
 
     private static final List<Class> WRAP_CLASS = Arrays.asList(Integer.class, Boolean.class, Double.class, Byte.class, Short.class, Long.class, Float.class, Double.class, BigDecimal.class, String.class);
-
 
     /**
      * 反射调用spring bean方法的入口
@@ -29,6 +31,7 @@ public class ReflectionService {
      * @throws Exception
      */
     public Object invokeService(String classz, String methodName, Map<String, Object> paramMap) throws Exception {
+        logger.info("beanName:{},methodName:{},param:{}", classz, methodName, paramMap);
         if (!springbeans.isHasBean(classz)) {
             throw new RuntimeException("Spring找不到对应的Bean");
         }

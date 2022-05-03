@@ -1,5 +1,6 @@
 package com.web.webchat.config.listen;
 
+import com.google.gson.Gson;
 import com.web.webchat.abstractclass.ChatBase;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.config.threadPool.AsyncPoolConfig;
@@ -13,6 +14,8 @@ import com.web.webchat.util.ReflectionService;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
@@ -24,6 +27,8 @@ import java.util.*;
 
 @Component
 public class AllTypeListener {
+
+    private static final Logger logger = LogManager.getLogger(AllTypeListener.class.getName());
 
     @Autowired
     private UserBagRepository userBagRepository;
@@ -38,12 +43,14 @@ public class AllTypeListener {
     public void listener(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ThingEvent) {
             ThingEvent thingEvent = (ThingEvent) applicationEvent;
+            logger.info("接受物品特性事件内容:{}", new Gson().toJson(thingEvent));
             RequestDto request = thingEvent.getRequestDto();
             String wxid = request.getFinal_from_wxid();
             if (StringUtils.isBlank(wxid)) {
                 return;
             }
             List<UserThing> userThingss = userBagRepository.getUserThingsCanUse(wxid);
+            logger.info("人物wxid:{},物品数量:{}", wxid, userThingss.size());
             if (CollectionUtils.isEmpty(userThingss)) {
                 return;
             }
@@ -69,8 +76,7 @@ public class AllTypeListener {
                             userBagRepository.save(userBag);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println(e);
+                        logger.error("执行物品自身逻辑失败", e);
                         request.setMsg(Message.SYSTEM_ERROR_MSG);
                         RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                     }

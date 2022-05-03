@@ -6,10 +6,13 @@ import com.web.webchat.dto.RequestDto;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class TuLingRobotChat extends WechatProduct {
+    private static final Logger logger = LogManager.getLogger(TuLingRobotChat.class.getName());
 
     public TuLingRobotChat(String functionType) {
         handler = StrategyFactory.getInvokeStrategy(functionType);
