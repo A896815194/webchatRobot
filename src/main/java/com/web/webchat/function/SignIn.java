@@ -160,6 +160,7 @@ public class SignIn {
             StringBuilder sb = new StringBuilder();
             if (!CollectionUtils.isEmpty(userBags)) {
                 for (UserBagEntity userBag : userBags) {
+                    sb.append("\r");
                     sb.append(String.format(getMoneyThingString(), userBag.getEntityName()));
                 }
             }

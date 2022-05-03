@@ -43,4 +43,11 @@ public class ThingEntity {
     @Column(name = "end_time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss ", timezone = "GMT+8")
     private Date endTime;
+    //传入的是秒
+    @Column(name = "duration")
+    private Long duration;
+
+    @Column(name = "auto_use")
+    private Integer autoUse;
+
 }

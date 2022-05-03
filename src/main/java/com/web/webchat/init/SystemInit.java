@@ -3,19 +3,19 @@ package com.web.webchat.init;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.FunctionRoleCommand;
 import com.web.webchat.entity.FunctionRoleEntity;
-import com.web.webchat.repository.ChatRoomRoleRepository;
+import com.web.webchat.entity.UserBagEntity;
+import com.web.webchat.entity.UserThing;
 import com.web.webchat.repository.FunctionRoleCommandRepository;
 import com.web.webchat.repository.FunctionRoleRepository;
+import com.web.webchat.repository.UserBagRepository;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,23 +23,18 @@ import java.util.stream.Collectors;
 @Component
 public class SystemInit {
 
-    // public static List<ChatRoomRoleEntity> chatRoomRole = new ArrayList<>();
-
     public static List<FunctionRoleEntity> functionRoleRole = new ArrayList<>();
 
     //托管开关
     public static boolean flag = false;
 
     @Autowired
-    private ChatRoomRoleRepository chatRoomRoleRepository;
-
-    @Autowired
     private FunctionRoleRepository functionRoleRepository;
 
     @Autowired
     private FunctionRoleCommandRepository functionRoleCommandRepository;
-
-    public static RequestDto lastRequest = null;
+    @Autowired
+    private UserBagRepository userBagRepository;
 
     public static Map<String, RequestDto> lastRequestMap = new HashMap<>();
     // 命令, 方法类型
@@ -58,7 +53,6 @@ public class SystemInit {
     @PostConstruct
     public void init() {
 
-        //chatRoomRole = chatRoomRoleRepository.findAllByIsOpen(1);
         functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
         functionRoleCommands = functionRoleCommandRepository.findAll();
         if (!CollectionUtils.isEmpty(functionRoleCommands)) {
@@ -66,6 +60,26 @@ public class SystemInit {
             commandFunctionType = functionRoleCommands.stream().collect(Collectors.toMap(FunctionRoleCommand::getCommand, FunctionRoleCommand::getFunctionType));
         }
     }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void initTask() {
+        System.out.println("每天0点执行,time:" + new Date());
+        List<UserThing> uts = userBagRepository.getUserDeleteAndAutoUseThings();
+        if (CollectionUtils.isEmpty(uts)) {
+            System.out.println("啥也没有执行");
+            return;
+        }
+        List<Long> ids = new ArrayList<>();
+        for (UserThing ut : uts) {
+            ids.add(Long.valueOf(ut.getThingId()));
+        }
+        List<UserBagEntity> ubs = userBagRepository.findAllByIdIn(ids);
+        for (UserBagEntity ub : ubs) {
+             ub.setIsDelete(0);
+        }
+        userBagRepository.saveAll(ubs);
+    }
+
 
     public static String getFunctionTypeByMsg(String msg) {
         //是不是文字+数字

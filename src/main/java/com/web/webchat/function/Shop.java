@@ -3,16 +3,15 @@ package com.web.webchat.function;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
-import com.web.webchat.entity.ChatroomMemberMoney;
-import com.web.webchat.entity.ShopEntity;
-import com.web.webchat.entity.ShopThing;
-import com.web.webchat.entity.UserBagEntity;
+import com.web.webchat.entity.*;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.Message;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.repository.ChatroomMemberMoneyRepository;
 import com.web.webchat.repository.ShopRepository;
+import com.web.webchat.repository.ThingRepository;
 import com.web.webchat.repository.UserBagRepository;
+import com.web.webchat.util.DateUtil;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
 import org.apache.logging.log4j.util.Strings;
@@ -40,6 +39,8 @@ public class Shop {
     private ChatroomMemberMoneyRepository chatroomMemberMoneyRepository;
     @Autowired
     private UserBagRepository userBagRepository;
+    @Autowired
+    private ThingRepository thingRepository;
 
     //魔法商城
     public ResponseDto magicShop(RequestDto request) {
@@ -136,19 +137,41 @@ public class Shop {
         }
         //商品数量减少
         Integer count = shopThing.getThingCount();
+        if (count == 0) {
+            msg = Message.GET_SHOP_EMPTY_MSG;
+            request.setMsg(msg);
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            return;
+        }
         count = count - 1;
         if (count < 0) {
             count = 0;
         }
         shopThing.setThingCount(count);
         memberMoney.setMoney(leftMoney);
+        ThingEntity thing = thingRepository.findAllById(Long.valueOf(shopThing.getThingId()));
+        String entityName = shopThing.getThingName();
+        String entityType = "thing";
+        Long times = null;
+        if (thing != null) {
+            entityName = thing.getThingName();
+            entityType = thing.getThingType();
+            times = thing.getDuration();
+        }
         UserBagEntity userBag = UserBagEntity.builder()
                 .wxidId(wxid)
                 .entityId(String.valueOf(shopThing.getThingId()))
-                .entityName(shopThing.getThingName())
-                .entityType("物品")
+                .entityName(entityName)
+                .entityType(entityType)
                 .isDelete(0)
-                .createTime(new Date()).build();
+                .createTime(new Date())
+                .startTime(new Date())
+                .build();
+        if (times == null) {
+            userBag.setEndTime(null);
+        } else {
+            userBag.setEndTime(DateUtil.toadyAfterMillions(times * 1000));
+        }
         TransactionDefinition definition = new DefaultTransactionDefinition();
         TransactionStatus status = manager.getTransaction(definition);
         try {
@@ -171,4 +194,5 @@ public class Shop {
     private String getShopSuccessMsg(String wxidName, String thingName) {
         return String.format(Message.GET_SHOP_SUCCESS, wxidName, thingName);
     }
+
 }

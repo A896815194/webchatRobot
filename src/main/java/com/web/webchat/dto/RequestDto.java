@@ -42,6 +42,8 @@ public class RequestDto {
 
     @Builder.Default
     private Long timeStamp = System.currentTimeMillis();
+    @JsonProperty
+    private Object object;
 
     @Override
     public String toString() {

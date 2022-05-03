@@ -3,11 +3,9 @@ package com.web.webchat.service;
 import com.web.webchat.abstractclass.ChatBase;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
-import com.web.webchat.entity.FunctionRoleEntity;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.init.SystemInit;
-import com.web.webchat.inteface.Command;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
 import com.web.webchat.strategyContext.TuLingRobotChat;
@@ -17,19 +15,16 @@ import com.web.webchat.util.VoiceDecoderUtil;
 import com.web.webchat.util.WeChatUtil;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
-import java.util.Optional;
 
-import static com.web.webchat.init.SystemInit.functionRoleRole;
 import static java.util.Objects.isNull;
 
 
 @Service("EventGroupMsg")
-public class EventGroupMsgService extends ChatBase implements Command {
+public class EventGroupMsgService extends ChatBase {
 
     @Autowired
     private PropertiesEntity propertiesEntity;
@@ -90,99 +85,6 @@ public class EventGroupMsgService extends ChatBase implements Command {
         return msg.split(robotId)[1].split("]")[1].trim();
     }
 
-    @Override
-    public boolean open(RequestDto request) {
-        if ("开启群聊".equals(request.getMsg()) && "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
-            if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
-                return true;
-            }
-            Example<FunctionRoleEntity> function = Example.of(FunctionRoleEntity.builder()
-                    .functionType("TuLingRobot")
-                    .chatType("EventGroupMsg")
-                    .chatroomId(request.getFrom_wxid())
-                    .robotId(request.getRobot_wxid()).build());
-
-            Optional<FunctionRoleEntity> dataSource = Optional.ofNullable(functionRoleRepository.findOne(function)).orElse(null);
-            if (dataSource.isPresent()) {
-                if (1 == dataSource.get().getIsOpen()) {
-                    return true;
-                }
-                FunctionRoleEntity saveFunction = FunctionRoleEntity.builder()
-                        .functionType("TuLingRobot")
-                        .chatType("EventGroupMsg")
-                        .chatroomId(request.getFrom_wxid())
-                        .isOpen(1)
-                        .robotId(request.getRobot_wxid()).build();
-                if (0 == dataSource.get().getIsOpen()) {
-                    saveFunction.setId(dataSource.get().getId());
-                }
-                functionRoleRepository.save(saveFunction);
-                functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
-                request.setMsg("开启群聊成功！");
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-                return true;
-            }
-            FunctionRoleEntity saveFunction = FunctionRoleEntity.builder()
-                    .functionType("TuLingRobot")
-                    .chatType("EventGroupMsg")
-                    .chatroomId(request.getFrom_wxid())
-                    .isOpen(1)
-                    .robotId(request.getRobot_wxid()).build();
-            functionRoleRepository.save(saveFunction);
-            functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
-            request.setMsg("开启群聊成功！");
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean close(RequestDto request) {
-        if ("关闭群聊".equals(request.getMsg()) && "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
-            if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
-
-                Example<FunctionRoleEntity> function = Example.of(FunctionRoleEntity.builder()
-                        .functionType("TuLingRobot")
-                        .chatType("EventGroupMsg")
-                        .chatroomId(request.getFrom_wxid())
-                        .robotId(request.getRobot_wxid()).build());
-
-                Optional<FunctionRoleEntity> dataSource = Optional.ofNullable(functionRoleRepository.findOne(function)).orElse(null);
-                if (dataSource.isPresent()) {
-                    if (0 == dataSource.get().getIsOpen()) {
-                        return true;
-                    }
-                    FunctionRoleEntity saveFunction = FunctionRoleEntity.builder()
-                            .functionType("TuLingRobot")
-                            .chatType("EventGroupMsg")
-                            .chatroomId(request.getFrom_wxid())
-                            .isOpen(0)
-                            .robotId(request.getRobot_wxid()).build();
-                    if (1 == dataSource.get().getIsOpen()) {
-                        saveFunction.setId(dataSource.get().getId());
-                    }
-                    functionRoleRepository.save(saveFunction);
-                    functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
-                    request.setMsg("关闭群聊成功！");
-                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-                    return true;
-                }
-                FunctionRoleEntity saveFunction = FunctionRoleEntity.builder()
-                        .functionType("TuLingRobot")
-                        .chatType("EventGroupMsg")
-                        .chatroomId(request.getFrom_wxid())
-                        .isOpen(0)
-                        .robotId(request.getRobot_wxid()).build();
-                functionRoleRepository.save(saveFunction);
-                functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
-                request.setMsg("关闭群聊成功！");
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-                return true;
-            }
-        }
-        return new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 0);
-    }
 
     private boolean isHighFrequency(RequestDto request) {
         long currentTime = System.currentTimeMillis();

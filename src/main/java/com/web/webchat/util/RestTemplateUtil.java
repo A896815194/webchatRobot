@@ -101,6 +101,7 @@ public class RestTemplateUtil {
         } catch (Exception e) {
             System.out.println("报错了");
             e.printStackTrace();
+            throw new RuntimeException("发送消息失败");
         }
     }
 

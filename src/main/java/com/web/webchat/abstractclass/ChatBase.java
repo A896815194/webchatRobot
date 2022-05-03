@@ -3,6 +3,7 @@ package com.web.webchat.abstractclass;
 
 import com.google.gson.Gson;
 import com.web.webchat.config.PropertiesEntity;
+import com.web.webchat.config.listen.AllEventPubLisher;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.FunctionRoleCommand;
 import com.web.webchat.entity.FunctionRoleEntity;
@@ -12,14 +13,15 @@ import com.web.webchat.enums.Message;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
-import com.web.webchat.util.*;
+import com.web.webchat.util.ReflectionService;
+import com.web.webchat.util.RestTemplateUtil;
+import com.web.webchat.util.WeChatUtil;
 import com.web.webchat.verifiaction.EventFriendMsgVerification;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -32,11 +34,11 @@ public abstract class ChatBase {
     @Autowired
     private PropertiesEntity propertiesEntity;
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
     private FunctionRoleRepository functionRoleRepository;
     @Autowired
     private ReflectionService reflectionService;
+    @Autowired
+    private AllEventPubLisher pubLisher;
 
     // RequestDto{api='null', robot_wxid='wxid_i5vabkq7vwb222', from_wxid='18955225703@chatroom', to_wxid='wxid_i5vabkq7vwb222', msg='6', Event='EventGroupMsg'}
     public boolean getVerificationByType(String eventMsg, String functionType, RequestDto request, int open) {
@@ -203,14 +205,14 @@ public abstract class ChatBase {
         return getVerificationByType(request.getEvent().name(), functionType, request, 0);
     }
 
-    private List<FunctionRoleEntity> getGroupsRole(RequestDto request) {
-        String groupsId = request.getFrom_wxid();
-        List<FunctionRoleEntity> roles = new ArrayList<>();
-        if (groupsId.contains("@chatroom")) {
-            roles = functionRoleRepository.findAllByChatroomIdAndIsOpen(groupsId, 1);
-        }
-        return roles;
-    }
+//    private List<FunctionRoleEntity> getGroupsRole(RequestDto request) {
+//        String groupsId = request.getFrom_wxid();
+//        List<FunctionRoleEntity> roles = new ArrayList<>();
+//        if (groupsId.contains("@chatroom")) {
+//            roles = functionRoleRepository.findAllByChatroomIdAndIsOpen(groupsId, 1);
+//        }
+//        return roles;
+//    }
 
     public abstract void sendMessageToWechat(RequestDto request);
 
@@ -226,6 +228,7 @@ public abstract class ChatBase {
 //        //查询有多少个群得到了权限
 //        List<FunctionRoleEntity> roles = getGroupsRole(request);
         // 判断是否是开关命令
+        pubLisher.pushListener(request);
         if (msg.startsWith("开启")) {
             String ml = msg.substring(2);
             if (FunctionType.isFuncationValue(ml)) {
@@ -246,10 +249,7 @@ public abstract class ChatBase {
                 //开了执行方法
                 List<FunctionRoleCommand> commands = SystemInit.getCommandsByMsg(request.getMsg());
                 FunctionRoleCommand command = commands.get(0);
-                String dtoJson = new Gson().toJson(request);
-                Gson gson = new Gson();
-                Map<String, Object> resultMap = new HashMap<>();
-                resultMap = gson.fromJson(dtoJson, resultMap.getClass());
+                Map<String, Object> resultMap = convertRequestToMap(request);
                 try {
                     reflectionService.invokeService(command.getClassName(), command.getClassMethod(), resultMap);
                 } catch (Exception e) {
@@ -262,7 +262,6 @@ public abstract class ChatBase {
             //没开啥也不干
             return false;
         }
-        //Handler handler = getStrategyByMsg(request);
         //校验是否超频发送
         boolean isSendMsg = beforeSendMessageToWechat(request, null);
         boolean isSendFinish = false;
@@ -272,6 +271,14 @@ public abstract class ChatBase {
         }
         afterSendMessageToWechat(request);
         return isSendFinish;
+    }
+
+    public static Map<String, Object> convertRequestToMap(RequestDto request) {
+        String dtoJson = new Gson().toJson(request);
+        Gson gson = new Gson();
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap = gson.fromJson(dtoJson, resultMap.getClass());
+        return resultMap;
     }
 
     // 是否超频
