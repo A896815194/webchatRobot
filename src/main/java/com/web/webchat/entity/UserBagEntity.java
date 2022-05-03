@@ -44,4 +44,8 @@ public class UserBagEntity {
 
     @Column(name = "is_delete")
     private Integer isDelete;
+
+    @Column(name = "use_count")
+    private Integer useCount;
+
 }

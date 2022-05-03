@@ -28,4 +28,6 @@ public class UserThing {
     private Date startTime;
 
     private Date endTime;
+
+    private Integer useCount;
 }

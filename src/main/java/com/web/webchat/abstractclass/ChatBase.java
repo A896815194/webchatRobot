@@ -2,6 +2,7 @@ package com.web.webchat.abstractclass;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.config.listen.AllEventPubLisher;
 import com.web.webchat.dto.RequestDto;
@@ -274,8 +275,8 @@ public abstract class ChatBase {
     }
 
     public static Map<String, Object> convertRequestToMap(RequestDto request) {
-        String dtoJson = new Gson().toJson(request);
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+        String dtoJson = gson.toJson(request);
         Map<String, Object> resultMap = new HashMap<>();
         resultMap = gson.fromJson(dtoJson, resultMap.getClass());
         return resultMap;

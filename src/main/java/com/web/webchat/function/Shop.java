@@ -164,6 +164,7 @@ public class Shop {
                 .entityName(entityName)
                 .entityType(entityType)
                 .isDelete(0)
+                .useCount(1)
                 .createTime(new Date())
                 .startTime(new Date())
                 .build();

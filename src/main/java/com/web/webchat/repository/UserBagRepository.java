@@ -31,7 +31,8 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
             "b.thingMethod, " +
             "b.autoUse, " +
             "a.startTime, " +
-            "a.endTime " +
+            "a.endTime ," +
+            "a.useCount " +
             ")" +
             "from UserBagEntity a " +
             "left join " +
@@ -40,6 +41,7 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
             "where " +
             "a.entityType = 'thing' " +
             "and a.isDelete = 0 " +
+            "and a.useCount > 0 " +
             "and a.wxidId = :wxid")
     List<UserThing> getUserThingsCanUse(@Param("wxid") String wxid);
 
@@ -54,7 +56,8 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
             "b.thingMethod, " +
             "b.autoUse, " +
             "a.startTime, " +
-            "a.endTime " +
+            "a.endTime ," +
+            "a.useCount " +
             ")" +
             "from UserBagEntity a " +
             "left join " +
@@ -62,7 +65,8 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
             "on a.entityId = b.id " +
             "where " +
             "a.entityType = 'thing' " +
-            "and a.isDelete = 1 " +
+            "and a.isDelete = 0 " +
+            "and a.useCount = 0 " +
             "and b.autoUse = 1 ")
-    List<UserThing> getUserDeleteAndAutoUseThings();
+    List<UserThing> getUserNoUseCountThings();
 }

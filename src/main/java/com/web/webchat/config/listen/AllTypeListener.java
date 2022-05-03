@@ -57,18 +57,25 @@ public class AllTypeListener {
                         request.setObject(ut);
                         Map<String, Object> resultMap = ChatBase.convertRequestToMap(request);
                         reflectionService.invokeService(ut.getThingClass(), ut.getThingMethod(), resultMap);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println(e);
-                        request.setMsg(Message.REPEAT_SINGIN_MSG);
-                        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-                    }finally {
                         List<UserBagEntity> userBagEntities = userBagRepository.findAllByWxidIdAndEntityIdAndIsDelete(wxid, ut.getThingId(), 0);
                         if (!CollectionUtils.isEmpty(userBagEntities)) {
                             UserBagEntity userBag = userBagEntities.get(0);
-                            userBag.setIsDelete(1);
+                            Integer useCount = userBag.getUseCount();
+                            if (useCount == null) {
+                                useCount = 1;
+                            }
+                            useCount = useCount - 1;
+                            if (useCount < 0) {
+                                useCount = 0;
+                            }
+                            userBag.setUseCount(useCount);
                             userBagRepository.save(userBag);
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println(e);
+                        request.setMsg(Message.SYSTEM_ERROR_MSG);
+                        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                     }
                 }
             }

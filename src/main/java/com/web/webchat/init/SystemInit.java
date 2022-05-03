@@ -64,7 +64,7 @@ public class SystemInit {
     @Scheduled(cron = "0 0 0 * * ?")
     public void initTask() {
         System.out.println("每天0点执行,time:" + new Date());
-        List<UserThing> uts = userBagRepository.getUserDeleteAndAutoUseThings();
+        List<UserThing> uts = userBagRepository.getUserNoUseCountThings();
         if (CollectionUtils.isEmpty(uts)) {
             System.out.println("啥也没有执行");
             return;
@@ -75,7 +75,7 @@ public class SystemInit {
         }
         List<UserBagEntity> ubs = userBagRepository.findAllByIdIn(ids);
         for (UserBagEntity ub : ubs) {
-             ub.setIsDelete(0);
+             ub.setUseCount(1);
         }
         userBagRepository.saveAll(ubs);
     }
