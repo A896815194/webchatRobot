@@ -5,9 +5,12 @@ import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.entity.ChatroomMemberMoney;
 import com.web.webchat.entity.ChatroomMemberSign;
+import com.web.webchat.entity.UserBagEntity;
 import com.web.webchat.enums.ApiType;
+import com.web.webchat.enums.Message;
 import com.web.webchat.repository.ChatroomMemberMoneyRepository;
 import com.web.webchat.repository.ChatroomMemberSignRepository;
+import com.web.webchat.repository.UserBagRepository;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +39,11 @@ public class SignIn {
     @Autowired
     private ChatroomMemberSignRepository chatroomMemberSignRepository;
     @Autowired
+    private UserBagRepository userBagRepository;
+    @Autowired
     private PlatformTransactionManager manager;
 
+    //签到
     public ResponseDto signin(RequestDto request) {
         String wxid = request.getFinal_from_wxid();
         LocalDateTime dateTime = LocalDateTime.now();
@@ -53,13 +59,18 @@ public class SignIn {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        saveSignIn(request, wxid, start, end);
+        return null;
+    }
+
+    private synchronized void saveSignIn(RequestDto request, String wxid, Date start, Date end) {
         List<ChatroomMemberSign> signDataSource = chatroomMemberSignRepository.findAllByWxidIdAndSignTimeBetween(wxid, start, end);
         String msg = "";
         if (!CollectionUtils.isEmpty(signDataSource)) {
-            msg = "今天已经签过到了,不要太贪心哦";
+            msg = Message.REPEAT_SINGIN_MSG;
             request.setMsg(msg);
             RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-            return null;
+            return;
         }
         List<ChatroomMemberSign> allSignData = chatroomMemberSignRepository.findAllBySignTimeBetween(start, end);
         Integer rank = CollectionUtils.isEmpty(allSignData) ? 1 : allSignData.size() + 1;
@@ -68,6 +79,7 @@ public class SignIn {
                 .wxidId(request.getFinal_from_wxid())
                 .wxidName(request.getFinal_from_name())
                 .rankDay(rank)
+                .signTime(new Date())
                 .build();
         TransactionDefinition definition = new DefaultTransactionDefinition();
         TransactionStatus status = manager.getTransaction(definition);
@@ -88,22 +100,24 @@ public class SignIn {
                 newUserMoney.setMoney(userMoney + money + extraMoney);
                 chatroomMemberMoneyRepository.save(newUserMoney);
             }
+            msg = getMoneyMsg(request.getFinal_from_name(), money, extraMoney, rank);
+            request.setMsg(msg);
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             manager.commit(status);
+            return;
         } catch (Exception e) {
             manager.rollback(status);
-            return null;
+            msg = Message.SYSTEM_ERROR_MSG;
         }
-        msg = getMoneyMsg(request.getFinal_from_name(), money, extraMoney, rank);
         request.setMsg(msg);
         RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-        return null;
     }
 
     private String getMoneyMsg(String name, Long money, Long extraMoney, Integer rank) {
-        String template = "签到NO.%s【 %s】得到【 %s】魔法能量";
+        String template = Message.GET_MONEY_TEMPALTE;
         String moneyMsg = String.format(template, rank, name, money);
         if (extraMoney != null && extraMoney > 0l) {
-            moneyMsg = moneyMsg + ";同时得到大魔法师的青睐，额外获得【" + extraMoney + "】魔法能量奖励!!";
+            moneyMsg = moneyMsg + String.format(Message.GET_EXTRA_MONEY_TEMPLATE, extraMoney);
         }
         return moneyMsg;
     }
@@ -119,6 +133,7 @@ public class SignIn {
         return (random.nextInt(100) + 50);
     }
 
+    //150-500
     private static long getExtraMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
@@ -128,4 +143,41 @@ public class SignIn {
         return 0;
     }
 
+    //魔法背包
+    public ResponseDto moneybag(RequestDto request) {
+        String wxid = request.getFinal_from_wxid();
+        String msg = "";
+        try {
+            List<ChatroomMemberMoney> userMoneys = chatroomMemberMoneyRepository.findAllByWxidId(wxid);
+            List<UserBagEntity> userBags = userBagRepository.findAllByWxidIdAndIsDelete(wxid, 0);
+            String money;
+            if (CollectionUtils.isEmpty(userMoneys)) {
+                money = "0";
+            } else {
+                money = String.valueOf(userMoneys.get(0).getMoney());
+            }
+            msg = String.format(getMoneyBagString(), request.getFinal_from_name(), money);
+            StringBuilder sb = new StringBuilder();
+            if (!CollectionUtils.isEmpty(userBags)) {
+                for (UserBagEntity userBag : userBags) {
+                    sb.append(String.format(getMoneyThingString(), userBag.getEntityName()));
+                }
+            }
+            msg = msg + sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg = Message.SYSTEM_ERROR_MSG;
+        }
+        request.setMsg(msg);
+        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        return null;
+    }
+
+    private String getMoneyBagString() {
+        return Message.MY_MONEYBAG_TEMPLATE;
+    }
+
+    private String getMoneyThingString() {
+        return Message.MY_MONEYBAG_THING_TEMPLATE;
+    }
 }

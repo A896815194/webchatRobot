@@ -17,7 +17,9 @@ public enum FunctionType {
 
     ASR("语音识别"),
 
-    SignIn("群签到");
+    SignIn("群签到"),
+
+    MagicShop("魔法商城");
 
     private String text;
 

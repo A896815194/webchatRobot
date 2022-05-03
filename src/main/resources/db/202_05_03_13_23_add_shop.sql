@@ -1,0 +1,1 @@
+INSERT INTO shop (id, thing_id, thing_count, create_time, start_time, end_time, is_delete, thing_price, is_one, thing_name) VALUES (1, '1', 5, '2022-05-03 13:22:15', '2022-05-03 13:22:15', '2022-05-03 13:22:15', 0, 100, 1, '黄金魅影座驾 ');

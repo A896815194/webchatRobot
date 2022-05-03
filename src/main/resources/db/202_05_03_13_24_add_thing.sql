@@ -1,0 +1,1 @@
+INSERT INTO thing (id, thing_name, thing_type, thing_desc, thing_class, thing_method, thing_template, start_time, end_time) VALUES (1, '黄金魅影座驾 ', null, '进场神器，每天第一次发言会使用自动提示', null, null, '【%s】驾驶黄金魅影座驾降临', '2022-05-03 12:00:00', '2022-05-03 12:00:00');

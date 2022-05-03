@@ -8,6 +8,7 @@ import com.web.webchat.entity.FunctionRoleCommand;
 import com.web.webchat.entity.FunctionRoleEntity;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
+import com.web.webchat.enums.Message;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
@@ -211,34 +212,6 @@ public abstract class ChatBase {
         return roles;
     }
 
-    private Handler getStrategy(RequestDto request, List<FunctionRoleEntity> roles) {
-        String msg = request.getMsg();
-        if (isStrategy(msg, roles)) {
-            return StrategyFactory.getInvokeStrategy(msg);
-        }
-        return null;
-
-    }
-
-    private Handler getStrategyByMsg(RequestDto request) {
-        String msg = request.getMsg();
-        //查询有多少个群得到了权限
-        List<FunctionRoleEntity> roles = getGroupsRole(request);
-        if (isStrategy(msg, roles)) {
-            msg = FunctionType.SignIn.name();
-            return StrategyFactory.getInvokeStrategy(msg);
-        }
-        return null;
-
-    }
-
-
-    private boolean isStrategy(String msg, List<FunctionRoleEntity> roles) {
-        return msg.equals("关闭签到");
-//         return  roles.stream().anyMatch(item-> Objects.equals("开启" + item.getFunctionName(), msg)||
-//                  Objects.equals("关闭" + item.getFunctionName(), msg) );
-    }
-
     public abstract void sendMessageToWechat(RequestDto request);
 
     public abstract boolean beforeSendMessageToWechat(RequestDto request, Handler handler);
@@ -282,6 +255,8 @@ public abstract class ChatBase {
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println(e);
+                    request.setMsg(Message.REPEAT_SINGIN_MSG);
+                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 }
             }
             //没开啥也不干
