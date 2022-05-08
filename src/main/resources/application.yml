@@ -25,6 +25,7 @@ api:
     source-voice-root-path: "G://微信群管家/可爱猫4.4.1含开发包/debug/可爱猫4.4.1含开发包/可爱猫4.4.0/data/temp"
     silk-v3-decoder-path: "G://test/pcm/bin/silk_v3_decoder.exe"
     ffmpeg-path: "G://test/pcm/bin/ffmpeg.exe"
+    temp-data-file-path: "E://test"
 
 logging:
   config: classpath:log4j-spring.xml

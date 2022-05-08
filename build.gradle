@@ -20,7 +20,7 @@ allprojects {
 }
 
 configurations {
-	providedRuntime
+	providedCompile
 	// remove default logger
 	all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 }
@@ -36,9 +36,13 @@ dependencies {
 	implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 	compile 'com.google.code.gson:gson:2.6.2'
 	compile('org.springframework.boot:spring-boot-starter-log4j2:1.5.8.RELEASE')
+	// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+	implementation 'com.alibaba:fastjson:2.0.2'
 	compile(
 			'net.sf.json-lib:json-lib:2.4:jdk15'
 	)
+
 	compile 'org.json:json:20160212'
 			testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mvnrepository.com/artifact/org.nutz/nutz

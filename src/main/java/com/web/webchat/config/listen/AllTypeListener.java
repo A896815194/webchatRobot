@@ -54,35 +54,38 @@ public class AllTypeListener {
             if (CollectionUtils.isEmpty(userThingss)) {
                 return;
             }
-            for (UserThing ut : userThingss) {
-                boolean use = calculateUse(ut);
-                if (use) {
-                    try {
-                        request.setObject(ut);
-                        Map<String, Object> resultMap = ChatBase.convertRequestToMap(request);
-                        reflectionService.invokeService(ut.getThingClass(), ut.getThingMethod(), resultMap);
-                        List<UserBagEntity> userBagEntities = userBagRepository.findAllByWxidIdAndEntityIdAndIsDelete(wxid, ut.getThingId(), 0);
-                        if (!CollectionUtils.isEmpty(userBagEntities)) {
-                            UserBagEntity userBag = userBagEntities.get(0);
-                            Integer useCount = userBag.getUseCount();
-                            if (useCount == null) {
-                                useCount = 1;
-                            }
-                            useCount = useCount - 1;
-                            if (useCount < 0) {
-                                useCount = 0;
-                            }
-                            userBag.setUseCount(useCount);
-                            userBagRepository.save(userBag);
+            sendThingMessage(request, wxid, userThingss);
+        }
+    }
+
+    private synchronized void sendThingMessage(RequestDto request, String wxid, List<UserThing> userThingss) {
+        for (UserThing ut : userThingss) {
+            boolean use = calculateUse(ut);
+            if (use) {
+                try {
+                    request.setObject(ut);
+                    Map<String, Object> resultMap = ChatBase.convertRequestToMap(request);
+                    reflectionService.invokeService(ut.getThingClass(), ut.getThingMethod(), resultMap);
+                    List<UserBagEntity> userBagEntities = userBagRepository.findAllByWxidIdAndEntityIdAndIsDelete(wxid, ut.getThingId(), 0);
+                    if (!CollectionUtils.isEmpty(userBagEntities)) {
+                        UserBagEntity userBag = userBagEntities.get(0);
+                        Integer useCount = userBag.getUseCount();
+                        if (useCount == null) {
+                            useCount = 1;
                         }
-                    } catch (Exception e) {
-                        logger.error("执行物品自身逻辑失败", e);
-                        request.setMsg(Message.SYSTEM_ERROR_MSG);
-                        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                        useCount = useCount - 1;
+                        if (useCount < 0) {
+                            useCount = 0;
+                        }
+                        userBag.setUseCount(useCount);
+                        userBagRepository.save(userBag);
                     }
+                } catch (Exception e) {
+                    logger.error("执行物品自身逻辑失败", e);
+                    request.setMsg(Message.SYSTEM_ERROR_MSG);
+                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 }
             }
-
         }
     }
 

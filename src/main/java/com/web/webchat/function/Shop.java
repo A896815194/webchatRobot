@@ -68,7 +68,7 @@ public class Shop {
             sb.append(isOne(st.getIsOne()));
             sb.append(" ×");
             sb.append(st.getThingCount());
-            sb.append("  售价:");
+            sb.append("\r售价:");
             sb.append(st.getThingPrice());
             sb.append("魔法能量");
             sb.append("\r");

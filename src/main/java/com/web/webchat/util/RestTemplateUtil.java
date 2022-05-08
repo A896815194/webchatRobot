@@ -6,18 +6,101 @@ import com.web.webchat.dto.baidutextreview.BaiduTextReviewResponseDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotRequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotResponseDto;
 import com.web.webchat.vo.ResultVO;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
 @Component
 public class RestTemplateUtil {
     private static final Logger logger = LogManager.getLogger(RestTemplateUtil.class.getName());
 
+    private static final int CONNECT_TIME_OUT = 10000;
+
+    private static final int READ_TIME_OUT = 15000;
+
+    private static final int MAX_COUNT = 3000;
+
+    private static final int MAX_ROUT = 100;
+
+    private static final int CONNECTION_VALIDATE_AFTER_INACTIVITY_MS = 10 * 1000;
+
+    private static RestTemplate restTemplate = null;
+
+    {
+        restTemplate = null;
+        try {
+            restTemplate = new RestTemplate(httpRequestFactory());
+            //防止响应中文乱码
+            restTemplate.getMessageConverters().stream().filter(StringHttpMessageConverter.class::isInstance).map(StringHttpMessageConverter.class::cast).forEach(a -> {
+                a.setWriteAcceptCharset(false);
+                a.setDefaultCharset(StandardCharsets.UTF_8);
+            });
+        } catch (Exception e) {
+            logger.error("初始化restTemplate失败", e);
+        }
+    }
+
+    public static ClientHttpRequestFactory httpRequestFactory() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        return new HttpComponentsClientHttpRequestFactory(httpClient());
+    }
+
+    public static HttpClient httpClient() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+            public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                return true;
+            }
+        }).build();
+        httpClientBuilder.setSSLContext(sslContext);
+        HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+        SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext,
+                hostnameVerifier);
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", sslConnectionSocketFactory)
+                .build();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
+        connectionManager.setMaxTotal(MAX_COUNT); // 最大连接数
+        connectionManager.setDefaultMaxPerRoute(MAX_ROUT);    //单个路由最大连接数
+        connectionManager.setValidateAfterInactivity(CONNECTION_VALIDATE_AFTER_INACTIVITY_MS); // 检查永久链接的可用性(milliseconds 毫秒)
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(READ_TIME_OUT)        //服务器返回数据(response)的时间，超过抛出read timeout
+                .setConnectTimeout(CONNECT_TIME_OUT)      //连接上服务器(握手成功)的时间，超出抛出connect timeout
+                .setConnectionRequestTimeout(READ_TIME_OUT)//从连接池中获取连接的超时时间，超时间未拿到可用连接，会抛出org.apache.http.conn.ConnectionPoolTimeoutException: Timeout waiting for connection from pool
+                .build();
+        return HttpClientBuilder.create()
+                .setDefaultRequestConfig(requestConfig)
+                .setConnectionManager(connectionManager)
+                .build();
+    }
 
     public static ResultVO sendPostRequest(String url, MultiValueMap<String, String> params, MultiValueMap<String, String> headers) {
         HttpMethod method = HttpMethod.POST;
@@ -98,8 +181,6 @@ public class RestTemplateUtil {
 
     public static void sendMsgToWeChat(ResponseDto request, String url) {
         HttpHeaders headers = getJsonHeaders();
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
         HttpEntity<ResponseDto> formEntity = new HttpEntity<>(request, headers);
         TuLingRobotResponseDto result = null;
         try {

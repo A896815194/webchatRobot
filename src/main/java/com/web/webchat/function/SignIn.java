@@ -11,6 +11,7 @@ import com.web.webchat.enums.Message;
 import com.web.webchat.repository.ChatroomMemberMoneyRepository;
 import com.web.webchat.repository.ChatroomMemberSignRepository;
 import com.web.webchat.repository.UserBagRepository;
+import com.web.webchat.util.Calculate;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
 import org.apache.logging.log4j.LogManager;
@@ -131,17 +132,17 @@ public class SignIn {
     private static long getBasicMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = random.nextInt(100) + 100;
+            long r = Calculate.randBewteewn(100, 200);
             return r;
         }
-        return (random.nextInt(100) + 50);
+        return Calculate.randBewteewn(50, 150);
     }
 
     //150-500
     private static long getExtraMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = random.nextInt(350) + 150;
+            long r = Calculate.randBewteewn(150, 500);
             return r;
         }
         return 0;

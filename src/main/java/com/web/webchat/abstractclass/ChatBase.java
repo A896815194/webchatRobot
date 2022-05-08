@@ -262,7 +262,7 @@ public abstract class ChatBase {
                     reflectionService.invokeService(command.getClassName(), command.getClassMethod(), resultMap);
                 } catch (Exception e) {
                     logger.error("反射执行对应的bean方法失败", e);
-                    request.setMsg(Message.REPEAT_SINGIN_MSG);
+                    request.setMsg(Message.SYSTEM_ERROR_MSG);
                     RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 }
             }

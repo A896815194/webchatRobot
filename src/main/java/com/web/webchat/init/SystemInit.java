@@ -8,10 +8,12 @@ import com.web.webchat.entity.UserThing;
 import com.web.webchat.repository.FunctionRoleCommandRepository;
 import com.web.webchat.repository.FunctionRoleRepository;
 import com.web.webchat.repository.UserBagRepository;
+import com.web.webchat.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -40,6 +42,8 @@ public class SystemInit {
     private FunctionRoleCommandRepository functionRoleCommandRepository;
     @Autowired
     private UserBagRepository userBagRepository;
+    @Value("${api.temp-data-file-path}")
+    private String tempFileDataPath;
 
     public static Map<String, RequestDto> lastRequestMap = new HashMap<>();
     // 命令, 方法类型
@@ -147,5 +151,11 @@ public class SystemInit {
             }
         }
         return commandByFunctionType.get(msg);
+    }
+
+    @Scheduled(cron = "0 */10 * * * ?")
+    public void clearTempData() {
+        logger.info("清理临时目录。。path:{}", tempFileDataPath);
+        FileUtil.delFolder(tempFileDataPath, false);
     }
 }
