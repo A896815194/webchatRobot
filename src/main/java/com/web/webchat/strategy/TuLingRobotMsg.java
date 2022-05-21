@@ -2,6 +2,7 @@ package com.web.webchat.strategy;
 
 import com.google.gson.Gson;
 import com.web.webchat.config.PropertiesEntity;
+import com.web.webchat.config.listen.AllTypeListener;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotRequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotResponseDto;
@@ -9,6 +10,9 @@ import com.web.webchat.enums.FunctionType;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.StrategyFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -19,7 +23,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Component
 public class TuLingRobotMsg implements Handler {
+    private static final Logger logger = LogManager.getLogger(TuLingRobotMsg.class.getName());
 
+    @Autowired
     private PropertiesEntity properties;
 
     @Override
@@ -33,10 +39,10 @@ public class TuLingRobotMsg implements Handler {
         StrategyFactory.register(FunctionType.TuLingRobot.name(), this);
     }
 
-    private List<String> getTuLingResponseMsg(String msg) {
+    public List<String> getTuLingResponseMsg(String msg) {
         TuLingRobotRequestDto request = getTuLingRobotRequestDto(msg);
         TuLingRobotResponseDto responseDto = RestTemplateUtil.sendMsgToTuLingRobot(request,properties.getTulingApi());
-        System.out.println(new Gson().toJson(responseDto));
+        logger.info(new Gson().toJson(responseDto));
         List<String> result = new ArrayList<>();
         if (!isEmpty(responseDto.getResults())) {
             if (responseDto.getResults().stream().anyMatch(item -> "image".equals(item.getResultType()))) {

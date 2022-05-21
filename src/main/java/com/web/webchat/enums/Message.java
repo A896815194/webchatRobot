@@ -50,4 +50,19 @@ public class Message {
      **/
     public static final String GET_SHOP_REPEAT_ERROR_MSG = "你已经买过一次限定商品了不能再购买！";
 
+    /**
+     * 幸运天气
+     **/
+    public static final String LUCK_DAY_MONEY = "阳光的【%s】很是幸运，魔法能量得到提升!";
+
+    /**
+     * 失落天气
+     **/
+    public static final String NO_LUCK_DAY_MONEY = "沮丧的【%s】有些失落，魔法能量损失了一些..";
+
+    /**
+     * 倒霉蛋天气
+     **/
+    public static final String DIED_DAY_MONEY = "倒霉蛋【%s】不幸被雷电击中，魔法能量全部丢失~";
+
 }

@@ -17,4 +17,5 @@ public interface ChatroomMemberSignRepository extends JpaRepository<ChatroomMemb
 
     List<ChatroomMemberSign> findAllBySignTimeBetween(Date start, Date end);
 
+    List<ChatroomMemberSign> findAllByChatroomIdIn(List<String>chatroomIds);
 }

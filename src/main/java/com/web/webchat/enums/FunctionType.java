@@ -19,7 +19,9 @@ public enum FunctionType {
 
     SignIn("群签到"),
 
-    MagicShop("魔法商城");
+    MagicShop("魔法商城"),
+
+    MagicWeather("魔法天气");
 
     private String text;
 

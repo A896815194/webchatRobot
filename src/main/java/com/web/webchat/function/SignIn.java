@@ -74,7 +74,7 @@ public class SignIn {
         if (!CollectionUtils.isEmpty(signDataSource)) {
             msg = Message.REPEAT_SINGIN_MSG;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return;
         }
         List<ChatroomMemberSign> allSignData = chatroomMemberSignRepository.findAllBySignTimeBetween(start, end);
@@ -115,7 +115,7 @@ public class SignIn {
             msg = Message.SYSTEM_ERROR_MSG;
         }
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
     }
 
     private String getMoneyMsg(String name, Long money, Long extraMoney, Integer rank) {
@@ -132,17 +132,17 @@ public class SignIn {
     private static long getBasicMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = Calculate.randBewteewn(100, 200);
+            long r = Calculate.randBewteewn(50, 100);
             return r;
         }
-        return Calculate.randBewteewn(50, 150);
+        return Calculate.randBewteewn(25, 75);
     }
 
     //150-500
     private static long getExtraMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = Calculate.randBewteewn(150, 500);
+            long r = Calculate.randBewteewn(30, 100);
             return r;
         }
         return 0;
@@ -172,11 +172,11 @@ public class SignIn {
             }
             msg = msg + sb.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("查看魔法背包出错",e);
             msg = Message.SYSTEM_ERROR_MSG;
         }
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
         return null;
     }
 

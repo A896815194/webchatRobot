@@ -28,7 +28,7 @@ public class ThingFeatrue {
         UserThing userThing = gson.fromJson(gson.toJson(request.getObject()), UserThing.class);
         String msg = String.format(userThing.getThingTemplate(), request.getFinal_from_name());
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
         return null;
     }
 

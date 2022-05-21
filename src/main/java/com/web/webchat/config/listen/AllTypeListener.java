@@ -83,7 +83,7 @@ public class AllTypeListener {
                 } catch (Exception e) {
                     logger.error("执行物品自身逻辑失败", e);
                     request.setMsg(Message.SYSTEM_ERROR_MSG);
-                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 }
             }
         }

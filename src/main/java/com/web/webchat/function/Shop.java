@@ -53,7 +53,7 @@ public class Shop {
         if (CollectionUtils.isEmpty(shopThings)) {
             msg = Message.GET_SHOP_EMPTY_MSG;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return null;
         }
         StringBuilder sb = new StringBuilder();
@@ -74,7 +74,7 @@ public class Shop {
             sb.append("\r");
         }
         request.setMsg(sb.toString());
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
         return null;
     }
 
@@ -92,7 +92,7 @@ public class Shop {
         if (Strings.isBlank(number)) {
             msg = Message.GET_SHOP_ERROR_MSG;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return null;
         }
         bugThing(request, wxid, number);
@@ -106,7 +106,7 @@ public class Shop {
         if (CollectionUtils.isEmpty(memberMonies)) {
             msg = Message.MY_MONEYBAG_EMPTY;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return;
         }
         List<ShopEntity> shopThings = shopRepository.findAllByThingId(number);
@@ -114,7 +114,7 @@ public class Shop {
         if (CollectionUtils.isEmpty(shopThings)) {
             msg = Message.GET_SHOP_ERROR_MSG;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return;
         }
         ChatroomMemberMoney memberMoney = memberMonies.get(0);
@@ -126,7 +126,7 @@ public class Shop {
             if (!CollectionUtils.isEmpty(userBagHad)) {
                 msg = Message.GET_SHOP_REPEAT_ERROR_MSG;
                 request.setMsg(msg);
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 return;
             }
         }
@@ -137,7 +137,7 @@ public class Shop {
         if (leftMoney < 0) {
             msg = Message.MY_MONEYBAG_NOT_ENOUGH;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return;
         }
         //商品数量减少
@@ -145,7 +145,7 @@ public class Shop {
         if (count == 0) {
             msg = Message.GET_SHOP_EMPTY_MSG;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return;
         }
         count = count - 1;
@@ -194,7 +194,7 @@ public class Shop {
             msg = Message.SYSTEM_ERROR_MSG;
         }
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
     }
 
     private String getShopSuccessMsg(String wxidName, String thingName) {

@@ -104,7 +104,7 @@ public abstract class ChatBase {
                 functionRoleRepository.save(saveFunction);
                 functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                 request.setMsg(request.getMsg() + "成功！");
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 return true;
             }
             FunctionRoleEntity saveFunction = null;
@@ -127,7 +127,7 @@ public abstract class ChatBase {
             functionRoleRepository.save(saveFunction);
             functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
             request.setMsg(request.getMsg() + "成功！");
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             return true;
         }
         return false;
@@ -181,7 +181,7 @@ public abstract class ChatBase {
                     functionRoleRepository.save(saveFunction);
                     functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                     request.setMsg(request.getMsg() + "成功！");
-                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                     return true;
                 }
                 FunctionRoleEntity saveFunction = null;
@@ -204,21 +204,13 @@ public abstract class ChatBase {
                 functionRoleRepository.save(saveFunction);
                 functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                 request.setMsg(request.getMsg() + "成功！");
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 return true;
             }
         }
         return getVerificationByType(request.getEvent().name(), functionType, request, 0);
     }
 
-//    private List<FunctionRoleEntity> getGroupsRole(RequestDto request) {
-//        String groupsId = request.getFrom_wxid();
-//        List<FunctionRoleEntity> roles = new ArrayList<>();
-//        if (groupsId.contains("@chatroom")) {
-//            roles = functionRoleRepository.findAllByChatroomIdAndIsOpen(groupsId, 1);
-//        }
-//        return roles;
-//    }
 
     public abstract void sendMessageToWechat(RequestDto request);
 
@@ -231,8 +223,6 @@ public abstract class ChatBase {
             return false;
         }
         String msg = request.getMsg();
-//        //查询有多少个群得到了权限
-//        List<FunctionRoleEntity> roles = getGroupsRole(request);
         // 判断是否是开关命令
         logger.info("发布物品特性事件");
         pubLisher.pushListener(request);
@@ -263,7 +253,7 @@ public abstract class ChatBase {
                 } catch (Exception e) {
                     logger.error("反射执行对应的bean方法失败", e);
                     request.setMsg(Message.SYSTEM_ERROR_MSG);
-                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                 }
             }
             //没开啥也不干

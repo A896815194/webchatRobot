@@ -13,4 +13,6 @@ public interface ChatroomMemberMoneyRepository extends JpaRepository<ChatroomMem
     List<ChatroomMemberMoney> findAll();
 
     List<ChatroomMemberMoney> findAllByWxidId(String wxidId);
+
+    List<ChatroomMemberMoney> findAllByWxidIdIn(List<String> wxidIds);
 }

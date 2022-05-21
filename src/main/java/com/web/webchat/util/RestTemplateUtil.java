@@ -1,5 +1,6 @@
 package com.web.webchat.util;
 
+import com.web.webchat.config.threadPool.AsyncPoolConfig;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.dto.baidutextreview.AssToken;
 import com.web.webchat.dto.baidutextreview.BaiduTextReviewResponseDto;
@@ -24,6 +25,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -37,6 +39,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 public class RestTemplateUtil {
@@ -54,6 +57,7 @@ public class RestTemplateUtil {
 
     private static RestTemplate restTemplate = null;
 
+    private static ThreadPoolTaskExecutor executor;
     {
         restTemplate = null;
         try {
@@ -66,6 +70,25 @@ public class RestTemplateUtil {
         } catch (Exception e) {
             logger.error("初始化restTemplate失败", e);
         }
+        executor = new ThreadPoolTaskExecutor();
+        // 核心线程数（默认线程数）
+        executor.setCorePoolSize(10);
+        // 最大线程数
+        executor.setMaxPoolSize(20);
+        // 缓冲队列数
+        executor.setQueueCapacity(200);
+        // 允许线程空闲时间（单位：默认为秒）
+        executor.setKeepAliveSeconds(60);
+        // 线程池名前缀
+        executor.setThreadNamePrefix("asyncExecutor-");
+        // 设置是否等待计划任务在关闭时完成
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        // 设置此执行器应该阻止的最大秒数
+        executor.setAwaitTerminationSeconds(60);
+        // 线程池对拒绝任务的处理策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 初始化
+        executor.initialize();
     }
 
     public static ClientHttpRequestFactory httpRequestFactory() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
@@ -173,11 +196,11 @@ public class RestTemplateUtil {
         return result.getBody();
     }
 
-    public static void main(String[] args) {
-        String token = getBaiduASSToken().getAccess_token();
-        System.out.println(token);
-        System.out.println(sendMsgToBaiduTextReview("我是你爹,他妈的", "https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined"));
-    }
+//    public static void main(String[] args) {
+//        String token = getBaiduASSToken().getAccess_token();
+//        System.out.println(token);
+//        System.out.println(sendMsgToBaiduTextReview("我是你爹,他妈的", "https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined"));
+//    }
 
     public static void sendMsgToWeChat(ResponseDto request, String url) {
         HttpHeaders headers = getJsonHeaders();
@@ -189,6 +212,24 @@ public class RestTemplateUtil {
             logger.error("回调给微信报错", e);
             throw new RuntimeException("发送消息失败");
         }
+    }
+
+    public static void sendMsgToWeChatSync(ResponseDto request, String url) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                HttpHeaders headers = getJsonHeaders();
+                HttpEntity<ResponseDto> formEntity = new HttpEntity<>(request, headers);
+                TuLingRobotResponseDto result = null;
+                try {
+                    result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
+                } catch (Exception e) {
+                    logger.error("回调给微信报错", e);
+                    throw new RuntimeException("发送消息失败");
+                }
+            }
+        });
+
     }
 
     public static HttpHeaders getFormHeaders() {

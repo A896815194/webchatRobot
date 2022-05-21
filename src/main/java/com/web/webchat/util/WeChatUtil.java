@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.enums.ApiType;
-import com.web.webchat.function.Shop;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,7 @@ public class WeChatUtil {
             response.setMsg(req.getMsg().split("@_@")[1]);
         }
 
-        logger.info("webchatUtil 转换后的实体,req:{}",new Gson().toJson(req));
+        logger.info("webchatUtil req:{},转换后的实体,response:{}", new Gson().toJson(req), new Gson().toJson(response));
         return response;
 
 

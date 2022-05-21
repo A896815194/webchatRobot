@@ -41,7 +41,7 @@ public class EventGroupMsgService extends ChatBase {
                     String pcmUrl = VoiceDecoderUtil.silkToPcm(request.getMsg(), propertiesEntity.getSourceVoiceRootPath() + "/" + request.getFrom_wxid() + "/", String.valueOf(System.currentTimeMillis()), propertiesEntity.getSilkV3Path());
                     String msg = BaiduAsrMainUtil.getMsgFromPcm(pcmUrl);
                     request.setMsg("语音翻译:" + msg);
-                    RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
                     return;
                 }
             }
