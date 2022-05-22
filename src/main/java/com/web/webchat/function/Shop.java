@@ -57,7 +57,7 @@ public class Shop {
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("【魔法商城】:\n");
+        sb.append("【魔法商城】\n");
         for (ShopThing st : shopThings) {
             sb.append("no_");
             sb.append(st.getThingId());
