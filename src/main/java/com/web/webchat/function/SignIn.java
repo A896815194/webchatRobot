@@ -127,8 +127,8 @@ public class SignIn {
         return moneyMsg;
     }
 
-    // 100-200
-    // 50-150
+
+
     private static long getBasicMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
@@ -138,11 +138,11 @@ public class SignIn {
         return Calculate.randBewteewn(25, 75);
     }
 
-    //150-500
+
     private static long getExtraMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = Calculate.randBewteewn(30, 100);
+            long r = Calculate.randBewteewn(25, 50);
             return r;
         }
         return 0;

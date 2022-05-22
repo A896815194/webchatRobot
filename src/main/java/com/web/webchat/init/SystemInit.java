@@ -229,8 +229,8 @@ public class SystemInit {
         List<String> zeroWxids = new ArrayList<>();
         Map<String, List<String>> chatRoomIdMessageMap;
         if (tqMsg.contains("晴")) {
-            addWxids = GifUtil.addMemberMoney(memberMonies, 2, 20, 50);
-        } else if (tqMsg.contains("雷") || tqMsg.contains("电")) {
+            addWxids = GifUtil.addMemberMoney(memberMonies, 2, 10, 20);
+        } else if (tqMsg.contains("雨") || tqMsg.contains("雷") || tqMsg.contains("电")) {
             zeroWxids = GifUtil.deAddMemberMoneyZero(memberMonies, 2);
         } else {
             deAddWxids = GifUtil.deAddMemberMoney(memberMonies, 3, 100, 200);
@@ -241,7 +241,7 @@ public class SystemInit {
             robotChatRooms.forEach((k, v) -> {
                 StringBuilder sb = new StringBuilder();
                 sb.append("【魔法天气】\r");
-                sb.append(tqMsg + "\r");
+                sb.append("魔法森林:" + tqMsg + "\r");
                 RequestDto request = new RequestDto();
                 request.setMsg(sb.toString());
                 request.setRobot_wxid(v.get(0).getRobotId());
@@ -263,7 +263,7 @@ public class SystemInit {
                 String robotId = robotChatRoomList.get(0).getRobotId();
                 StringBuilder sb = new StringBuilder();
                 sb.append("【魔法天气】\r");
-                sb.append(tqMsg + "\r");
+                sb.append("魔法森林:" + tqMsg + "\r");
                 v.forEach(msg -> {
                     sb.append(msg + "\r");
                 });
@@ -285,53 +285,65 @@ public class SystemInit {
     private Map<String, List<String>> createChatRoomIdMessageMap(Map<String, List<ChatroomMemberSign>> memberSingByWxid, List<String> addWxids, List<String> deAddWxids, List<String> zeroWxids) {
         Map<String, List<String>> chatRoomIdMessageMap = new HashMap<>();
         addWxids.forEach(wxid -> {
-            List<String> chatRoomMessage = new ArrayList<>();
             List<ChatroomMemberSign> cms = memberSingByWxid.get(wxid);
             if (CollectionUtils.isEmpty(cms)) {
                 return;
             }
-            cms.forEach(item -> {
-                String wxidName = item.getWxidName();
+            // roomid  wxid
+            Map<String, List<ChatroomMemberSign>> chatRoomWxid = cms.stream().collect(Collectors.groupingBy(ChatroomMemberSign::getChatroomId, Collectors.toList()));
+            chatRoomWxid.forEach((roomId, wxidList) -> {
+                String wxidName = wxidList.get(0).getWxidName();
                 //如果有值往原来的集合里放
-                if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(item.getChatroomId()))) {
-                    chatRoomIdMessageMap.get(item.getChatroomId()).add(String.format(Message.LUCK_DAY_MONEY, wxidName));
-                } else {
+                if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(roomId))) {
+                    List<String> chatRoomMessage = new ArrayList<>();
                     chatRoomMessage.add(String.format(Message.LUCK_DAY_MONEY, wxidName));
-                    chatRoomIdMessageMap.put(item.getChatroomId(), chatRoomMessage);
+                    chatRoomIdMessageMap.get(roomId).addAll(chatRoomMessage);
+                } else {
+                    List<String> chatRoomMessage = new ArrayList<>();
+                    chatRoomMessage.add(String.format(Message.LUCK_DAY_MONEY, wxidName));
+                    chatRoomIdMessageMap.put(roomId, chatRoomMessage);
                 }
             });
         });
         deAddWxids.forEach(wxid -> {
-            List<String> chatRoomMessage = new ArrayList<>();
             List<ChatroomMemberSign> cms = memberSingByWxid.get(wxid);
             if (CollectionUtils.isEmpty(cms)) {
                 return;
             }
-            cms.forEach(item -> {
-                String wxidName = item.getWxidName();
+            // roomid  wxid
+            Map<String, List<ChatroomMemberSign>> chatRoomWxid = cms.stream().collect(Collectors.groupingBy(ChatroomMemberSign::getChatroomId, Collectors.toList()));
+            chatRoomWxid.forEach((roomId, wxidList) -> {
+                String wxidName = wxidList.get(0).getWxidName();
                 //如果有值往原来的集合里放
-                if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(item.getChatroomId()))) {
-                    chatRoomIdMessageMap.get(item.getChatroomId()).add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName));
-                } else {
+                if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(roomId))) {
+                    List<String> chatRoomMessage = new ArrayList<>();
                     chatRoomMessage.add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName));
-                    chatRoomIdMessageMap.put(item.getChatroomId(), chatRoomMessage);
+                    chatRoomIdMessageMap.get(roomId).addAll(chatRoomMessage);
+                } else {
+                    List<String> chatRoomMessage = new ArrayList<>();
+                    chatRoomMessage.add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName));
+                    chatRoomIdMessageMap.put(roomId, chatRoomMessage);
                 }
             });
         });
         zeroWxids.forEach(wxid -> {
-            List<String> chatRoomMessage = new ArrayList<>();
             List<ChatroomMemberSign> cms = memberSingByWxid.get(wxid);
             if (CollectionUtils.isEmpty(cms)) {
                 return;
             }
-            cms.forEach(item -> {
-                String wxidName = item.getWxidName();
+            // roomid  wxid
+            Map<String, List<ChatroomMemberSign>> chatRoomWxid = cms.stream().collect(Collectors.groupingBy(ChatroomMemberSign::getChatroomId, Collectors.toList()));
+            chatRoomWxid.forEach((roomId, wxidList) -> {
+                String wxidName = wxidList.get(0).getWxidName();
                 //如果有值往原来的集合里放
-                if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(item.getChatroomId()))) {
-                    chatRoomIdMessageMap.get(item.getChatroomId()).add(String.format(Message.DIED_DAY_MONEY, wxidName));
-                } else {
+                if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(roomId))) {
+                    List<String> chatRoomMessage = new ArrayList<>();
                     chatRoomMessage.add(String.format(Message.DIED_DAY_MONEY, wxidName));
-                    chatRoomIdMessageMap.put(item.getChatroomId(), chatRoomMessage);
+                    chatRoomIdMessageMap.get(roomId).addAll(chatRoomMessage);
+                } else {
+                    List<String> chatRoomMessage = new ArrayList<>();
+                    chatRoomMessage.add(String.format(Message.DIED_DAY_MONEY, wxidName));
+                    chatRoomIdMessageMap.put(roomId, chatRoomMessage);
                 }
             });
         });
