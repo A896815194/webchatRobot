@@ -236,42 +236,22 @@ public class SystemInit {
             deAddWxids = GifUtil.deAddMemberMoney(memberMonies, 3, 100, 200);
         }
         chatRoomIdMessageMap = createChatRoomIdMessageMap(memberSingByWxid, addWxids, deAddWxids, zeroWxids);
+        List<String> robotChatRoomIds = new ArrayList<>();
+        robotChatRooms.forEach((chatRoomId, v) -> {
+            robotChatRoomIds.add(chatRoomId);
+        });
         if (chatRoomIdMessageMap.isEmpty()) {
-            logger.info("没有产生魔法奖励");
-            robotChatRooms.forEach((k, v) -> {
-                StringBuilder sb = new StringBuilder();
-                sb.append("【魔法天气】\r");
-                sb.append("魔法森林:" + tqMsg + "\r");
-                RequestDto request = new RequestDto();
-                request.setMsg(sb.toString());
-                request.setRobot_wxid(v.get(0).getRobotId());
-                request.setFrom_wxid(k);
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
-            });
+            onlySendWeater(tqMsg, robotChatRooms);
             return;
         }
         //根据群消息map生成消息并发送
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);//新发起一个事务
         TransactionStatus status = transactionManager.getTransaction(def);// 获得事务状态
+        List<String> sendChatroomId = new ArrayList<>();
         try {
             chatRoomIdMessageMap.forEach((k, v) -> {
-                List<FunctionRoleEntity> robotChatRoomList = robotChatRooms.get(k);
-                if (CollectionUtils.isEmpty(robotChatRoomList)) {
-                    return;
-                }
-                String robotId = robotChatRoomList.get(0).getRobotId();
-                StringBuilder sb = new StringBuilder();
-                sb.append("【魔法天气】\r");
-                sb.append("魔法森林:" + tqMsg + "\r");
-                v.forEach(msg -> {
-                    sb.append(msg + "\r");
-                });
-                RequestDto request = new RequestDto();
-                request.setMsg(sb.toString());
-                request.setRobot_wxid(robotId);
-                request.setFrom_wxid(k);
-                RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                sendMoneyChatRoom(tqMsg, robotChatRooms, sendChatroomId, k, v);
             });
             chatroomMemberMoneyRepository.saveAll(memberMonies);
             transactionManager.commit(status);// 手动提交事务
@@ -280,6 +260,58 @@ public class SystemInit {
             // 异常的时候回滚
             transactionManager.rollback(status);
         }
+        //去掉有奖励提示的群里
+        robotChatRoomIds.removeAll(sendChatroomId);
+        //没有奖励的群也要发天气预报
+        robotChatRoomIds.forEach(noSendMoneyRoom -> {
+            List<FunctionRoleEntity> robotChatRoomList = robotChatRooms.get(noSendMoneyRoom);
+            if (CollectionUtils.isEmpty(robotChatRoomList)) {
+                return;
+            }
+            String robotId = robotChatRoomList.get(0).getRobotId();
+            StringBuilder sb = new StringBuilder();
+            sb.append("【魔法天气】\r");
+            sb.append("魔法森林:" + tqMsg + "\r");
+            RequestDto request = new RequestDto();
+            request.setMsg(sb.toString());
+            request.setRobot_wxid(robotId);
+            request.setFrom_wxid(noSendMoneyRoom);
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        });
+    }
+
+    private void sendMoneyChatRoom(String tqMsg, Map<String, List<FunctionRoleEntity>> robotChatRooms, List<String> sendChatroomId, String k, List<String> v) {
+        List<FunctionRoleEntity> robotChatRoomList = robotChatRooms.get(k);
+        if (CollectionUtils.isEmpty(robotChatRoomList)) {
+            return;
+        }
+        String robotId = robotChatRoomList.get(0).getRobotId();
+        StringBuilder sb = new StringBuilder();
+        sb.append("【魔法天气】\r");
+        sb.append("魔法森林:" + tqMsg + "\r");
+        v.forEach(msg -> {
+            sb.append(msg + "\r");
+        });
+        sendChatroomId.add(k);
+        RequestDto request = new RequestDto();
+        request.setMsg(sb.toString());
+        request.setRobot_wxid(robotId);
+        request.setFrom_wxid(k);
+        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+    }
+
+    private void onlySendWeater(String tqMsg, Map<String, List<FunctionRoleEntity>> robotChatRooms) {
+        logger.info("没有产生魔法奖励");
+        robotChatRooms.forEach((k, v) -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append("【魔法天气】\r");
+            sb.append("魔法森林:" + tqMsg + "\r");
+            RequestDto request = new RequestDto();
+            request.setMsg(sb.toString());
+            request.setRobot_wxid(v.get(0).getRobotId());
+            request.setFrom_wxid(k);
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        });
     }
 
     private Map<String, List<String>> createChatRoomIdMessageMap(Map<String, List<ChatroomMemberSign>> memberSingByWxid, List<String> addWxids, List<String> deAddWxids, List<String> zeroWxids) {
