@@ -179,9 +179,10 @@ public class SystemInit {
         FileUtil.delFolder(tempFileDataPath, false);
     }
 
-    @Scheduled(cron = "0 00 08 ? * *")
+    @Scheduled(cron = "0 00 07 ? * *")
+    //@Scheduled(cron = "*/5 * * * * ?")
     public void sendTianQi() {
-        logger.info("每天8点执行");
+        logger.info("每天7点执行");
         if (CollectionUtils.isEmpty(functionRoleRole)) {
             return;
         }
@@ -229,11 +230,11 @@ public class SystemInit {
         List<String> zeroWxids = new ArrayList<>();
         Map<String, List<String>> chatRoomIdMessageMap;
         if (tqMsg.contains("晴")) {
-            addWxids = GifUtil.addMemberMoney(memberMonies, 2, 10, 20);
-        } else if (tqMsg.contains("雨") || tqMsg.contains("雷") || tqMsg.contains("电")) {
-            zeroWxids = GifUtil.deAddMemberMoneyZero(memberMonies, 2);
+            addWxids = GifUtil.addMemberMoneyMajor(memberMonies, 2, 10, 20);
+        } else if ((tqMsg.contains("雨") && tqMsg.contains("雷")) || (tqMsg.contains("雨") && tqMsg.contains("电"))) {
+            zeroWxids = GifUtil.deAddMemberMoneyHalfMajor(memberMonies, 1);
         } else {
-            deAddWxids = GifUtil.deAddMemberMoney(memberMonies, 3, 100, 200);
+            deAddWxids = GifUtil.deAddMemberMoneyMajor(memberMonies, 3, 100, 200);
         }
         chatRoomIdMessageMap = createChatRoomIdMessageMap(memberSingByWxid, addWxids, deAddWxids, zeroWxids);
         List<String> robotChatRoomIds = new ArrayList<>();
@@ -316,8 +317,8 @@ public class SystemInit {
 
     private Map<String, List<String>> createChatRoomIdMessageMap(Map<String, List<ChatroomMemberSign>> memberSingByWxid, List<String> addWxids, List<String> deAddWxids, List<String> zeroWxids) {
         Map<String, List<String>> chatRoomIdMessageMap = new HashMap<>();
-        addWxids.forEach(wxid -> {
-            List<ChatroomMemberSign> cms = memberSingByWxid.get(wxid);
+        addWxids.forEach(wxidAndMoney -> {
+            List<ChatroomMemberSign> cms = memberSingByWxid.get(wxidAndMoney.split("@")[0]);
             if (CollectionUtils.isEmpty(cms)) {
                 return;
             }
@@ -328,17 +329,17 @@ public class SystemInit {
                 //如果有值往原来的集合里放
                 if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(roomId))) {
                     List<String> chatRoomMessage = new ArrayList<>();
-                    chatRoomMessage.add(String.format(Message.LUCK_DAY_MONEY, wxidName));
+                    chatRoomMessage.add(String.format(Message.LUCK_DAY_MONEY, wxidName, wxidAndMoney.split("@")[1]));
                     chatRoomIdMessageMap.get(roomId).addAll(chatRoomMessage);
                 } else {
                     List<String> chatRoomMessage = new ArrayList<>();
-                    chatRoomMessage.add(String.format(Message.LUCK_DAY_MONEY, wxidName));
+                    chatRoomMessage.add(String.format(Message.LUCK_DAY_MONEY, wxidName, wxidAndMoney.split("@")[1]));
                     chatRoomIdMessageMap.put(roomId, chatRoomMessage);
                 }
             });
         });
-        deAddWxids.forEach(wxid -> {
-            List<ChatroomMemberSign> cms = memberSingByWxid.get(wxid);
+        deAddWxids.forEach(wxidAndMoney -> {
+            List<ChatroomMemberSign> cms = memberSingByWxid.get(wxidAndMoney.split("@")[0]);
             if (CollectionUtils.isEmpty(cms)) {
                 return;
             }
@@ -349,17 +350,17 @@ public class SystemInit {
                 //如果有值往原来的集合里放
                 if (!CollectionUtils.isEmpty(chatRoomIdMessageMap.get(roomId))) {
                     List<String> chatRoomMessage = new ArrayList<>();
-                    chatRoomMessage.add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName));
+                    chatRoomMessage.add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName, wxidAndMoney.split("@")[1]));
                     chatRoomIdMessageMap.get(roomId).addAll(chatRoomMessage);
                 } else {
                     List<String> chatRoomMessage = new ArrayList<>();
-                    chatRoomMessage.add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName));
+                    chatRoomMessage.add(String.format(Message.NO_LUCK_DAY_MONEY, wxidName, wxidAndMoney.split("@")[1]));
                     chatRoomIdMessageMap.put(roomId, chatRoomMessage);
                 }
             });
         });
-        zeroWxids.forEach(wxid -> {
-            List<ChatroomMemberSign> cms = memberSingByWxid.get(wxid);
+        zeroWxids.forEach(wxidAndMoney -> {
+            List<ChatroomMemberSign> cms = memberSingByWxid.get(wxidAndMoney.split("@")[0]);
             if (CollectionUtils.isEmpty(cms)) {
                 return;
             }

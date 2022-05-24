@@ -53,16 +53,16 @@ public class Message {
     /**
      * 幸运天气
      **/
-    public static final String LUCK_DAY_MONEY = "阳光的【%s】很是幸运，魔法能量得到提升!";
+    public static final String LUCK_DAY_MONEY = "阳光的【%s】很是幸运，魔法能量得到%s点提升!";
 
     /**
      * 失落天气
      **/
-    public static final String NO_LUCK_DAY_MONEY = "沮丧的【%s】有些失落，魔法能量损失了一些..";
+    public static final String NO_LUCK_DAY_MONEY = "沮丧的【%s】有些失落，魔法能量损失了%s点..";
 
     /**
      * 倒霉蛋天气
      **/
-    public static final String DIED_DAY_MONEY = "倒霉蛋【%s】不幸被雷电击中，魔法能量全部丢失~";
+    public static final String DIED_DAY_MONEY = "倒霉蛋【%s】不幸被雷电击中，魔法能量被折半~";
 
 }
