@@ -1,0 +1,1 @@
+INSERT INTO thing (id, thing_name, thing_type, thing_desc, thing_class, thing_method, thing_template, start_time, end_time,duration,auto_use,use_type) VALUES (2, '妙手空空', 'thing', '输入【使用妙手空空】并@对其使用的目标，即有几率偷取对方的魔法能量（可对多人使用）', 'ThingFeatrue', 'miaoshoukongkong', '', null, null ,null,0,2);

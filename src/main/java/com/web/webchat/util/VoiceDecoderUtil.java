@@ -10,20 +10,20 @@ public class VoiceDecoderUtil {
     private final static String FFMPEG_PATH = "G://test/pcm/bin/ffmpeg.exe";
     private final static String SOURCE_VOICE_PATH ="G://test/pcm/bin/";
     private final static String TARGET_VOICE_PATH ="G://test/pcm/bin/";
-    public static void main(String[] args){
-
-        String skil = "G:\\test\\pcm\\bin\\test.silk";
-        String pcm = "G:\\test\\pcm\\bin\\test1.pcm";
-        String mp3 = "G:\\test\\pcm\\bin\\test2.mp3";
-
-        //String pcmUrl = silkToPcm(SOURCE_VOICE_PATH+"test.silk",TARGET_VOICE_PATH+"/targetPath","666");
-        //pcmToMp3(pcmUrl,TARGET_VOICE_PATH+"/mp3/test","mpe3");
-//        boolean b = getPcm(skil,pcm);
-//        System.out.println(b);
-//        if (b)
-//            getMp3(pcm,mp3);
-
-    }
+//    public static void main(String[] args){
+//
+//        String skil = "G:\\test\\pcm\\bin\\test.silk";
+//        String pcm = "G:\\test\\pcm\\bin\\test1.pcm";
+//        String mp3 = "G:\\test\\pcm\\bin\\test2.mp3";
+//
+//        //String pcmUrl = silkToPcm(SOURCE_VOICE_PATH+"test.silk",TARGET_VOICE_PATH+"/targetPath","666");
+//        //pcmToMp3(pcmUrl,TARGET_VOICE_PATH+"/mp3/test","mpe3");
+////        boolean b = getPcm(skil,pcm);
+////        System.out.println(b);
+////        if (b)
+////            getMp3(pcm,mp3);
+//
+//    }
     /**
      * 解码为pcm格式
      * @param silk 源silk文件,需要绝对路径!! 例:F:\zhuanma\vg2ub41omgipvrmur1fnssd3tq.silk

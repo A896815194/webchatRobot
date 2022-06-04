@@ -14,4 +14,6 @@ public interface ThingRepository extends JpaRepository<ThingEntity, Long> {
     List<ThingEntity> findAll();
 
     ThingEntity findAllById(@Param("id")Long id);
+
+    List<ThingEntity> findAllByAutoUseIs(@Param("autoUse")Integer autoUse);
 }

@@ -29,4 +29,7 @@ public class Demo {
 //    System.out.println("pubKey:"+test[1]);
 //    System.out.println("password:"+com.alibaba.druid.filter.config.ConfigTools.encrypt(test[0],"Sjk@2021!)!!"));
 //}
+    public void init(){
+
+    }
 }

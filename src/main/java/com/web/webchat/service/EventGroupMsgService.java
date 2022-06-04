@@ -72,10 +72,10 @@ public class EventGroupMsgService extends ChatBase {
 
     private boolean isAtRobot(String msg, String robotId) {
         return msg.startsWith("[@at,nickname=Robot,wxid=" + robotId + "]") &&
-                isOneAtRobot(msg, robotId);
+                isOneAtRobot(msg);
     }
 
-    private boolean isOneAtRobot(String msg, String robotId) {
+    private boolean isOneAtRobot(String msg) {
         int index = msg.indexOf("]");
         String msg1 = msg.substring(index);
         return !msg1.contains("@at,nickname=Robot,wxid=");

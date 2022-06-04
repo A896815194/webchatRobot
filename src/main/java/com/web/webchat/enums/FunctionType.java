@@ -21,7 +21,9 @@ public enum FunctionType {
 
     MagicShop("魔法商城"),
 
-    MagicWeather("魔法天气");
+    MagicWeather("魔法天气"),
+
+    MagicThing("魔法道具");
 
     private String text;
 

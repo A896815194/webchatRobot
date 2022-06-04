@@ -14,6 +14,7 @@ import com.web.webchat.enums.Message;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
+import com.web.webchat.util.InitCommonUtil;
 import com.web.webchat.util.ReflectionService;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
@@ -225,7 +226,7 @@ public abstract class ChatBase {
         String msg = request.getMsg();
         // 判断是否是开关命令
         logger.info("发布物品特性事件");
-        pubLisher.pushListener(request);
+        pubLisher.pushAutoThingListener(request);
         if (msg.startsWith("开启")) {
             String ml = msg.substring(2);
             if (FunctionType.isFuncationValue(ml)) {
@@ -239,13 +240,13 @@ public abstract class ChatBase {
             }
         }
         //判断命令是不是功能命令
-        String functionType = SystemInit.getFunctionTypeByMsg(request.getMsg());
+        String functionType = InitCommonUtil.getFunctionTypeByMsg(request.getMsg());
         if (StringUtils.isNotBlank(functionType)) {
             logger.info("functionType{}:", functionType);
             //判断功能开没开
             if (getVerificationByType(request.getEvent().name(), functionType, request, 1)) {
                 //开了执行方法
-                List<FunctionRoleCommand> commands = SystemInit.getCommandsByMsg(request.getMsg());
+                List<FunctionRoleCommand> commands = InitCommonUtil.getCommandsByMsg(request.getMsg());
                 FunctionRoleCommand command = commands.get(0);
                 Map<String, Object> resultMap = convertRequestToMap(request);
                 try {

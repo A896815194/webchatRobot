@@ -28,15 +28,6 @@ public class WebChatController {
     @PostMapping("/api")
     public ResponseDto webChat(@RequestBody RequestDto request) {
         ResponseDto response = null;
-//        //群聊私聊开关
-//        SwitchControl chatControl = new SwitchControl();
-//        chatControl.setFunctionSwitch(switchService);
-//        if(chatControl.openFunction(request)){
-//            return response;
-//        };
-//        if(chatControl.closeFunction(request)){
-//            return response;
-//        };
         ChatBase stragey = serviceFactory.getInvokeStrategy(request.getEvent());
         if (Objects.isNull(stragey)) {
             System.out.println("没有这个策略的逻辑:" + stragey);

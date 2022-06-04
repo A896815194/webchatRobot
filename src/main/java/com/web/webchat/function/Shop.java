@@ -12,6 +12,7 @@ import com.web.webchat.repository.ShopRepository;
 import com.web.webchat.repository.ThingRepository;
 import com.web.webchat.repository.UserBagRepository;
 import com.web.webchat.util.DateUtil;
+import com.web.webchat.util.InitCommonUtil;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
 import org.apache.logging.log4j.LogManager;
@@ -87,7 +88,7 @@ public class Shop {
         logger.info("wxid:{},name:{}执行魔法购买", request.getFinal_from_wxid(), request.getFinal_from_name());
         String msg = request.getMsg();
         String wxid = request.getFinal_from_wxid();
-        String number = SystemInit.getMsgNumber(msg);
+        String number = InitCommonUtil.getMsgNumber(msg);
         // 数字不对
         if (Strings.isBlank(number)) {
             msg = Message.GET_SHOP_ERROR_MSG;
@@ -184,7 +185,7 @@ public class Shop {
             shopRepository.save(shopThing);
             chatroomMemberMoneyRepository.save(memberMoney);
             userBagRepository.save(userBag);
-            msg = getShopSuccessMsg(request.getFinal_from_name(), shopThing.getThingName());
+            msg = getShopSuccessMsg(request.getFinal_from_name(), shopThing.getThingName(), thing.getThingDesc());
             request.setMsg(msg);
             RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
             manager.commit(status);
@@ -197,8 +198,8 @@ public class Shop {
         RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
     }
 
-    private String getShopSuccessMsg(String wxidName, String thingName) {
-        return String.format(Message.GET_SHOP_SUCCESS, wxidName, thingName);
+    private String getShopSuccessMsg(String wxidName, String thingName, String thingDesc) {
+        return String.format(Message.GET_SHOP_SUCCESS, wxidName, thingName, thingDesc);
     }
 
 }

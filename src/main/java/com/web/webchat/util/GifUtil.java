@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class GifUtil {
@@ -56,7 +58,7 @@ public class GifUtil {
             new ArrayList<>();
         }
         List<ChatroomMemberMoney> copyList = new ArrayList<>();
-        memberMonies.forEach(item->{
+        memberMonies.forEach(item -> {
             copyList.add(item);
         });
         //先生成随机最多有 ranCount 个人中奖
@@ -67,14 +69,14 @@ public class GifUtil {
         }
         List<ChatroomMemberMoney> zjList = getRandomByCount(copyList, zjCount);
         List<ChatroomMemberMoney> mbs = memberMonies.stream().filter(item -> {
-            return zjList.stream().anyMatch(zj->{
-                return Objects.equals(item.getWxidId(),zj.getWxidId());
+            return zjList.stream().anyMatch(zj -> {
+                return Objects.equals(item.getWxidId(), zj.getWxidId());
             });
         }).collect(Collectors.toList());
         mbs.forEach(item -> {
             Long itemMoney = item.getMoney();
             Integer jl = Calculate.randBewteewn(beforeMoney, endMoney);
-            logger.info("wxid:{},原来:{},获得额外奖励:{}",item.getWxidId(), itemMoney, jl);
+            logger.info("wxid:{},原来:{},获得额外奖励:{}", item.getWxidId(), itemMoney, jl);
             Long newMoney = itemMoney + jl;
             item.setMoney(newMoney);
             wxids.add(item.getWxidId() + "@" + jl);
@@ -103,7 +105,7 @@ public class GifUtil {
             new ArrayList<>();
         }
         List<ChatroomMemberMoney> copyList = new ArrayList<>();
-        memberMonies.forEach(item->{
+        memberMonies.forEach(item -> {
             copyList.add(item);
         });
         //先生成随机最多有 ranCount 个人中奖
@@ -114,14 +116,14 @@ public class GifUtil {
         }
         List<ChatroomMemberMoney> zjList = getRandomByCount(copyList, zjCount);
         List<ChatroomMemberMoney> mbs = memberMonies.stream().filter(item -> {
-            return zjList.stream().anyMatch(zj->{
-                return Objects.equals(item.getWxidId(),zj.getWxidId());
+            return zjList.stream().anyMatch(zj -> {
+                return Objects.equals(item.getWxidId(), zj.getWxidId());
             });
         }).collect(Collectors.toList());
         mbs.forEach(item -> {
             Long itemMoney = item.getMoney();
             Integer deMoney = Calculate.randBewteewn(beforeMoney, endMoney);
-            logger.info("wxid:{},原来:{},扣掉奖励:{}",item.getWxidId(), itemMoney, deMoney);
+            logger.info("wxid:{},原来:{},扣掉奖励:{}", item.getWxidId(), itemMoney, deMoney);
             Long newMoney = itemMoney - deMoney;
             if (newMoney <= 0) {
                 item.setMoney(0L);
@@ -141,7 +143,7 @@ public class GifUtil {
             new ArrayList<>();
         }
         List<ChatroomMemberMoney> copyList = new ArrayList<>();
-        memberMonies.forEach(item->{
+        memberMonies.forEach(item -> {
             copyList.add(item);
         });
         //先生成随机最多有 ranCount 个人中奖
@@ -152,8 +154,8 @@ public class GifUtil {
         }
         List<ChatroomMemberMoney> zjList = getRandomByCount(copyList, zjCount);
         List<ChatroomMemberMoney> mbs = memberMonies.stream().filter(item -> {
-            return zjList.stream().anyMatch(zj->{
-                return Objects.equals(item.getWxidId(),zj.getWxidId());
+            return zjList.stream().anyMatch(zj -> {
+                return Objects.equals(item.getWxidId(), zj.getWxidId());
             });
         }).collect(Collectors.toList());
         mbs.forEach(item -> {
@@ -161,7 +163,7 @@ public class GifUtil {
             String sMoney = String.valueOf(itemMoney);
             BigDecimal bMoney = new BigDecimal(sMoney);
             BigDecimal newMoney = bMoney.divide(new BigDecimal("2"), BigDecimal.ROUND_UP);
-            logger.info("wxid:{},原来:{},折半后为:{}",item.getWxidId(), itemMoney, newMoney);
+            logger.info("wxid:{},原来:{},折半后为:{}", item.getWxidId(), itemMoney, newMoney);
             item.setMoney(0L);
             wxids.add(item.getWxidId() + "@" + newMoney);
         });
@@ -252,4 +254,58 @@ public class GifUtil {
         });
         return wxids;
     }
+
+
+    //妙手空空技能效果
+    public static List<String> mskkMemberMoney(List<ChatroomMemberMoney> memberMonies, String userWxid, Integer beforeMoney, Integer endMoney) {
+        List<String> wxids = new ArrayList<>();
+        if (CollectionUtils.isEmpty(memberMonies)) {
+            new ArrayList<>();
+        }
+        //拿到自己的钱包
+        List<ChatroomMemberMoney> userMoney = memberMonies.stream()
+                .filter(item -> Objects.equals(item.getWxidId(), userWxid)).collect(Collectors.toList());
+        //去掉自己的
+        ChatroomMemberMoney memberMoney;
+        if (CollectionUtils.isEmpty(userMoney)) {
+            memberMoney = ChatroomMemberMoney.builder()
+                    .money(0L)
+                    .wxidId(userWxid)
+                    .build();
+        } else {
+            memberMoney = userMoney.get(0);
+        }
+        //去掉自己
+        memberMonies.removeIf(item -> Objects.equals(item.getWxidId(), userWxid));
+        AtomicReference<Long> addMoney = new AtomicReference<>(0L);
+        memberMonies.forEach(item -> {
+            Long itemMoney = item.getMoney();
+            Integer deMoney = Calculate.randBewteewn(beforeMoney, endMoney);
+            logger.info("wxid:{},原来:{},被偷:{}", item.getWxidId(), itemMoney, deMoney);
+            UnaryOperator function
+                    = (v) -> addMoney.get() + deMoney;
+            addMoney.updateAndGet(function);
+            Long newMoney = itemMoney - deMoney;
+            if (newMoney <= 0) {
+                item.setMoney(0L);
+            } else {
+                item.setMoney(newMoney);
+            }
+            wxids.add(item.getWxidId() + "@-" + deMoney);
+        });
+        wxids.add(wxids + "@+" + addMoney.get());
+        memberMoney.setMoney(memberMoney.getMoney() + addMoney.get());
+        memberMonies.add(memberMoney);
+        return wxids;
+    }
+
+//    public static void main(String[] args) {
+//        AtomicReference<Long> addMoney = new AtomicReference<>(0L);
+//        for (int i = 0; i < 4; i++) {
+//            UnaryOperator function
+//                    = (v) -> addMoney.get() + 5;
+//            addMoney.updateAndGet(function);
+//        }
+//        System.out.println(addMoney.get());
+//    }
 }

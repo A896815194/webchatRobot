@@ -33,7 +33,8 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
             "b.autoUse, " +
             "a.startTime, " +
             "a.endTime ," +
-            "a.useCount " +
+            "a.useCount, " +
+            "b.useType " +
             ")" +
             "from UserBagEntity a " +
             "left join " +
@@ -59,7 +60,8 @@ public interface UserBagRepository extends JpaRepository<UserBagEntity, Long> {
             "b.autoUse, " +
             "a.startTime, " +
             "a.endTime ," +
-            "a.useCount " +
+            "a.useCount , " +
+            "b.useType " +
             ")" +
             "from UserBagEntity a " +
             "left join " +

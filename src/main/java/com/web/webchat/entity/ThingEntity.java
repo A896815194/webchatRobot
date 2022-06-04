@@ -49,5 +49,8 @@ public class ThingEntity {
 
     @Column(name = "auto_use")
     private Integer autoUse;
+    // 1是使用即生效，2要艾特别人，对别人使用
+    @Column(name = "use_type")
+    private Integer useType;
 
 }

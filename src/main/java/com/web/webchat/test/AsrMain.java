@@ -73,20 +73,20 @@ public class AsrMain {
     }
     */
 
-    public static void main(String[] args) throws IOException, DemoException {
-        AsrMain demo = new AsrMain();
-        // 填写下面信息
-        String result = demo.run();
-        System.out.println("识别结束：结果是：");
-        System.out.println(result);
-
-        // 如果显示乱码，请打开result.txt查看
-        File file = new File("result.txt");
-        FileWriter fo = new FileWriter(file);
-        fo.write(result);
-        fo.close();
-        System.out.println("Result also wrote into " + file.getAbsolutePath());
-    }
+//    public static void main(String[] args) throws IOException, DemoException {
+//        AsrMain demo = new AsrMain();
+//        // 填写下面信息
+//        String result = demo.run();
+//        System.out.println("识别结束：结果是：");
+//        System.out.println(result);
+//
+//        // 如果显示乱码，请打开result.txt查看
+//        File file = new File("result.txt");
+//        FileWriter fo = new FileWriter(file);
+//        fo.write(result);
+//        fo.close();
+//        System.out.println("Result also wrote into " + file.getAbsolutePath());
+//    }
 
 
     public String run() throws IOException, DemoException {

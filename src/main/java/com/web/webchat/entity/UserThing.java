@@ -31,4 +31,7 @@ public class UserThing {
     private Date endTime;
 
     private Integer useCount;
+
+    private Integer useType;
+
 }

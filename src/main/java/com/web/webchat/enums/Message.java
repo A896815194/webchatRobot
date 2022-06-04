@@ -44,7 +44,7 @@ public class Message {
     /**
      * 商城购买成功
      **/
-    public static final String GET_SHOP_SUCCESS = "【%s】通过魔法商城成功购买了【%s】!";
+    public static final String GET_SHOP_SUCCESS = "【%s】通过魔法商城成功购买了【%s】!\r【%s】";
     /**
      * 商城购买存在限定
      **/
@@ -64,5 +64,43 @@ public class Message {
      * 倒霉蛋天气
      **/
     public static final String DIED_DAY_MONEY = "倒霉蛋【%s】不幸被雷电击中，魔法能量被折半~";
+
+    /**
+     * 妙手空空失败
+     **/
+    public static final String MSKK_FAIL_1 = "【%s】使用妙手空空被发现,被拧断胳膊,损失【%s】魔法能量才恢复健康~";
+
+    /**
+     * 妙手空空失败
+     **/
+    public static final String MSKK_FAIL_2 = "【%s】使用妙手空空被发现,被打断腿,损失【%s】魔法能量才恢复健康~";
+
+    /**
+     * 妙手空空失败
+     **/
+    public static final String MSKK_FAIL_3 = "【%s】使用妙手空空被发现,被打到半身不遂,损失【%s】魔法能量才恢复健康~";
+
+    /**
+     * 妙手空空失败
+     **/
+    public static final String MSKK_FAIL_4 = "【%s】使用妙手空空被发现,被打到生活不能自理,损失了全部【%s】魔法能量才恢复健康!";
+    /**
+     * 妙手空空失败
+     **/
+    public static final String MSKK_FAIL = "没有发现携带魔法水晶的勇者,妙手空空本次被消耗";
+    /**
+     * 妙手空空失败
+     **/
+    public static final String MSKK_FAIL_5 = "【%s】使用妙手空空被发现,由于没有魔法能量并没有造成不良影响";
+
+    /**
+     * 妙手空空成功
+     **/
+    public static final String MSKK_SUCCESS = "【%s】使用妙手空空,来无影去无踪,成功偷取【%s】魔法能量!\r%s";
+
+    /**
+     * 妙手空空成功被偷
+     **/
+    public static final String MSKK_SUCCESS_BT = "【%s】被偷取【%s】魔法能量,竟毫无察觉~";
 
 }

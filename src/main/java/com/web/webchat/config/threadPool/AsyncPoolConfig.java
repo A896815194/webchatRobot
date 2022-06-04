@@ -1,5 +1,7 @@
 package com.web.webchat.config.threadPool;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @EnableAsync
 public class AsyncPoolConfig implements AsyncConfigurer {
+
+    private static final Logger logger = LogManager.getLogger(AsyncPoolConfig.class.getName());
 
     public static final String TASK_EXECUTOR_NAME = "thingTaskExecutor";
 
@@ -49,6 +53,7 @@ public class AsyncPoolConfig implements AsyncConfigurer {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        logger.error("异步池子报错");
         return null;
     }
 
