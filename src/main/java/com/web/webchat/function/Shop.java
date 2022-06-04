@@ -6,7 +6,6 @@ import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.entity.*;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.Message;
-import com.web.webchat.init.SystemInit;
 import com.web.webchat.repository.ChatroomMemberMoneyRepository;
 import com.web.webchat.repository.ShopRepository;
 import com.web.webchat.repository.ThingRepository;
@@ -164,20 +163,29 @@ public class Shop {
             entityType = thing.getThingType();
             times = thing.getDuration();
         }
-        UserBagEntity userBag = UserBagEntity.builder()
-                .wxidId(wxid)
-                .entityId(String.valueOf(shopThing.getThingId()))
-                .entityName(entityName)
-                .entityType(entityType)
-                .isDelete(0)
-                .useCount(1)
-                .createTime(new Date())
-                .startTime(new Date())
-                .build();
-        if (times == null) {
-            userBag.setEndTime(null);
+        List<UserBagEntity> userHasBag = userBagRepository.findAllByWxidIdAndEntityIdAndIsDelete(wxid, shopThing.getThingId(), 0);
+        UserBagEntity userBag = null;
+        // 如果没有这个东西
+        if (CollectionUtils.isEmpty(userHasBag)) {
+            userBag = UserBagEntity.builder()
+                    .wxidId(wxid)
+                    .entityId(String.valueOf(shopThing.getThingId()))
+                    .entityName(entityName)
+                    .entityType(entityType)
+                    .isDelete(0)
+                    .useCount(1)
+                    .createTime(new Date())
+                    .startTime(new Date())
+                    .build();
+            if (times == null) {
+                userBag.setEndTime(null);
+            } else {
+                userBag.setEndTime(DateUtil.toadyAfterMillions(times * 1000));
+            }
         } else {
-            userBag.setEndTime(DateUtil.toadyAfterMillions(times * 1000));
+            userBag = userHasBag.get(0);
+            Integer c = userBag.getUseCount();
+            userBag.setUseCount(c++);
         }
         TransactionDefinition definition = new DefaultTransactionDefinition();
         TransactionStatus status = manager.getTransaction(definition);

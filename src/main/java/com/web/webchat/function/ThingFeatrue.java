@@ -43,11 +43,11 @@ public class ThingFeatrue {
     private final static Map<Integer, Long> MSKK_DEADD_MAP = new HashMap<>();
 
     {
-        MSKK_MAP.put(40, Message.MSKK_FAIL_1);
+        MSKK_MAP.put(50, Message.MSKK_FAIL_1);
         MSKK_MAP.put(10, Message.MSKK_FAIL_2);
         MSKK_MAP.put(5, Message.MSKK_FAIL_3);
         MSKK_MAP.put(1, Message.MSKK_FAIL_4);
-        MSKK_DEADD_MAP.put(40, 10L);
+        MSKK_DEADD_MAP.put(50, 10L);
         MSKK_DEADD_MAP.put(10, 30L);
         MSKK_DEADD_MAP.put(5, 80L);
         MSKK_DEADD_MAP.put(1, 100L);

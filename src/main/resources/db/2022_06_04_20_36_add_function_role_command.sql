@@ -1,0 +1,1 @@
+INSERT INTO function_role_command (id, function_type, command, class_name, class_method) VALUES (5, 'MagicThing', '使用*', 'MagicThing', 'magicUseThing');

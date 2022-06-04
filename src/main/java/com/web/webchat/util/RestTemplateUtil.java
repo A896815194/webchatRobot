@@ -58,6 +58,7 @@ public class RestTemplateUtil {
     private static RestTemplate restTemplate = null;
 
     private static ThreadPoolTaskExecutor executor;
+
     {
         restTemplate = null;
         try {
