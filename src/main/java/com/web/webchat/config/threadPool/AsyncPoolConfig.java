@@ -1,5 +1,6 @@
 package com.web.webchat.config.threadPool;
 
+import com.web.webchat.util.ThreadLocalData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -12,7 +13,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
@@ -64,16 +67,24 @@ public class AsyncPoolConfig implements AsyncConfigurer {
     class ContextDecorator implements TaskDecorator {
         @Override
         public Runnable decorate(Runnable runnable) {
-            RequestAttributes context = RequestContextHolder.currentRequestAttributes();
-            return () -> {
-                try {
-                    // 传递上下文
-                    RequestContextHolder.setRequestAttributes(context);
-                    runnable.run();
-                } finally {
-                    RequestContextHolder.resetRequestAttributes();
-                }
-            };
+            try {
+                //获取父线程的request的user-agent(示例)
+                HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+                String ua = request.getHeader("user-agent");
+                return () -> {
+                    try {
+                        //将父线程的ua设置进子线程里
+                        ThreadLocalData.setUa(ua);
+                        //子线程方法执行
+                        runnable.run();
+                    } finally {
+                        //清除线程threadLocal的值
+                        ThreadLocalData.remove();
+                    }
+                };
+            } catch (IllegalStateException e) {
+                return runnable;
+            }
         }
     }
 }

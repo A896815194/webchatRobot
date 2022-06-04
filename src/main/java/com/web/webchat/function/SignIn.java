@@ -5,11 +5,13 @@ import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.entity.ChatroomMemberMoney;
 import com.web.webchat.entity.ChatroomMemberSign;
+import com.web.webchat.entity.ThingEntity;
 import com.web.webchat.entity.UserBagEntity;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.Message;
 import com.web.webchat.repository.ChatroomMemberMoneyRepository;
 import com.web.webchat.repository.ChatroomMemberSignRepository;
+import com.web.webchat.repository.ThingRepository;
 import com.web.webchat.repository.UserBagRepository;
 import com.web.webchat.util.Calculate;
 import com.web.webchat.util.RestTemplateUtil;
@@ -27,10 +29,8 @@ import org.springframework.util.CollectionUtils;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("SignIn")
 public class SignIn {
@@ -46,6 +46,8 @@ public class SignIn {
     private UserBagRepository userBagRepository;
     @Autowired
     private PlatformTransactionManager manager;
+    @Autowired
+    private ThingRepository thingRepository;
 
     //签到
     public ResponseDto signin(RequestDto request) {
@@ -128,7 +130,6 @@ public class SignIn {
     }
 
 
-
     private static long getBasicMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
@@ -165,14 +166,22 @@ public class SignIn {
             msg = String.format(getMoneyBagString(), request.getFinal_from_name(), money);
             StringBuilder sb = new StringBuilder();
             if (!CollectionUtils.isEmpty(userBags)) {
+                List<ThingEntity> things = thingRepository.findAll();
                 for (UserBagEntity userBag : userBags) {
                     sb.append("\r");
-                    sb.append(String.format(getMoneyThingString(), userBag.getEntityName()));
+                    List<ThingEntity> isThing = things.stream().filter(item -> Objects.equals(item.getThingType(), "thing") && Objects.equals(String.valueOf(item.getId()), userBag.getEntityId())).collect(Collectors.toList());
+                    if (!CollectionUtils.isEmpty(isThing)) {
+                        if (isThing.get(0).getAutoUse() == 1) {
+                            sb.append(String.format(getMoneyThingString(), userBag.getEntityName(), 1));
+                        } else {
+                            sb.append(String.format(getMoneyThingString(), userBag.getEntityName(), userBag.getUseCount()));
+                        }
+                    }
                 }
             }
             msg = msg + sb.toString();
         } catch (Exception e) {
-            logger.error("查看魔法背包出错",e);
+            logger.error("查看魔法背包出错", e);
             msg = Message.SYSTEM_ERROR_MSG;
         }
         request.setMsg(msg);

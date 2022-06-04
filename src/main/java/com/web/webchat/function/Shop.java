@@ -185,7 +185,7 @@ public class Shop {
         } else {
             userBag = userHasBag.get(0);
             Integer c = userBag.getUseCount();
-            userBag.setUseCount(c++);
+            userBag.setUseCount(c+1);
         }
         TransactionDefinition definition = new DefaultTransactionDefinition();
         TransactionStatus status = manager.getTransaction(definition);

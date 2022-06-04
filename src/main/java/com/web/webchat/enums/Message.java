@@ -24,7 +24,7 @@ public class Message {
     /**
      * 我的魔法物品模板
      **/
-    public static final String MY_MONEYBAG_THING_TEMPLATE = "【%s】   ×1";
+    public static final String MY_MONEYBAG_THING_TEMPLATE = "【%s】   ×%s";
     /**
      * 签收收益模板
      **/

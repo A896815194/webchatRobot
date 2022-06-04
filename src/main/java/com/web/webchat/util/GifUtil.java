@@ -293,7 +293,7 @@ public class GifUtil {
             }
             wxids.add(item.getWxidId() + "@-" + deMoney);
         });
-        wxids.add(wxids + "@+" + addMoney.get());
+        wxids.add(userWxid + "@+" + addMoney.get());
         memberMoney.setMoney(memberMoney.getMoney() + addMoney.get());
         memberMonies.add(memberMoney);
         return wxids;

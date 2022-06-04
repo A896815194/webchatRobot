@@ -155,7 +155,7 @@ public class ThingFeatrue {
     private Integer miaoshoukongkongRate(int size) {
         if (size == 1) {
             //打断胳膊   扣10%
-            return 40;
+            return 50;
         }
         if (size == 2) {
             //打断腿    扣30%
