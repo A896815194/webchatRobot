@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +44,11 @@ public class ThingFeatrue {
     private final static Map<Integer, Long> MSKK_DEADD_MAP = new HashMap<>();
 
     {
-        MSKK_MAP.put(50, Message.MSKK_FAIL_1);
+        MSKK_MAP.put(40, Message.MSKK_FAIL_1);
         MSKK_MAP.put(10, Message.MSKK_FAIL_2);
         MSKK_MAP.put(5, Message.MSKK_FAIL_3);
         MSKK_MAP.put(1, Message.MSKK_FAIL_4);
-        MSKK_DEADD_MAP.put(50, 10L);
+        MSKK_DEADD_MAP.put(40, 10L);
         MSKK_DEADD_MAP.put(10, 30L);
         MSKK_DEADD_MAP.put(5, 80L);
         MSKK_DEADD_MAP.put(1, 100L);
@@ -75,6 +76,7 @@ public class ThingFeatrue {
         if (CollectionUtils.isEmpty(wxids)) {
             return null;
         }
+        wxids = wxids.stream().distinct().collect(Collectors.toList());
         int successRate = miaoshoukongkongRate(wxids.size());
         logger.info("目标{}人,成功率:{}", wxids.size(), successRate);
         //当前群参加过嵌套的人
@@ -98,7 +100,7 @@ public class ThingFeatrue {
             //加上自己的钱包
             wxids.add(request.getFinal_from_wxid());
             List<ChatroomMemberMoney> memberMonies = chatroomMemberMoneyRepository.findAllByWxidIdIn(wxids);
-            List<String> resutlStr = GifUtil.mskkMemberMoney(memberMonies, request.getFinal_from_wxid(), 100, 300);
+            List<String> resutlStr = GifUtil.mskkMemberMoney(memberMonies, request.getFinal_from_wxid(), 100, 500);
             result = createResultMsg(request.getFinal_from_wxid(), resutlStr, memberSingByWxid);
             chatroomMemberMoneyRepository.saveAll(memberMonies);
         } else {
@@ -144,7 +146,6 @@ public class ThingFeatrue {
                 String wxName = wxNameMap.get(wxid).get(0).getWxidName();
                 String wxidDeMoneyStr = msg.split("@")[1];
                 String deMoney = StringUtils.substringAfter(wxidDeMoneyStr, "-");
-                sb.append("\r");
                 sb.append(String.format(Message.MSKK_SUCCESS_BT, wxName, deMoney));
             }
         }
@@ -155,7 +156,7 @@ public class ThingFeatrue {
     private Integer miaoshoukongkongRate(int size) {
         if (size == 1) {
             //打断胳膊   扣10%
-            return 50;
+            return 40;
         }
         if (size == 2) {
             //打断腿    扣30%

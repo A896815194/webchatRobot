@@ -101,6 +101,6 @@ public class Message {
     /**
      * 妙手空空成功被偷
      **/
-    public static final String MSKK_SUCCESS_BT = "【%s】被偷取【%s】魔法能量,竟毫无察觉~";
+    public static final String MSKK_SUCCESS_BT = "【%s】被偷取【%s】魔法能量,竟毫无察觉~\r";
 
 }

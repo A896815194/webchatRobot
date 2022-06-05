@@ -1,6 +1,5 @@
 package com.web.webchat.util;
 
-import com.web.webchat.config.threadPool.AsyncPoolConfig;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.dto.baidutextreview.AssToken;
 import com.web.webchat.dto.baidutextreview.BaiduTextReviewResponseDto;
@@ -53,7 +52,7 @@ public class RestTemplateUtil {
 
     private static final int MAX_ROUT = 100;
 
-    private static final int CONNECTION_VALIDATE_AFTER_INACTIVITY_MS = 10 * 1000;
+    private static final int CONNECTION_VALIDATE_AFTER_INACTIVITY_MS = 2 * 1000;
 
     private static RestTemplate restTemplate = null;
 

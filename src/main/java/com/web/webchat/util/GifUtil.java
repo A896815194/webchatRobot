@@ -164,7 +164,7 @@ public class GifUtil {
             BigDecimal bMoney = new BigDecimal(sMoney);
             BigDecimal newMoney = bMoney.divide(new BigDecimal("2"), BigDecimal.ROUND_UP);
             logger.info("wxid:{},原来:{},折半后为:{}", item.getWxidId(), itemMoney, newMoney);
-            item.setMoney(0L);
+            item.setMoney(newMoney.toBigInteger().longValue());
             wxids.add(item.getWxidId() + "@" + newMoney);
         });
 
