@@ -28,6 +28,9 @@ public class FunctionRoleEntity {
     @Column(name = "chatroom_id")
     private String chatroomId;
 
+    @Column(name = "chatroom_name")
+    private String chatroomName;
+
     @Column(name = "robot_id")
     private String robotId;
 
