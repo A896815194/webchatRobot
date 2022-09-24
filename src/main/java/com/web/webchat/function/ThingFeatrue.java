@@ -100,7 +100,7 @@ public class ThingFeatrue {
             //加上自己的钱包
             wxids.add(request.getFinal_from_wxid());
             List<ChatroomMemberMoney> memberMonies = chatroomMemberMoneyRepository.findAllByWxidIdIn(wxids);
-            List<String> resutlStr = GifUtil.mskkMemberMoney(memberMonies, request.getFinal_from_wxid(), 100, 500);
+            List<String> resutlStr = GifUtil.mskkMemberMoney(memberMonies, request.getFinal_from_wxid(), 500, 1000);
             result = createResultMsg(request.getFinal_from_wxid(), resutlStr, memberSingByWxid);
             chatroomMemberMoneyRepository.saveAll(memberMonies);
         } else {
