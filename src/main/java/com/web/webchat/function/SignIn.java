@@ -133,17 +133,17 @@ public class SignIn {
     private static long getBasicMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = Calculate.randBewteewn(50, 100);
+            long r = Calculate.randBewteewn(300, 500);
             return r;
         }
-        return Calculate.randBewteewn(25, 75);
+        return Calculate.randBewteewn(150, 230);
     }
 
 
     private static long getExtraMoney(Integer rank) {
         Random random = new Random();
         if (rank < 5) {
-            long r = Calculate.randBewteewn(25, 50);
+            long r = Calculate.randBewteewn(100, 200);
             return r;
         }
         return 0;

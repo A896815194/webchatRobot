@@ -44,14 +44,14 @@ public class ThingFeatrue {
     private final static Map<Integer, Long> MSKK_DEADD_MAP = new HashMap<>();
 
     {
-        MSKK_MAP.put(40, Message.MSKK_FAIL_1);
-        MSKK_MAP.put(10, Message.MSKK_FAIL_2);
-        MSKK_MAP.put(5, Message.MSKK_FAIL_3);
-        MSKK_MAP.put(1, Message.MSKK_FAIL_4);
-        MSKK_DEADD_MAP.put(40, 10L);
-        MSKK_DEADD_MAP.put(10, 30L);
-        MSKK_DEADD_MAP.put(5, 80L);
-        MSKK_DEADD_MAP.put(1, 100L);
+        MSKK_MAP.put(70, Message.MSKK_FAIL_1);
+        MSKK_MAP.put(50, Message.MSKK_FAIL_2);
+        MSKK_MAP.put(25, Message.MSKK_FAIL_3);
+        MSKK_MAP.put(15, Message.MSKK_FAIL_4);
+        MSKK_DEADD_MAP.put(70, 5L);
+        MSKK_DEADD_MAP.put(50, 15L);
+        MSKK_DEADD_MAP.put(25, 50L);
+        MSKK_DEADD_MAP.put(15, 80L);
 
     }
 
@@ -156,19 +156,19 @@ public class ThingFeatrue {
     private Integer miaoshoukongkongRate(int size) {
         if (size == 1) {
             //打断胳膊   扣10%
-            return 40;
+            return 70;
         }
         if (size == 2) {
             //打断腿    扣30%
-            return 10;
+            return 50;
         }
         if (size == 3) {
             //半身不遂  扣80%
-            return 5;
+            return 25;
         }
         if (size > 3) {
             //生活不能自理 清零
-            return 1;
+            return 15;
         }
         return 1;
     }

@@ -176,7 +176,7 @@ public class SystemInit {
         List<String> zeroWxids = new ArrayList<>();
         Map<String, List<String>> chatRoomIdMessageMap;
         if (tqMsg.contains("晴")) {
-            addWxids = GifUtil.addMemberMoneyMajor(memberMonies, 2, 10, 20);
+            addWxids = GifUtil.addMemberMoneyMajor(memberMonies, 2, 300, 500);
         } else if ((tqMsg.contains("雨") && tqMsg.contains("雷")) || (tqMsg.contains("雨") && tqMsg.contains("电"))) {
             zeroWxids = GifUtil.deAddMemberMoneyHalfMajor(memberMonies, 1);
         } else {
