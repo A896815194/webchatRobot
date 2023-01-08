@@ -114,7 +114,7 @@ public class AllTypeListener {
             transactionManager.rollback(status);
             logger.error("执行物品自身逻辑失败", e);
             request.setMsg(Message.SYSTEM_ERROR_MSG);
-            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
         }
     }
 
@@ -155,7 +155,7 @@ public class AllTypeListener {
                     transactionManager.rollback(status);
                     logger.error("执行物品自身逻辑失败", e);
                     request.setMsg(Message.SYSTEM_ERROR_MSG);
-                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                 }
             }
         }

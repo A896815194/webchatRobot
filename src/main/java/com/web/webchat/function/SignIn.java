@@ -76,7 +76,7 @@ public class SignIn {
         if (!CollectionUtils.isEmpty(signDataSource)) {
             msg = Message.REPEAT_SINGIN_MSG;
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
             return;
         }
         List<ChatroomMemberSign> allSignData = chatroomMemberSignRepository.findAllBySignTimeBetween(start, end);
@@ -109,7 +109,7 @@ public class SignIn {
             }
             msg = getMoneyMsg(request.getFinal_from_name(), money, extraMoney, rank);
             request.setMsg(msg);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
             manager.commit(status);
             return;
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class SignIn {
             msg = Message.SYSTEM_ERROR_MSG;
         }
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
     }
 
     private String getMoneyMsg(String name, Long money, Long extraMoney, Integer rank) {
@@ -185,7 +185,7 @@ public class SignIn {
             msg = Message.SYSTEM_ERROR_MSG;
         }
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
         return null;
     }
 

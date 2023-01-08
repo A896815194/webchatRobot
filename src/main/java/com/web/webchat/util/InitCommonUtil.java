@@ -1,5 +1,9 @@
 package com.web.webchat.util;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.web.webchat.dto.KunPengRequestDto;
+import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.FunctionRoleCommand;
 import com.web.webchat.init.SystemInit;
 import org.apache.commons.lang.StringUtils;
@@ -8,11 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class InitCommonUtil {
 
@@ -147,5 +153,12 @@ public class InitCommonUtil {
             }
         }
         return wxids;
+    }
+
+    // 计算艾特到的wxid集合
+    public static List<String> getAtWxidsFromMsg(RequestDto request) {
+        Type listType = new TypeToken<ArrayList<KunPengRequestDto.AtUser>>(){}.getType();
+        List<KunPengRequestDto.AtUser> atUsers = new Gson().fromJson(request.getAtUserString(), listType);
+        return atUsers.stream().map(KunPengRequestDto.AtUser::getWxid).collect(Collectors.toList());
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.config.listen.AllEventPubLisher;
+import com.web.webchat.dto.KunPengRequestDto;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.FunctionRoleCommand;
 import com.web.webchat.entity.FunctionRoleEntity;
@@ -26,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -107,7 +109,7 @@ public abstract class ChatBase {
                 functionRoleRepository.save(saveFunction);
                 functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                 request.setMsg(request.getMsg() + "成功！");
-                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                 return true;
             }
             FunctionRoleEntity saveFunction = null;
@@ -131,7 +133,7 @@ public abstract class ChatBase {
             functionRoleRepository.save(saveFunction);
             functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
             request.setMsg(request.getMsg() + "成功！");
-            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
             return true;
         }
         return false;
@@ -187,7 +189,7 @@ public abstract class ChatBase {
                     functionRoleRepository.save(saveFunction);
                     functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                     request.setMsg(request.getMsg() + "成功！");
-                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                     return true;
                 }
                 FunctionRoleEntity saveFunction = null;
@@ -211,7 +213,7 @@ public abstract class ChatBase {
                 functionRoleRepository.save(saveFunction);
                 functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                 request.setMsg(request.getMsg() + "成功！");
-                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                 return true;
             }
         }
@@ -260,7 +262,7 @@ public abstract class ChatBase {
                 } catch (Exception e) {
                     logger.error("反射执行对应的bean方法失败", e);
                     request.setMsg(Message.SYSTEM_ERROR_MSG);
-                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                 }
             }
             //没开啥也不干
@@ -293,7 +295,7 @@ public abstract class ChatBase {
             return false;
         }
         RequestDto lastRequest = SystemInit.lastRequestMap.get(request.getRobot_wxid());
-        if (isAtRobot(request.getMsg(), request.getRobot_wxid()) &&
+        if (isOneAtRobot(request) &&
                 Objects.equals(request.getFrom_wxid(), lastRequest.getFrom_wxid()) &&
                 currentTime - lastRequest.getTimeStamp() < interVal
         ) {
@@ -302,14 +304,33 @@ public abstract class ChatBase {
         return false;
     }
 
-    private boolean isAtRobot(String msg, String robotId) {
-        return msg.startsWith("[@at,nickname=Robot,wxid=" + robotId + "]") &&
-                isOneAtRobot(msg, robotId);
+    //    private boolean isAtRobot(String msg, String robotId) {
+//        return msg.startsWith("[@at,nickname=Robot,wxid=" + robotId + "]") &&
+//                isOneAtRobot(msg, robotId);
+//    }
+    private boolean isAtRobot(RequestDto request) {
+        if (!CollectionUtils.isEmpty(request.getAtuserlists())) {
+            List<KunPengRequestDto.AtUser> atUsers = request.getAtuserlists();
+            if (atUsers.stream().anyMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isOneAtRobot(String msg, String robotId) {
-        int index = msg.indexOf("]");
-        String msg1 = msg.substring(index);
-        return !msg1.contains("@at,nickname=Robot,wxid=");
+//    private boolean isOneAtRobot(String msg, String robotId) {
+//        int index = msg.indexOf("]");
+//        String msg1 = msg.substring(index);
+//        return !msg1.contains("@at,nickname=Robot,wxid=");
+//    }
+
+    private boolean isOneAtRobot(RequestDto request) {
+        if (!CollectionUtils.isEmpty(request.getAtuserlists())) {
+            List<KunPengRequestDto.AtUser> atUsers = request.getAtuserlists();
+            if (atUsers.stream().allMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

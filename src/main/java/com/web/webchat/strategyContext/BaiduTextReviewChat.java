@@ -27,7 +27,7 @@ public class BaiduTextReviewChat extends WechatProduct {
                 request.setMsg(message + "\n" +
                         "(主人不在,现在由机器人晓晓回复)");
             }
-            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
             return 1;
         }
         return null;

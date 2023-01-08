@@ -64,13 +64,35 @@ public class MagicThing {
         ThingEntity commandThing = useThing.get();
         //msg 换成真实命令
         request.setMsg(commandString);
-        if (isPushThingEvent(commandString, commandThing)) {
+        if (isPushThingEvent(request, commandString, commandThing)) {
             publisher.pushUseThingListener(request, commandThing);
             return null;
         }
         logger.info("命令:【{}】不符合命令规则", commandString);
         return null;
     }
+
+    private boolean isPushThingEvent(RequestDto request, String commandString, ThingEntity commandThing) {
+        // 如果是直接使用的物品就推送
+        if (commandThing.getUseType() == null) {
+            return false;
+        }
+        if (commandThing.getUseType() == 1) {
+            return true;
+        }
+        // 2类物品需要艾特人使用
+        if (commandThing.getUseType() == 2) {
+            // 判断已没有以  物品命令开头  比如以妙手空空开头,有值会去掉妙手空空留下剩余部分
+            String commands = StringUtils.substringAfter(commandString, commandThing.getThingName());
+            if (StringUtils.isBlank(commands)) {
+                return false;
+            }
+            // 如果艾特人了
+            return !CollectionUtils.isEmpty(request.getAtuserlists());
+        }
+        return false;
+    }
+
 
     private boolean isPushThingEvent(String commandString, ThingEntity commandThing) {
         // 如果是直接使用的物品就推送

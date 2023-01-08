@@ -1,12 +1,16 @@
 package com.web.webchat.api;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.web.webchat.abstractclass.ChatBase;
+import com.web.webchat.dto.KunPengRequestDto;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
 import com.web.webchat.dto.WxBaseDto.HfArticleResponseDto;
 import com.web.webchat.dto.WxBaseDto.HfContentResponseDto;
 import com.web.webchat.dto.WxBaseDto.WxRequestDto;
+import com.web.webchat.util.KunpengToLoveCatUtil;
 import com.web.webchat.util.ServiceFactory;
 import com.web.webchat.util.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +19,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +45,24 @@ public class WebChatController {
     private static final Logger logger = LogManager.getLogger(WebChatController.class.getName());
     @Autowired
     private ServiceFactory serviceFactory;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @PostMapping("/api")
-    public ResponseDto webChat(@RequestBody RequestDto request) {
+    public ResponseDto webChat(@RequestBody String req) {
         ResponseDto response = null;
+        System.out.println(new Gson().toJson(req));
+        KunPengRequestDto requestDto = new Gson().fromJson(req, KunPengRequestDto.class);
+        KunPengRequestDto.build(requestDto);
+        System.out.println(new Gson().toJson(KunPengRequestDto.build(requestDto)));
+        RequestDto request = KunpengToLoveCatUtil.kpConverCat(requestDto);
         ChatBase stragey = serviceFactory.getInvokeStrategy(request.getEvent());
         if (Objects.isNull(stragey)) {
-            System.out.println("没有这个策略的逻辑:" + stragey);
+            logger.error("没有这个策略的逻辑:{}", request.getEvent());
             return new ResponseDto();
+        }
+        if (Objects.equals(request.getRobot_wxid(), request.getFrom_wxid())) {
+            return response;
         }
         stragey.sendToWechat(request);
         return response;
@@ -170,4 +192,24 @@ public class WebChatController {
         return "";
     }
 
+    public static class se implements Serializable {
+
+    }
+
+    public void test() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> formData = addSignatureToRequestObject(new se(), "666");
+        ResponseEntity<String> entity = restTemplate.postForEntity("omniHttpConfig.getRootUrl()", new HttpEntity<>(formData, headers), String.class);
+        JSONObject body = (null == entity.getBody()) ? null : JSON.parseObject(entity.getBody());
+
+    }
+
+    public MultiValueMap<String, String> addSignatureToRequestObject(Serializable serializable, String method) {
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+
+        formData.add("test", method);
+        return formData;
+    }
 }

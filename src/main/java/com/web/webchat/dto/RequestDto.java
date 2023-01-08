@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.web.webchat.enums.PushEvent;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -44,6 +46,21 @@ public class RequestDto {
     private Long timeStamp = System.currentTimeMillis();
     @JsonProperty
     private Object object;
+
+    @JsonProperty
+    private String filepath;
+    @JsonProperty
+    private List<KunPengRequestDto.AtUser> atuserlists;
+
+    private String atUserString;
+
+    public String getAtUserString() {
+        return atUserString;
+    }
+
+    public void setAtUserString(String atUserString) {
+        this.atUserString = atUserString;
+    }
 
     @Override
     public String toString() {

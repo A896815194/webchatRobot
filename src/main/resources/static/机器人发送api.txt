@@ -1,0 +1,415 @@
+https://www.kancloud.cn/feimao/kphttp/2747768
+
+发送文本消息
+发送文本信息[K10033]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10033
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+msg
+string
+
+required
+
+消息内容
+
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+
+发送图片消息
+发送图片信息[K10034]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10034
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+msg
+string
+
+required
+
+图片路径，支持网址(直链，如：http://127.0.0.1/tp.jpg)
+
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+
+
+发送文件信息[K10035]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10035
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+msg
+string
+
+required
+
+文件路径，本地(鲲鹏机器人所在电脑/服务器)
+
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+
+
+
+发送GIF信息[K10036]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10036
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+msg
+string
+
+required
+
+GIF路径，支持网址(直链，如：http://127.0.0.1/tp.gif)
+
+success
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+发送艾特信息[K10037]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10037
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+msg
+string
+
+required
+
+内容
+
+list
+string
+
+required
+
+艾特的wxid列表，用英文逗号隔开，艾特全体填notify@all
+
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+
+发送链接信息[K10039]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10039
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+title
+string
+
+required
+
+标题
+
+desc
+string
+
+required
+
+描述
+
+url
+string
+
+required
+
+链接
+
+pic
+string
+
+required
+
+图片路径，支持网址(直链，如：http://127.0.0.1/tp.jpg)
+
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+发送小程序信息[K10040]
+POSThttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10040
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+目标id，勿填错
+
+xml
+string
+
+required
+
+自己看收到的xml
+
+pic
+string
+
+required
+
+略缩图路径，支持网址(直链，如：http://127.0.0.1/tp.jpg)
+
+{
+    "msg": "成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}
+
+
+
+
+获取群成员列表[K10010]
+POS Thttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10010
+
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+群id，勿填错
+
+{
+    "errCode": 1,
+    "data": [
+        {
+            "wxid": "tiaotiaoxiaoshuai",
+            "wxaccount": "",
+            "remark": "",
+            "nickname": "Cheat.晓帅",
+            "bighead": "http://wx.qlogo.cn/mmhead/ver_1/atp9QQAUNsbs7Zukz4m700EGehCbeEvFlahbyAWNY1bKB6JTBHGFWMry4t1SCavp7uFcCl6TI4HIEQlpCnwbp9AZnbaRtsvESDVh9MaibWHc/0",
+            "smallhead": "http://wx.qlogo.cn/mmhead/ver_1/atp9QQAUNsbs7Zukz4m700EGehCbeEvFlahbyAWNY1bKB6JTBHGFWMry4t1SCavp7uFcCl6TI4HIEQlpCnwbp9AZnbaRtsvESDVh9MaibWHc/132",
+            "sex": "男",
+            "country": "CN",
+            "province": "Liaoning",
+            "city": "Anshan"
+        },
+        {
+            "wxid": "wxid_i5vabkq7vwb222",
+            "wxaccount": "",
+            "remark": "",
+            "nickname": "Robot",
+            "bighead": "http://wx.qlogo.cn/mmhead/ver_1/AI4LicSu573msicVDRibSpmgt0wN5ZAmkfQX3fuubkQzEaS6ibcFzouy0z4ib5ULvnU9JDDxoib9f37dy5EC3ZVpJXEdvOIV1JibuRua2gaDPiaEhjc/0",
+            "smallhead": "http://wx.qlogo.cn/mmhead/ver_1/AI4LicSu573msicVDRibSpmgt0wN5ZAmkfQX3fuubkQzEaS6ibcFzouy0z4ib5ULvnU9JDDxoib9f37dy5EC3ZVpJXEdvOIV1JibuRua2gaDPiaEhjc/132",
+            "sex": "未设置",
+            "country": "",
+            "province": "",
+            "city": ""
+        }
+    ],
+    "account_wxid": "wxid_i5vabkq7vwb222"
+}
+
+修改群名称
+
+修改群聊名称[K10013]
+POS Thttp://127.0.0.1:2022/KP
+api
+string
+
+required
+
+API代码，必须有
+
+K10013
+robotWxid
+string
+
+required
+
+机器人的wxid
+
+wxid_xxxxxxxxxx
+fromWxid
+string
+
+required
+
+群id，勿填错
+
+newName
+string
+
+required
+
+新的群名称
+
+新名称
+{
+    "msg": "修改群聊名称成功",
+    "code": 200,
+    "success": true,
+    "data": {}
+}

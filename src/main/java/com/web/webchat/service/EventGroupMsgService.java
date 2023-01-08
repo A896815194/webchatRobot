@@ -2,6 +2,7 @@ package com.web.webchat.service;
 
 import com.web.webchat.abstractclass.ChatBase;
 import com.web.webchat.config.PropertiesEntity;
+import com.web.webchat.dto.KunPengRequestDto;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
@@ -16,8 +17,10 @@ import com.web.webchat.util.WeChatUtil;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.isNull;
@@ -41,12 +44,12 @@ public class EventGroupMsgService extends ChatBase {
                     String pcmUrl = VoiceDecoderUtil.silkToPcm(request.getMsg(), propertiesEntity.getSourceVoiceRootPath() + "/" + request.getFrom_wxid() + "/", String.valueOf(System.currentTimeMillis()), propertiesEntity.getSilkV3Path());
                     String msg = BaiduAsrMainUtil.getMsgFromPcm(pcmUrl);
                     request.setMsg("语音翻译:" + msg);
-                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                     return;
                 }
             }
-            if (isAtRobot(request.getMsg(), request.getRobot_wxid())) {
-                request.setMsg(sendMsg(request.getMsg(), request.getRobot_wxid()));
+            if (isOneAtRobot(request)) {
+                request.setMsg(sendMsg(request.getMsg(), request.getFrom_name()));
                 new TuLingRobotChat(FunctionType.TuLingRobot.name()).chat(request, propertiesEntity);
             }
         }
@@ -70,12 +73,30 @@ public class EventGroupMsgService extends ChatBase {
     }
 
 
-    private boolean isAtRobot(String msg, String robotId) {
-        return msg.startsWith("[@at,nickname=Robot,wxid=" + robotId + "]") &&
-                isOneAtRobot(msg);
+    private boolean isAtRobot(RequestDto request) {
+        if (!CollectionUtils.isEmpty(request.getAtuserlists())) {
+            List<KunPengRequestDto.AtUser> atUsers = request.getAtuserlists();
+            if (atUsers.stream().anyMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isOneAtRobot(String msg) {
+//    private boolean isAtRobotOld(String msg, String robotId) {
+//        return msg.startsWith("[@at,nickname=Robot,wxid=" + robotId + "]") &&
+//                isOneAtRobot(msg);
+//    }
+
+    private boolean isOneAtRobot(RequestDto request) {
+        if (!CollectionUtils.isEmpty(request.getAtuserlists())) {
+            List<KunPengRequestDto.AtUser> atUsers = request.getAtuserlists();
+            return atUsers.stream().allMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()));
+        }
+        return false;
+    }
+
+    private boolean isOneAtRobotOld(String msg) {
         int index = msg.indexOf("]");
         String msg1 = msg.substring(index);
         return !msg1.contains("@at,nickname=Robot,wxid=");
@@ -93,7 +114,7 @@ public class EventGroupMsgService extends ChatBase {
             return false;
         }
         RequestDto lastRequest = SystemInit.lastRequestMap.get(request.getRobot_wxid());
-        if (isAtRobot(request.getMsg(), request.getRobot_wxid()) &&
+        if (isOneAtRobot(request) &&
                 Objects.equals(request.getFrom_wxid(), lastRequest.getFrom_wxid()) &&
                 currentTime - lastRequest.getTimeStamp() < interVal
         ) {

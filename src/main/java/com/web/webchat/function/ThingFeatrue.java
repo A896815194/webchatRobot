@@ -62,7 +62,7 @@ public class ThingFeatrue {
         UserThing userThing = gson.fromJson(gson.toJson(request.getObject()), UserThing.class);
         String msg = String.format(userThing.getThingTemplate(), request.getFinal_from_name());
         request.setMsg(msg);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
         return null;
     }
 
@@ -70,7 +70,7 @@ public class ThingFeatrue {
     public ResponseDto miaoshoukongkong(RequestDto request) {
         String msg = request.getMsg();
         String result = "";
-        List<String> wxids = InitCommonUtil.getAtWxidsFromMsg(msg);
+        List<String> wxids = InitCommonUtil.getAtWxidsFromMsg(request);
         logger.info("wxid:{},name:{}对:wxids{}使用妙手空空的道具", request.getFinal_from_wxid(), request.getFinal_from_name(), wxids);
         // 获取对谁使用了技能的列表
         if (CollectionUtils.isEmpty(wxids)) {
@@ -89,7 +89,7 @@ public class ThingFeatrue {
         Map<String, List<ChatroomMemberSign>> memberSingByWxid = chatroomMemberSigns.stream().collect(Collectors.groupingBy(ChatroomMemberSign::getWxidId, Collectors.toList()));
         result = xskkCalculateAndSaveMoney(request, wxids, successRate, memberSingByWxid);
         request.setMsg(result);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
         return null;
     }
 

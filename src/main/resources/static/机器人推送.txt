@@ -1,0 +1,275 @@
+群说话  发文本
+{
+	"event_type": 1100,
+	"event_desc": "同步消息",
+	"account_wxid": "wxid_i5vabkq7vwb222",
+	"data": {
+		"SvrId": "5512155277489159723",
+		"LocalId": 95,
+		"PrefixId": "360291268724523103",
+		"createtime": 1673156438,
+		"msgtype": 1,   //文本
+		"subtype": 0,
+		"isSender": 0,
+		"content": "2",
+		"from_wxid": "18955225703@chatroom", // 来自群 或者微信
+		"from_name": "Robot",
+		"final_from_wxid": "tiaotiaoxiaoshuai", // 最终人得微信
+		"final_from_name": "Cheat.晓帅",
+		"final_displayname": "Cheat.晓帅",     // 显示名称
+		"to_wxid": "wxid_i5vabkq7vwb222",     // 发给谁
+		"to_name": "Robot",
+		"filepath": "",
+		"atuserlist": []
+	},  "pid": 2084,  "hwnd": 919196
+
+私聊
+{
+	  "event_type": 1100,
+	  "event_desc": "同步消息",
+	  "account_wxid": "wxid_i5vabkq7vwb222",
+	  "data": {
+		  "SvrId": "7128023202344334522",
+		  "LocalId": 97,
+		  "PrefixId": "360291268724523105",
+		  "createtime": 1673156963,
+		  "msgtype": 1,
+		  "subtype": 0,
+		  "isSender": 0,
+		  "content": "1",
+		  "from_wxid": "tiaotiaoxiaoshuai",
+		  "from_name": "Cheat.晓帅",
+		  "final_from_wxid": "tiaotiaoxiaoshuai",
+		  "final_from_name": "Cheat.晓帅",
+		  "final_displayname": "Cheat.晓帅",
+		  "to_wxid": "wxid_i5vabkq7vwb222",
+		  "to_name": "Robot",
+		  "filepath": "",
+		  "atuserlist": []  
+	},   "pid": 2084,   "hwnd": 919196
+}
+
+// 接受语音
+{
+	 "event_type": 1100,
+	 "event_desc": "同步消息",
+	 "account_wxid": "wxid_i5vabkq7vwb222",
+	 "data": {
+		"SvrId": "3646258458658800851",
+		"PrefixId": "0",
+		"LocalId": 126,
+		"createtime": 1673163609,
+		"from_wxid": "18955225703@chatroom",
+		"from_name": "Robot",
+		"final_from_wxid": "tiaotiaoxiaoshuai",
+		"final_from_name": "Cheat.晓帅",
+		"to_wxid": "wxid_i5vabkq7vwb222",
+		"to_name": "Robot",
+		"msgtype": 34,
+		"subtype": 0,
+		"isSender": 0,
+		"filepath": "G:\\wechatFile\\WeChat Files\\wxid_i5vabkq7vwb222\\silk\\3646258458658800851.silk",
+		"content": "\u003cmsg\u003e\u003cvoicemsg endflag\u003d\"1\" cancelflag\u003d\"0\" forwardflag\u003d\"0\" voiceformat\u003d\"4\" voicelength\u003d\"1797\" length\u003d\"2836\" bufid\u003d\"0\" aeskey\u003d\"957d6ec168bc6749035555f42bfdad95\" voiceurl\u003d\"3052020100044b304902010002048b2e600402032f4e2b02042dd48424020463ba7359042465313336343333342d643739632d346230362d626236302d38336666386331353964623302040104000f0201000400\" voicemd5\u003d\"\" clientmsgid\u003d\"41306533633736313866393066333000061540010823991646b1a91103\" fromusername\u003d\"tiaotiaoxiaoshuai\" /\u003e\u003c/msg\u003e",
+		"atuserlist": ""
+		
+	}, "pid": 2084,  "hwnd": 919196
+
+接受图片
+{
+	  "event_type": 1100,
+	  "event_desc": "同步消息",
+	  "account_wxid": "wxid_i5vabkq7vwb222",
+	  "data": {
+		 "SvrId": "5562099740108170616",
+		 "LocalId": 99,
+		 "PrefixId": "360291268724523107",
+		 "createtime": 1673157506,
+		 "msgtype": 3,  // 图片
+		 "subtype": 0,
+		 "isSender": 0,
+		 "content": "u003c?xml versionu003d"1.0"?u003ernu003cmsgu003erntu003cimg aeskeyu003d"f2ebc595057dec4c664ecbfbf4061ae3" encryveru003d"1" cdnthumbaeskeyu003d"f2ebc595057dec4c664ecbfbf4061ae3" cdnthumburlu003d"3057020100044b3049020100020422377b8d02032f4e2b020434d48424020463b94ab2042431666637386364312d616530342d343239352d396462362d663762346565656366353838020401150a020201000405004c56fb00" cdnthumblengthu003d"4975" cdnthumbheightu003d"144" cdnthumbwidthu003d"65" cdnmidheightu003d"0" cdnmidwidthu003d"0" cdnhdheightu003d"0" cdnhdwidthu003d"0" cdnmidimgurlu003d"3057020100044b3049020100020422377b8d02032f4e2b020434d48424020463b94ab2042431666637386364312d616530342d343239352d396462362d663762346565656366353838020401150a020201000405004c56fb00" lengthu003d"129981" md5u003d"c8bccd42bd3de4a3ef5768cba369cf43" hevc_mid_sizeu003d"129981" /u003erntu003cplatform_signatureu003eu003c/platform_signatureu003erntu003cimgdatahashu003eu003c/imgdatahashu003ernu003c/msgu003ern",
+		 "from_wxid": "tiaotiaoxiaoshuai",
+		 "from_name": "Cheat.晓帅",
+		 "final_from_wxid": "tiaotiaoxiaoshuai",
+		 "final_from_name": "Cheat.晓帅",
+		 "final_displayname": "Cheat.晓帅",
+		 "to_wxid": "wxid_i5vabkq7vwb222",
+		 "to_name": "Robot",
+		 "filepath": "G:wechatFileWeChat Fileswxid_i5vabkq7vwb222FileStorageMsgAttach991646b0ac1f4755d1964d13fe760e06Image2023-01148e87efb1556dcdac61dacbd39d2e32.dat",
+		 "atuserlist": []
+	},  "pid": 2084,  "hwnd": 919196
+}
+
+//接受视频
+{
+	 "event_type": 1100,
+	 "event_desc": "同步消息",
+	 "account_wxid": "wxid_i5vabkq7vwb222",
+	 "data": {
+		 "SvrId": "4877602336862791378",
+		 "LocalId": 103,
+		 "PrefixId": "360291268724523111",
+		 "createtime": 1673157948,
+		 "msgtype": 43,  //接受视频
+		 "subtype": 0,
+		 "isSender": 0,
+		 "content": "u003c?xml versionu003d"1.0"?u003ernu003cmsgu003erntu003cvideomsg aeskeyu003d"280b747c549eda1b3e8b07a52fa0e06e" cdnvideourlu003d"3057020100044b3049020100020422377b8d02032f4e2b0204aed48424020463ba5c63042432366662663865382d353333342d346438612d616336662d3139323434313735646536310204011400040201000405004c543f00" cdnthumbaeskeyu003d"280b747c549eda1b3e8b07a52fa0e06e" cdnthumburlu003d"3057020100044b3049020100020422377b8d02032f4e2b0204aed48424020463ba5c63042432366662663865382d353333342d346438612d616336662d3139323434313735646536310204011400040201000405004c543f00" lengthu003d"3416189" playlengthu003d"13" cdnthumblengthu003d"19552" cdnthumbwidthu003d"540" cdnthumbheightu003d"243" fromusernameu003d"tiaotiaoxiaoshuai" md5u003d"c60042d815ce0c3311876b3ee0ee0387" newmd5u003d"3ee644afef2e4779bde4636412d61bb6" isplaceholderu003d"0" rawmd5u003d"" rawlengthu003d"0" cdnrawvideourlu003d"" cdnrawvideoaeskeyu003d"" overwritenewmsgidu003d"0" isadu003d"0" /u003ernu003c/msgu003ern",
+		 "from_wxid": "tiaotiaoxiaoshuai",  //来源微信id
+		 "from_name": "Cheat.晓帅",
+		 "final_from_wxid": "tiaotiaoxiaoshuai",
+		 "final_from_name": "Cheat.晓帅",
+		 "final_displayname": "Cheat.晓帅",
+		 "to_wxid": "wxid_i5vabkq7vwb222",
+		 "to_name": "Robot",
+		 "filepath": "G:wechatFileWeChat Fileswxid_i5vabkq7vwb222FileStorageVideo2023-0142d63c59d59c119d1b59ec5f3e7ccf9a.mp4",
+		 "atuserlist": []
+	},  "pid": 2084,  "hwnd": 919196
+}
+
+// 群里艾特人说话
+{
+	"event_type": 1100,
+	"event_desc": "同步消息",
+	"account_wxid": "wxid_i5vabkq7vwb222",
+	"data": {
+		"SvrId": "1376692672517951484",
+		"LocalId": 106,
+		"PrefixId": "360291268724523114",
+		"createtime": 1673158748,
+		"msgtype": 1,
+		"subtype": 0,
+		"isSender": 0,
+		"content": "@Robot[@emojiu003d2005]你好啊",
+		"from_wxid": "18955225703@chatroom",
+		"from_name": "Robot",
+		"final_from_wxid": "tiaotiaoxiaoshuai",
+		"final_from_name": "Cheat.晓帅",
+		"final_displayname": "Cheat.晓帅",
+		"to_wxid": "wxid_i5vabkq7vwb222",
+		"to_name": "Robot",
+		"filepath": "",
+		"atuserlist": [{
+			"nickname": "Robot",
+			"wxid": "wxid_i5vabkq7vwb222"
+		}]
+	}, "pid": 2084, "hwnd": 919196
+}
+
+//加群事件
+{
+	"event_type": 1100,
+	"event_desc": "同步消息",
+	"account_wxid": "wxid_i5vabkq7vwb222",
+	"data": {
+		"SvrId": "2995835202295478130",
+		 "LocalId": 104,
+		 "PrefixId": "360291268724523112",
+		 "createtime": 1673158284,
+		 "msgtype": 10000, // 加入群
+		 "subtype": 0,
+		 "isSender": 0,
+		 "content": ""Cheat.晓帅"邀请"小铁岭"加入了群聊",
+		 "from_wxid": "18955225703@chatroom",
+		 "from_name": "Robot",
+		 "final_from_wxid": "18955225703@chatroom",
+		 "final_from_name": "Robot",
+		 "final_displayname": "Robot",
+		 "to_wxid": "wxid_i5vabkq7vwb222",
+		 "to_name": "Robot",
+		 "filepath": "",
+		 "atuserlist": []
+	}, "pid": 2084, "hwnd": 919196
+}
+// 进群通知
+{
+	"event_type": 1010,
+	"event_desc": "群员进群通知",
+	"account_wxid": "wxid_i5vabkq7vwb222",
+	"data": {
+		"roomid": "18955225703@chatroom",
+		"roomname": "Robot",
+		"createtime": 1673158286,
+		"membercount": 1,
+		"memberlist": [{
+			"userName": "wxid_0547005470022",
+			"nickName": "小铁岭",
+			"bigHeadImgUrl": "http://wx.qlogo.cn/mmhead/ver_1/AwPjibibX5XYzI8NRSToib0kQQZUhrRibQBPlR3MZAZWcIpSztQ8mmJ0yHuGgrCGc6n1D3CHNeffxfb4wR2oNXJCibfAN2d4M0eQKiau9lOhHApPY/0",
+			"smallHeadImgUrl": "http://wx.qlogo.cn/mmhead/ver_1/AwPjibibX5XYzI8NRSToib0kQQZUhrRibQBPlR3MZAZWcIpSztQ8mmJ0yHuGgrCGc6n1D3CHNeffxfb4wR2oNXJCibfAN2d4M0eQKiau9lOhHApPY/132",
+			"chatroomMemberFlag": 1,
+			"inviterUserName": "tiaotiaoxiaoshuai",
+			"inviterNickName": "Cheat.晓帅"
+		}]
+	}, "pid": 2084, "hwnd": 919196
+}
+//离开群
+{
+	"event_type": 1009,
+	"event_desc": "群员退群通知",
+	"account_wxid": "wxid_i5vabkq7vwb222",
+	"data": {
+		"createtime": 1673158549,
+		"membercount": 1,
+		"memberlist": [{
+			"nickname": "[@emojiu003d2133][@emojiu003d20AF][@emojiu003d3395].dear銰劦℡",
+			"wxid": "wxid_0547005470022"
+			
+		}],
+		"roomid": "18955225703@chatroom",
+		"roomname": "Robot"
+	}, "pid": 2084, "hwnd": 919196
+}
+
+
+
+
+通讯重新链接
+{
+	 "event_type": 1006,
+	 "event_desc": "通讯重新连接成功,当前账号已登录",
+	 "account_wxid": "wxid_i5vabkq7vwb222",
+	 "data": {
+		 "city": "",
+		 "country": "",
+		 "device": "android",
+		 "head": "http://wx.qlogo.cn/mmhead/ver_1/HefApEQCsC8XdyVVBAzSZxHJZneJDRFLFlgZDROQ1FoZxlOyapapFdRCfymMQx4wvavcpMqqylfaL2Kq5NX0jSA5ibObF3QHFwOuThhbfCaQ/132",
+		 "nickname": "Robot",
+		 "phone": "15140670032",
+		 "pid": 2084,
+		 "province": "",
+		 "sex": "未设置",
+		 "signature": "",
+		 "wxaccount": "",
+		 "wxid": "wxid_i5vabkq7vwb222"
+	},  "pid": 2084,  "hwnd": 919196
+}
+
+心跳
+{
+	"event_type":9999,
+	"event_desc":"HeartBeat",
+	"account_wxid":"wxid_i5vabkq7vwb222",
+	"pid":2084,
+	"hwnd":919196}
+
+// 切换聊天对象
+{
+	"event_type": 1004,
+	"event_desc": "切换聊天对象事件",
+	"account_wxid": "wxid_i5vabkq7vwb222",
+	"data": {
+		"wxid": "18955225703@chatroom",
+		"wxaccount": "",
+		"v1": "",
+		"remark": "",
+		"nickname": "Robot",
+		"smallhead": "http://wx.qlogo.cn/mmcrhead/YCOL3hU8ffW1Wz6INFt19Bq1RcfXuqVbYYnOfrdtdD9ZPQichARPial77A8D1joj7GhVfACzAP7CxW9oexvG4q3SVczsqI7ibSM/0",
+		"bighead": "",
+		"country": "",
+		"province": "",
+		"city": "",
+		"source": 0,
+		"sourceStr": "",
+		"labels": ""
+		
+	}, "pid": 2084, "hwnd": 919196
+}

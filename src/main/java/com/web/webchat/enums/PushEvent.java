@@ -28,6 +28,7 @@ public enum PushEvent {
 
     EventContactsChange("朋友变动事件"),
 
+    NoHandle("先不处理"),
     ;
 
     private String text;

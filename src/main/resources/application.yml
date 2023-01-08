@@ -17,7 +17,8 @@ server:
 
 api:
     reply-interval: 1000
-    wechat-url: "http://localhost:88/httpAPI"
+    wechat-url: "http://127.0.0.1:2022/KP"
+    wechat-url-cat: "http://localhost:88/httpAPI"
     tuLing-api: "http://openapi.tuling123.com/openapi/api/v2"
     tuLing-api-key: "0dd580fb0128ac0f7584572c642ba312"
     tuLing-user-id: "xiaoxiao"

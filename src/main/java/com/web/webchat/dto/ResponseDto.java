@@ -29,6 +29,12 @@ public class ResponseDto {
     //url
     private String path;
 
+    private String robotWxid;
+
+    private String fromWxid;
+
+    private String list;
+
     @Override
     public String toString() {
         return "ResponseDto{" +
@@ -41,6 +47,10 @@ public class ResponseDto {
                 ", final_from_name='" + final_from_name + '\'' +
                 ", to_wxid='" + to_wxid + '\'' +
                 ", msg='" + msg + '\'' +
+                ", path='" + path + '\'' +
+                ", robotWxid='" + robotWxid + '\'' +
+                ", fromWxid='" + fromWxid + '\'' +
+                ", list='" + list + '\'' +
                 '}';
     }
 }

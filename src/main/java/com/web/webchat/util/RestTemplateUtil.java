@@ -205,9 +205,9 @@ public class RestTemplateUtil {
     public static void sendMsgToWeChat(ResponseDto request, String url) {
         HttpHeaders headers = getJsonHeaders();
         HttpEntity<ResponseDto> formEntity = new HttpEntity<>(request, headers);
-        TuLingRobotResponseDto result = null;
+        String result = null;
         try {
-            result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
+            result = restTemplate.postForObject(url, formEntity, String.class);
         } catch (Exception e) {
             logger.error("回调给微信报错", e);
             throw new RuntimeException("发送消息失败");
@@ -220,9 +220,9 @@ public class RestTemplateUtil {
             public void run() {
                 HttpHeaders headers = getJsonHeaders();
                 HttpEntity<ResponseDto> formEntity = new HttpEntity<>(request, headers);
-                TuLingRobotResponseDto result = null;
+                String result = null;
                 try {
-                    result = restTemplate.postForObject(url, formEntity, TuLingRobotResponseDto.class);
+                    result = restTemplate.postForObject(url, formEntity, String.class);
                 } catch (Exception e) {
                     logger.error("回调给微信报错", e);
                     throw new RuntimeException("发送消息失败");

@@ -34,7 +34,7 @@ public class TuLingRobotChat extends WechatProduct {
             } else {
                 request.setMsg(item);
             }
-            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
 
         });
         return 1;

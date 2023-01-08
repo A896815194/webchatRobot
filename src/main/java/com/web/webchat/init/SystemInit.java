@@ -223,7 +223,7 @@ public class SystemInit {
             request.setMsg(sb.toString());
             request.setRobot_wxid(robotId);
             request.setFrom_wxid(noSendMoneyRoom);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
         });
     }
 
@@ -244,7 +244,7 @@ public class SystemInit {
         request.setMsg(sb.toString());
         request.setRobot_wxid(robotId);
         request.setFrom_wxid(k);
-        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+        RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
     }
 
     private void onlySendWeater(String tqMsg, Map<String, List<FunctionRoleEntity>> robotChatRooms) {
@@ -257,7 +257,7 @@ public class SystemInit {
             request.setMsg(sb.toString());
             request.setRobot_wxid(v.get(0).getRobotId());
             request.setFrom_wxid(k);
-            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg.name()), propertiesEntity.getWechatUrl());
+            RestTemplateUtil.sendMsgToWeChat(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
         });
     }
 

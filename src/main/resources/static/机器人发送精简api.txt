@@ -1,0 +1,425 @@
+API接口
+初始化[K10001]
+[POST-JSON] http://127.0.0.1:2022/KP
+
+
+
+============================================================
+发送文本信息[K10033]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msg	是	string	消息内容
+============================================================
+发送图片信息[K10034]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msg	是	string	图片路径，支持网址(直链，如：http://127.0.0.1/tp.jpg)
+============================================================
+发送文件信息[K10035]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msg	是	string	文件路径，本地(鲲鹏机器人所在电脑/服务器)
+============================================================
+发送GIF信息[K10036]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msg	是	string	GIF路径，支持网址(直链，如：http://127.0.0.1/tp.gif)
+============================================================
+发送艾特信息[K10037]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msg	是	string	内容，要艾特请在这里面加上 @名称 ，否则可能不生效
+list	是	string	艾特的wxid列表，用英文逗号隔开，艾特全体填notify@all
+============================================================
+发送名片信息[K10038]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+tjWxid	是	string	wxid和v4都可以
+tjName	是	string	推荐昵称
+============================================================
+发送链接信息[K10039]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+title	是	string	标题
+desc	是	string	描述
+url	是	string	链接
+pic	是	string	图片路径，支持网址(直链，如：http://127.0.0.1/tp.jpg)
+============================================================
+发送小程序信息[K10040]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+xml	是	string	自己看收到的xml
+pic	是	string	图片路径，支持网址(直链，如：http://127.0.0.1/tp.jpg)
+============================================================
+转发信息[K10041]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msgId	是	string	消息Id，SvrId
+============================================================
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+appId	是	string	软件唯一id，暂时随意
+appName	是	string	软件名称
+appVer	是	string	软件版本号
+appKey	是	string	软件Key，暂时随意
+============================================================
+添加日志[K10002]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+type	是	string	1调试，2警告，3提示
+msg	是	string	日志内容
+============================================================
+关注公众号[K10003]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	公众号的wxid，勿填错
+============================================================
+转账收款[K10004]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+transferid	是	string	收到的转账transferid
+============================================================
+转账退款[K10005]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+transferid	是	string	收到的转账transferid
+============================================================
+同意群聊邀请[K10006]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+url	是	string	收到的消息里获取
+============================================================
+消息免打扰[K10007]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+isFlag	是	string	是否免打扰，0/1
+============================================================
+置顶聊天[K10008]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+isFlag	是	string	是否置顶，0/1
+============================================================
+切换当前聊天对象[K10009]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+============================================================
+获取群成员列表[K10010]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+============================================================
+获取企业群成员列表[K10011]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+============================================================
+创建群聊[K10012]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	wxid，用英文逗号分隔
+============================================================
+修改群聊名称[K10013]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+newName	是	string	新的群名称
+============================================================
+发布群公告[K10014]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+newMsg	是	string	公告内容
+============================================================
+邀请群成员40人以上[K10015]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+newWxid	是	string	邀请进群的wxid
+============================================================
+添加群成员40人以下[K10016]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+newWxid	是	string	邀请进群的wxid
+============================================================
+删除群成员[K10017]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+oldWxid	是	string	群成员id
+============================================================
+退出群聊[K10018]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+============================================================
+获取群内昵称[K10019]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+oldWxid	是	string	群成员id
+============================================================
+修改群内昵称[K10020]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+newMsg	是	string	新的群内昵称
+============================================================
+显示或隐藏群成员昵称[K10021]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+isFlag	是	string	是否隐藏，0/1
+============================================================
+保存到通讯录[K10022]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+isFlag	是	string	是否保存，0/1
+============================================================
+获取群成员邀请信息[K10023]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	群id，勿填错
+============================================================
+获取通讯录列表[K10024]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+============================================================
+获取企业好友列表[K10025]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+============================================================
+获取指定好友信息[K10026]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+============================================================
+网络获取指定好友信息[K10027]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+============================================================
+删除好友[K10028]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+============================================================
+修改好友备注[K10029]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+newMsg	是	string	新备注
+============================================================
+同意好友请求[K10030]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+v3	是	string	接收到的消息里获取
+v4	是	string	接收到的消息里获取
+sence	是	string	接收到的消息里获取，名称可能不一样(相似)
+============================================================
+好友状态检测[K10031]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+============================================================
+拉黑好友[K10032]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+isFlag	是	string	是否拉黑，0/1
+============================================================
+取登录状态[K10042]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+============================================================
+撤回信息[K10043]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标id，勿填错
+msgId	是	string	消息Id，SvrId或者LocalId，自己测测
+============================================================
+获取个人信息[K10044]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+============================================================
+取登录账号列表[K10045]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+============================================================
+下载图片[K10046]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+xml	是	string	接收到的消息xml
+path	是	string	保存路径，绝对路径，带后缀
+============================================================
+解密图片[K10047]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+filepath	是	string	接收消息里的filepath字段
+path	是	string	保存路径，绝对路径，带后缀
+============================================================
+发送XML信息[K10048]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标ID，勿填错
+xml	是	string	XML信息
+============================================================
+刷新朋友圈[K10049]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+============================================================
+获取朋友圈下一页[K10050]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+circleId	是	string	itemid朋友圈ID，获取从该ID的下一条开始的一页
+============================================================
+获取个人朋友圈[K10051]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+fromWxid	是	string	目标ID
+circleId	是	string	itemid朋友圈ID，获取从该ID的下一条开始的一页
+============================================================
+朋友圈点赞[K10052]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+circleId	是	string	itemid朋友圈ID，获取从该ID的下一条开始的一页
+============================================================
+朋友圈取消点赞[K10053]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+circleId	是	string	itemid朋友圈ID，获取从该ID的下一条开始的一页
+============================================================
+发表朋友圈评论[K10054]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+circleId	是	string	itemid朋友圈ID，获取从该ID的下一条开始的一页
+msg	是	string	评论的内容
+============================================================
+删除朋友圈评论[K10055]
+[POST-JSON] http://127.0.0.1:2022/KP
+参数名	必选	类型	说明
+api	是	string	API代码，必须有
+robotWxid	是	string	机器人的wxid
+circleId	是	string	itemid朋友圈ID，获取从该ID的下一条开始的一页
+============================================================
