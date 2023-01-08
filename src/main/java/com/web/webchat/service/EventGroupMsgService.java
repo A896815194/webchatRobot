@@ -49,7 +49,7 @@ public class EventGroupMsgService extends ChatBase {
                 }
             }
             if (isOneAtRobot(request)) {
-                request.setMsg(sendMsg(request.getMsg(), request.getFrom_name()));
+                request.setMsg(sendMsg(request.getMsg(), "Robot"));
                 new TuLingRobotChat(FunctionType.TuLingRobot.name()).chat(request, propertiesEntity);
             }
         }

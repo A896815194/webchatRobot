@@ -103,4 +103,16 @@ public class Message {
      **/
     public static final String MSKK_SUCCESS_BT = "【%s】被偷取【%s】魔法能量,竟毫无察觉~\r";
 
+    /**
+     * 欢迎入群
+     **/
+    public static final String ADD_MEMBER = "【风很温柔、花很浪漫、你很特别、我很喜欢~】\r" +
+            "【%s】通过【%s】的邀请来到了【%s】这个大家庭,列队欢迎!!";
+
+
+    /**
+     * 出群
+     **/
+    public static final String DEADD_MEMBER = "【青山不改、绿水长流、来日方长、后会有期!】\r【%s】离开了这个大家庭!" ;
+
 }

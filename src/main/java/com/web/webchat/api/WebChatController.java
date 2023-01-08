@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.web.webchat.abstractclass.ChatBase;
+import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.KunPengRequestDto;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
@@ -48,14 +49,17 @@ public class WebChatController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private PropertiesEntity propertiesEntity;
+
     @PostMapping("/api")
     public ResponseDto webChat(@RequestBody String req) {
         ResponseDto response = null;
-        System.out.println(new Gson().toJson(req));
+        logger.info("请求数据{}", req);
         KunPengRequestDto requestDto = new Gson().fromJson(req, KunPengRequestDto.class);
         KunPengRequestDto.build(requestDto);
-        System.out.println(new Gson().toJson(KunPengRequestDto.build(requestDto)));
-        RequestDto request = KunpengToLoveCatUtil.kpConverCat(requestDto);
+        RequestDto request = KunpengToLoveCatUtil.kpConverCat(requestDto, propertiesEntity);
+        logger.info("转换后为{}", request);
         ChatBase stragey = serviceFactory.getInvokeStrategy(request.getEvent());
         if (Objects.isNull(stragey)) {
             logger.error("没有这个策略的逻辑:{}", request.getEvent());

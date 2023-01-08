@@ -68,16 +68,18 @@ public class KunPengRequestDto {
     }
 
     @Builder
-    @Getter
-    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberDto {
+        // 加入群里时微信id
+        private String userName;
+        //加入
+        private String nickName;
+        // 离开
         private String nickname;
         // 离开群时
         private String wxid;
-        // 加入群里时微信id
-        private String userName;
+
 
         private String bigHeadImgUrl;
 
@@ -88,6 +90,78 @@ public class KunPengRequestDto {
         private String inviterUserName;
         // 邀请name
         private String inviterNickName;
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getNickName() {
+            return nickName;
+        }
+
+        public void setNickName(String nickName) {
+            this.nickName = nickName;
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
+
+        public String getWxid() {
+            return wxid;
+        }
+
+        public void setWxid(String wxid) {
+            this.wxid = wxid;
+        }
+
+        public String getBigHeadImgUrl() {
+            return bigHeadImgUrl;
+        }
+
+        public void setBigHeadImgUrl(String bigHeadImgUrl) {
+            this.bigHeadImgUrl = bigHeadImgUrl;
+        }
+
+        public String getSmallHeadImgUrl() {
+            return smallHeadImgUrl;
+        }
+
+        public void setSmallHeadImgUrl(String smallHeadImgUrl) {
+            this.smallHeadImgUrl = smallHeadImgUrl;
+        }
+
+        public Integer getChatroomMemberFlag() {
+            return chatroomMemberFlag;
+        }
+
+        public void setChatroomMemberFlag(Integer chatroomMemberFlag) {
+            this.chatroomMemberFlag = chatroomMemberFlag;
+        }
+
+        public String getInviterUserName() {
+            return inviterUserName;
+        }
+
+        public void setInviterUserName(String inviterUserName) {
+            this.inviterUserName = inviterUserName;
+        }
+
+        public String getInviterNickName() {
+            return inviterNickName;
+        }
+
+        public void setInviterNickName(String inviterNickName) {
+            this.inviterNickName = inviterNickName;
+        }
     }
 
     @Builder

@@ -99,7 +99,7 @@ public abstract class ChatBase {
                             .functionType(functionType)
                             .chatType(request.getEvent().name())
                             .chatroomId(request.getFrom_wxid())
-                            .chatroomName(request.getFinal_from_name())
+                            .chatroomName(request.getFrom_name())
                             .isOpen(1)
                             .robotId(request.getRobot_wxid()).build();
                 }
@@ -126,7 +126,7 @@ public abstract class ChatBase {
                         .functionType(functionType)
                         .chatType(request.getEvent().name())
                         .chatroomId(request.getFrom_wxid())
-                        .chatroomName(request.getFinal_from_name())
+                        .chatroomName(request.getFrom_name())
                         .isOpen(1)
                         .robotId(request.getRobot_wxid()).build();
             }
@@ -157,7 +157,7 @@ public abstract class ChatBase {
                             .functionType(functionType)
                             .chatType(request.getEvent().name())
                             .chatroomId(request.getFrom_wxid())
-                            .chatroomName(request.getFinal_from_name())
+                            .chatroomName(request.getFrom_name())
                             .robotId(request.getRobot_wxid()).build());
                 }
                 Optional<FunctionRoleEntity> dataSource = Optional.ofNullable(functionRoleRepository.findOne(function)).orElse(null);
@@ -179,7 +179,7 @@ public abstract class ChatBase {
                                 .functionType(functionType)
                                 .chatType(request.getEvent().name())
                                 .chatroomId(request.getFrom_wxid())
-                                .chatroomName(request.getFinal_from_name())
+                                .chatroomName(request.getFrom_name())
                                 .isOpen(0)
                                 .robotId(request.getRobot_wxid()).build();
                     }
