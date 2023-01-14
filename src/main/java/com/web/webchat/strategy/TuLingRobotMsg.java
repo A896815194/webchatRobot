@@ -2,14 +2,13 @@ package com.web.webchat.strategy;
 
 import com.google.gson.Gson;
 import com.web.webchat.config.PropertiesEntity;
-import com.web.webchat.config.listen.AllTypeListener;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotRequestDto;
 import com.web.webchat.dto.tulingrobot.TuLingRobotResponseDto;
 import com.web.webchat.enums.FunctionType;
+import com.web.webchat.factory.StrategyFactory;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.util.RestTemplateUtil;
-import com.web.webchat.util.StrategyFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

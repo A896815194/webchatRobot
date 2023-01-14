@@ -39,4 +39,17 @@ public class PropertiesEntity {
 
     @Value("${api.reply-interval}")
     public Long replyInterval;
+
+    @Value("${api.robotId}")
+    public String robotId;
+
+    @Value("${api.robotName}")
+    public String robotName;
+
+    public String chatroomId;
+
+    public String wxid;
+
+    @Value("${api.appFilePath}")
+    public String appFilePath;
 }

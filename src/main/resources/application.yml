@@ -27,6 +27,9 @@ api:
     silk-v3-decoder-path: "G://test/pcm/bin/silk_v3_decoder.exe"
     ffmpeg-path: "G://test/pcm/bin/ffmpeg.exe"
     temp-data-file-path: "E://test"
+    robotId: "wxid_i5vabkq7vwb222"
+    robotName: "Robot"
+    appFilePath: "G://test"
 
 logging:
   config: classpath:log4j-spring.xml

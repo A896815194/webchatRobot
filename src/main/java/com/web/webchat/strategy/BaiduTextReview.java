@@ -4,9 +4,9 @@ import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.baidutextreview.BaiduTextReviewResponseDto;
 import com.web.webchat.enums.FunctionType;
+import com.web.webchat.factory.StrategyFactory;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.util.RestTemplateUtil;
-import com.web.webchat.util.StrategyFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

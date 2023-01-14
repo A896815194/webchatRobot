@@ -4,14 +4,13 @@ import com.web.webchat.abstractclass.WechatProduct;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.enums.ApiType;
+import com.web.webchat.factory.StrategyFactory;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.util.RestTemplateUtil;
-import com.web.webchat.util.StrategyFactory;
 import com.web.webchat.util.WeChatUtil;
 
 import java.util.List;
 
-import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class BaiduTextReviewChat extends WechatProduct {

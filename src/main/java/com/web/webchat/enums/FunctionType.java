@@ -23,7 +23,9 @@ public enum FunctionType {
 
     MagicWeather("魔法天气"),
 
-    MagicThing("魔法道具");
+    MagicThing("魔法道具"),
+
+    BlindDate("情缘推");
 
     private String text;
 

@@ -39,17 +39,17 @@ public class EventGroupMsgService extends ChatBase {
 
     public void sendMessageToWechat(RequestDto request) {
         if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
-            if (request.getMsg().contains(".silk")) {
-                if (34 == request.getType()) {
-                    String pcmUrl = VoiceDecoderUtil.silkToPcm(request.getMsg(), propertiesEntity.getSourceVoiceRootPath() + "/" + request.getFrom_wxid() + "/", String.valueOf(System.currentTimeMillis()), propertiesEntity.getSilkV3Path());
-                    String msg = BaiduAsrMainUtil.getMsgFromPcm(pcmUrl);
-                    request.setMsg("语音翻译:" + msg);
-                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
-                    return;
-                }
-            }
+//            if (request.getMsg().contains(".silk")) {
+//                if (34 == request.getType()) {
+//                    String pcmUrl = VoiceDecoderUtil.silkToPcm(request.getMsg(), propertiesEntity.getSourceVoiceRootPath() + "/" + request.getFrom_wxid() + "/", String.valueOf(System.currentTimeMillis()), propertiesEntity.getSilkV3Path());
+//                    String msg = BaiduAsrMainUtil.getMsgFromPcm(pcmUrl);
+//                    request.setMsg("语音翻译:" + msg);
+//                    RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
+//                    return;
+//                }
+//            }
             if (isOneAtRobot(request)) {
-                request.setMsg(sendMsg(request.getMsg(), "Robot"));
+                request.setMsg(sendMsg(request.getMsg(), propertiesEntity.getRobotName()));
                 new TuLingRobotChat(FunctionType.TuLingRobot.name()).chat(request, propertiesEntity);
             }
         }

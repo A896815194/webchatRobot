@@ -12,13 +12,11 @@ import com.web.webchat.entity.FunctionRoleEntity;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.enums.Message;
+import com.web.webchat.function.timer.BlindDate;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
-import com.web.webchat.util.InitCommonUtil;
-import com.web.webchat.util.ReflectionService;
-import com.web.webchat.util.RestTemplateUtil;
-import com.web.webchat.util.WeChatUtil;
+import com.web.webchat.util.*;
 import com.web.webchat.verifiaction.EventFriendMsgVerification;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
 import org.apache.commons.lang.StringUtils;
@@ -48,7 +46,7 @@ public abstract class ChatBase {
     private AllEventPubLisher pubLisher;
 
     // RequestDto{api='null', robot_wxid='wxid_i5vabkq7vwb222', from_wxid='18955225703@chatroom', to_wxid='wxid_i5vabkq7vwb222', msg='6', Event='EventGroupMsg'}
-    public boolean getVerificationByType(String eventMsg, String functionType, RequestDto request, int open) {
+    public static boolean getVerificationByType(String eventMsg, String functionType, RequestDto request, int open) {
         if (Objects.equals("EventGroupMsg", eventMsg)) {
             return new EventGroupMsgVerification().hasOpen(request, functionType, open);
         }
@@ -109,6 +107,7 @@ public abstract class ChatBase {
                 functionRoleRepository.save(saveFunction);
                 functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
                 request.setMsg(request.getMsg() + "成功！");
+                functionTypeHandle(functionType, request);
                 RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                 return true;
             }
@@ -133,11 +132,50 @@ public abstract class ChatBase {
             functionRoleRepository.save(saveFunction);
             functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
             request.setMsg(request.getMsg() + "成功！");
+            functionTypeHandle(functionType, request);
             RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
             return true;
         }
         return false;
     }
+
+    private void functionTypeHandle(String functionType, RequestDto request) {
+        if (Objects.equals(functionType, FunctionType.BlindDate.name())) {
+            logger.info(functionType + ":要创建配置文件");
+            try {
+                propertiesEntity.setChatroomId(request.getFrom_wxid());
+                String pzFilePath = BlindDate.createPzPath(propertiesEntity);
+                logger.info(functionType + ":配置文件:url" + pzFilePath);
+                String content = createFileContent(functionType, request);
+                ReadExcel.outFile(pzFilePath, content);
+            } catch (Exception e) {
+                logger.error("创建异常", e);
+            }
+            logger.info(functionType + ":创建完毕");
+        }
+
+    }
+
+    private String createFileContent(String functionType, RequestDto request) {
+        if (Objects.equals(functionType, FunctionType.BlindDate.name())) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("不推男=");
+            sb.append("\r");
+            sb.append("不推女=");
+            sb.append("\r");
+            sb.append("男=");
+            sb.append("\r");
+            sb.append("女=");
+            sb.append("\r");
+            sb.append("内容男=");
+            sb.append("\r");
+            sb.append("内容女=");
+            sb.append("\r");
+            return sb.toString();
+        }
+        return null;
+    }
+
 
     public boolean close(RequestDto request, String functionType) {
         logger.info("关闭功能命令.");

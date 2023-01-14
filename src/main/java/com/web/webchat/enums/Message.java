@@ -115,4 +115,9 @@ public class Message {
      **/
     public static final String DEADD_MEMBER = "【青山不改、绿水长流、来日方长、后会有期!】\r【%s】离开了这个大家庭!" ;
 
+    /**
+     * 情缘推
+     **/
+    public static final String QYT_MSG = "【情缘推】#hhf#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#hhf%s#hhf#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#dyh#hhf愿你喜欢的人刚好也喜欢你~#hhf【消息来源】群公告" ;
+
 }
