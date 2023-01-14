@@ -103,7 +103,7 @@ public class KunpengToLoveCatUtil {
         dto.setType(data.getMsgtype());
         dto.setMsg(data.getContent());
         dto.setFrom_wxid(data.getFrom_wxid());
-        dto.setFinal_from_name(data.getFrom_name());
+        dto.setFinal_from_name(data.getFinal_from_name());
         dto.setFinal_from_wxid(data.getFinal_from_wxid());
         dto.setFrom_name(data.getFrom_name());
         dto.setTo_wxid(data.getTo_wxid());

@@ -107,7 +107,7 @@ public class Message {
      * 欢迎入群
      **/
     public static final String ADD_MEMBER = "【风很温柔、花很浪漫、你很特别、我很喜欢~】\r" +
-            "【%s】通过【%s】的邀请来到了【%s】这个大家庭,列队欢迎!!";
+            "【%s】通过【%s】的邀请来到了【%s】这个大家庭,先来看看群公告吧!!";
 
 
     /**

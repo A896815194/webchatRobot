@@ -30,7 +30,7 @@ public class KunPengRequestDto {
         private Long LocalId;
         private String PrefixId;
         private Long createtime;
-        // 信息类型 1 文本 34 语音  3 图片 43视频 10000加群
+        // 信息类型 1 文本 34 语音  3 图片 43视频 49   10000加群
         private Integer msgtype;
         private Integer subtype;
         private Integer isSender;
