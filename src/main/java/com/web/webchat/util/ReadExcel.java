@@ -17,7 +17,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -70,7 +73,8 @@ public class ReadExcel {
         FileOutputStream fos1 = null;
         try {
             fos1 = new FileOutputStream(f);
-            OutputStreamWriter dos1 = new OutputStreamWriter(fos1);
+            OutputStreamWriter dos1 = new OutputStreamWriter(fos1, StandardCharsets.UTF_8);
+
             dos1.write(content);
             dos1.close();
         } catch (Exception e) {
@@ -289,10 +293,12 @@ public class ReadExcel {
                             sheetList.add(dto);
                         }
                     }
+                    log.info("当前sheet页" + sheetList.size() + "条");
                     list.add(sheetList);
                 }
-                System.err.println(list.toString());
+                //System.err.println(list.toString());
             } catch (Exception e) {
+                log.error("发生异常", e);
                 e.printStackTrace();
             }
         }

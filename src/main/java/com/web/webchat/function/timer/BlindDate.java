@@ -51,7 +51,7 @@ public class BlindDate {
         PropertiesEntity propertiesEntity = new Gson().fromJson(request, PropertiesEntity.class);
         RequestDto dto = createRequestDto(propertiesEntity);
         if (ChatBase.getVerificationByType(PushEvent.EventGroupMsg.name(), FunctionType.BlindDate.name(), dto, 1)) {
-            log.info("该群开启了情缘推:chatroomId：{}", dto.getFrom_wxid());
+            log.info("该群开启了情缘推-男:chatroomId：{}", dto.getFrom_wxid());
             // 读取配置内容
             String pzPath = createPzPath(propertiesEntity);
             List<String> result = ReadExcel.readFile(pzPath);
@@ -67,7 +67,7 @@ public class BlindDate {
             RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(requestDto, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
             return;
         }
-        log.info("该群没开启:chatroomId：{}", dto.getFrom_wxid());
+        log.info("该群没开启-男:chatroomId：{}", dto.getFrom_wxid());
     }
 
     public void pushWoman(String request) {
@@ -75,7 +75,7 @@ public class BlindDate {
         RequestDto dto = createRequestDto(propertiesEntity);
         if (ChatBase.getVerificationByType(PushEvent.EventGroupMsg.name(), FunctionType.BlindDate.name(), dto, 1)) {
             // 读取配置内容
-            log.info("该群开启了情缘推:chatroomId：{}", dto.getFrom_wxid());
+            log.info("该群开启了情缘推-女:chatroomId：{}", dto.getFrom_wxid());
             String pzPath = createPzPath(propertiesEntity);
             List<String> result = ReadExcel.readFile(pzPath);
             List<String> woman = ReadExcel.getValuesByKey(result, "内容女");
@@ -88,15 +88,16 @@ public class BlindDate {
             requestDto.setRobot_wxid(propertiesEntity.getRobotId());
             requestDto.setFrom_wxid(propertiesEntity.getChatroomId());
             RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(requestDto, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
+            return;
         }
-        log.info("该群没开启:chatroomId：{}", dto.getFrom_wxid());
+        log.info("该群没开启-女:chatroomId：{}", dto.getFrom_wxid());
     }
 
     public void totalData(String request) {
         PropertiesEntity propertiesEntity = new Gson().fromJson(request, PropertiesEntity.class);
         RequestDto dto = createRequestDto(propertiesEntity);
         if (ChatBase.getVerificationByType(PushEvent.EventGroupMsg.name(), FunctionType.BlindDate.name(), dto, 1)) {
-            log.info("该群开启了情缘推:chatroomId：{}", dto.getFrom_wxid());
+            log.info("该群开启了情缘推-统计:chatroomId：{}", dto.getFrom_wxid());
             // 获取excel 路径  路径/functionType/群号.xlsx
             String excelPath = createExcelPath(propertiesEntity);
             // 读取excel内容
@@ -116,8 +117,9 @@ public class BlindDate {
             String womanContent = createPushContent(pushWomanDto, "女", Message.QYT_MSG);
             String content = createPzFileContent(notMan, notWoMan, man, woman, manContent, womanContent);
             ReadExcel.outFile(pzPath, content);
+            return;
         }
-        log.info("该群没开启:chatroomId：{}", dto.getFrom_wxid());
+        log.info("该群没开启-统计:chatroomId：{}", dto.getFrom_wxid());
     }
 
     private String createPzFileContent(List<String> notMan, List<String> notWoMan, List<String> man, List<String> woman, String manContent, String womanContent) {
