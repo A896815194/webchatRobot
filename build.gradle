@@ -36,6 +36,8 @@ dependencies {
 	implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 	compile 'com.google.code.gson:gson:2.6.2'
 	compile('org.springframework.boot:spring-boot-starter-log4j2:1.5.8.RELEASE')
+	compile 'org.reflections:reflections:0.9.12'
+	testCompile 'org.mockito:mockito-core:2.16.0'
 	// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
 	// https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream
 	implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.19'
@@ -44,9 +46,10 @@ dependencies {
 	compile(
 			'net.sf.json-lib:json-lib:2.4:jdk15'
 	)
-
+	compile 'org.apache.poi:poi:3.11-beta2'
+	compile 'org.apache.poi:poi-ooxml:3.11-beta2'
 	compile 'org.json:json:20160212'
-			testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mvnrepository.com/artifact/org.nutz/nutz
 	implementation group: 'org.nutz', name: 'nutz', version: '1.r.67'
 

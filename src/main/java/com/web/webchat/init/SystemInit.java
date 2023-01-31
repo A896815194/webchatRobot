@@ -78,7 +78,7 @@ public class SystemInit {
     @PostConstruct
     public void init() {
         logger.info("初始化开启了权限的列表");
-        functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
+        functionRoleRole = functionRoleRepository.findAll();
         functionRoleCommands = functionRoleCommandRepository.findAll();
         if (!CollectionUtils.isEmpty(functionRoleCommands)) {
             logger.info("初始化功能权限命令集合");

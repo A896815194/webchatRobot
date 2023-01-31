@@ -4,17 +4,13 @@ import com.web.webchat.abstractclass.ChatBase;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.KunPengRequestDto;
 import com.web.webchat.dto.RequestDto;
-import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.init.SystemInit;
 import com.web.webchat.inteface.Handler;
 import com.web.webchat.repository.FunctionRoleRepository;
 import com.web.webchat.strategyContext.TuLingRobotChat;
-import com.web.webchat.util.BaiduAsrMainUtil;
-import com.web.webchat.util.RestTemplateUtil;
-import com.web.webchat.util.VoiceDecoderUtil;
-import com.web.webchat.util.WeChatUtil;
 import com.web.webchat.verifiaction.EventGroupMsgVerification;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -91,7 +87,7 @@ public class EventGroupMsgService extends ChatBase {
     private boolean isOneAtRobot(RequestDto request) {
         if (!CollectionUtils.isEmpty(request.getAtuserlists())) {
             List<KunPengRequestDto.AtUser> atUsers = request.getAtuserlists();
-            return atUsers.stream().allMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()));
+            return atUsers.stream().filter(user -> StringUtils.isNotBlank(user.getWxid())).allMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()));
         }
         return false;
     }

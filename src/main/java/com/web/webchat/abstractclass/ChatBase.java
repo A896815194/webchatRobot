@@ -75,37 +75,38 @@ public abstract class ChatBase {
                         .functionType(functionType)
                         .chatType(request.getEvent().name())
                         .chatroomId(request.getFrom_wxid())
-                        .chatroomName(request.getFinal_from_name())
+                        .chatroomName(request.getFrom_name())
                         .robotId(request.getRobot_wxid()).build());
             }
             Optional<FunctionRoleEntity> dataSource = Optional.ofNullable(functionRoleRepository.findOne(function)).orElse(null);
             if (dataSource.isPresent()) {
-                if (1 == dataSource.get().getIsOpen()) {
+                if (Objects.equals(dataSource.get().getIsOpen(), 1)) {
                     return true;
                 }
-                FunctionRoleEntity saveFunction = null;
-                if (Objects.equals("EventFriendMsg", request.getEvent().name())) {
-                    saveFunction = FunctionRoleEntity.builder()
-                            .functionType(functionType)
-                            .chatType(request.getEvent().name())
-                            .chatroomId("")
-                            .isOpen(1)
-                            .robotId(request.getRobot_wxid()).build();
-                }
-                if (Objects.equals("EventGroupMsg", request.getEvent().name())) {
-                    saveFunction = FunctionRoleEntity.builder()
-                            .functionType(functionType)
-                            .chatType(request.getEvent().name())
-                            .chatroomId(request.getFrom_wxid())
-                            .chatroomName(request.getFrom_name())
-                            .isOpen(1)
-                            .robotId(request.getRobot_wxid()).build();
-                }
-                if (0 == dataSource.get().getIsOpen()) {
-                    saveFunction.setId(dataSource.get().getId());
-                }
+//                FunctionRoleEntity saveFunction = null;
+//                if (Objects.equals("EventFriendMsg", request.getEvent().name())) {
+//                    saveFunction = FunctionRoleEntity.builder()
+//                            .functionType(functionType)
+//                            .chatType(request.getEvent().name())
+//                            .chatroomId("")
+//                            .isOpen(1)
+//                            .robotId(request.getRobot_wxid()).build();
+//                }
+//                if (Objects.equals("EventGroupMsg", request.getEvent().name())) {
+//                    saveFunction = FunctionRoleEntity.builder()
+//                            .functionType(functionType)
+//                            .chatType(request.getEvent().name())
+//                            .chatroomId(request.getFrom_wxid())
+//                            .chatroomName(request.getFrom_name())
+//                            .isOpen(1)
+//                            .robotId(request.getRobot_wxid()).build();
+//                }
+//                saveFunction.setId(dataSource.get().getId());
+                FunctionRoleEntity saveFunction = dataSource.get();
+                saveFunction.setIsOpen(1);
                 functionRoleRepository.save(saveFunction);
-                functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
+                functionRoleRole.clear();
+                functionRoleRole = functionRoleRepository.findAll();
                 request.setMsg(request.getMsg() + "成功！");
                 functionTypeHandle(functionType, request);
                 RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
@@ -130,7 +131,8 @@ public abstract class ChatBase {
                         .robotId(request.getRobot_wxid()).build();
             }
             functionRoleRepository.save(saveFunction);
-            functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
+            functionRoleRole.clear();
+            functionRoleRole = functionRoleRepository.findAll();
             request.setMsg(request.getMsg() + "成功！");
             functionTypeHandle(functionType, request);
             RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
@@ -204,28 +206,28 @@ public abstract class ChatBase {
                         return true;
                     }
                     FunctionRoleEntity saveFunction = null;
-                    if (Objects.equals("EventFriendMsg", request.getEvent().name())) {
-                        saveFunction = FunctionRoleEntity.builder()
-                                .functionType(functionType)
-                                .chatType(request.getEvent().name())
-                                .chatroomId("")
-                                .isOpen(0)
-                                .robotId(request.getRobot_wxid()).build();
-                    }
-                    if (Objects.equals("EventGroupMsg", request.getEvent().name())) {
-                        saveFunction = FunctionRoleEntity.builder()
-                                .functionType(functionType)
-                                .chatType(request.getEvent().name())
-                                .chatroomId(request.getFrom_wxid())
-                                .chatroomName(request.getFrom_name())
-                                .isOpen(0)
-                                .robotId(request.getRobot_wxid()).build();
-                    }
-                    if (1 == dataSource.get().getIsOpen()) {
-                        saveFunction.setId(dataSource.get().getId());
-                    }
+//                    if (Objects.equals("EventFriendMsg", request.getEvent().name())) {
+//                        saveFunction = FunctionRoleEntity.builder()
+//                                .functionType(functionType)
+//                                .chatType(request.getEvent().name())
+//                                .chatroomId("")
+//                                .isOpen(0)
+//                                .robotId(request.getRobot_wxid()).build();
+//                    }
+//                    if (Objects.equals("EventGroupMsg", request.getEvent().name())) {
+//                        saveFunction = FunctionRoleEntity.builder()
+//                                .functionType(functionType)
+//                                .chatType(request.getEvent().name())
+//                                .chatroomId(request.getFrom_wxid())
+//                                .chatroomName(request.getFrom_name())
+//                                .isOpen(0)
+//                                .robotId(request.getRobot_wxid()).build();
+//                    }
+                    saveFunction = dataSource.get();
+                    saveFunction.setIsOpen(0);
                     functionRoleRepository.save(saveFunction);
-                    functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
+                    functionRoleRole.clear();
+                    functionRoleRole = functionRoleRepository.findAll();
                     request.setMsg(request.getMsg() + "成功！");
                     RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                     return true;
@@ -249,7 +251,8 @@ public abstract class ChatBase {
                             .robotId(request.getRobot_wxid()).build();
                 }
                 functionRoleRepository.save(saveFunction);
-                functionRoleRole = functionRoleRepository.findAllByIsOpen(1);
+                functionRoleRole.clear();
+                functionRoleRole = functionRoleRepository.findAll();
                 request.setMsg(request.getMsg() + "成功！");
                 RestTemplateUtil.sendMsgToWeChatSync(WeChatUtil.handleResponse(request, ApiType.SendTextMsg), propertiesEntity.getWechatUrl());
                 return true;
@@ -365,9 +368,7 @@ public abstract class ChatBase {
     private boolean isOneAtRobot(RequestDto request) {
         if (!CollectionUtils.isEmpty(request.getAtuserlists())) {
             List<KunPengRequestDto.AtUser> atUsers = request.getAtuserlists();
-            if (atUsers.stream().allMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()))) {
-                return true;
-            }
+            return atUsers.stream().filter(user -> StringUtils.isNotBlank(user.getWxid())).allMatch(item -> Objects.equals(item.getWxid(), request.getRobot_wxid()));
         }
         return false;
     }
