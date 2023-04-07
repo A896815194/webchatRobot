@@ -34,6 +34,7 @@ public class EventGroupMsgService extends ChatBase {
     // RequestDto{api='null', robot_wxid='wxid_i5vabkq7vwb222', from_wxid='18955225703@chatroom', to_wxid='wxid_i5vabkq7vwb222', msg='6', Event='EventGroupMsg'}
 
     public void sendMessageToWechat(RequestDto request) {
+        // 开启图灵机器人聊天模块
         if (new EventGroupMsgVerification().hasOpen(request, FunctionType.TuLingRobot.name(), 1)) {
 //            if (request.getMsg().contains(".silk")) {
 //                if (34 == request.getType()) {

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+
+  <title>益智拼图</title>
+  <link rel="stylesheet" href="./css/puzzle.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- 头部数据 -->
+    <div class="head">
+      <span id="count">步数: 0</span>
+      <span id="time">用时: 00:00</span>
+      <button id="set" class="finger" onclick="setGame()">设置</button>
+    </div>
+
+    <div class="selectImg">
+      <div class="selectImgMsg">
+        <img src="./img/puzzle/1.png" alt="">
+        <img class="puzzleImg" src="./img/puzzle/2.png" alt="">
+        <img class="puzzleImg" src="./img/puzzle/3.png" alt="">
+        <img class="puzzleImg" src="./img/puzzle/4.png" alt="">
+        <img class="puzzleImg" src="./img/puzzle/5.png" alt="">
+        <img class="puzzleImg" src="./img/puzzle/6.png" alt="">
+        <img class="puzzleImg" src="./img/puzzle/7.png" alt="">
+      </div>
+
+    </div>
+    <!-- 拼图区域 -->
+    <div class="newImg" id="newImg">
+      <img id="startImg" src="./img/puzzle/1.png" alt="">
+    </div>
+
+    <!-- 底部功能按钮 -->
+    <div class="end">
+      <button id="resetGame" onclick="resetGame()" disabled class="disable buttonH">重置</button>
+      <button id="startGame" onclick="startGame()" class="finger buttonH">开始游戏</button>
+      <button id="suspendGame" onclick="suspendGame(true)" disabled class="disable buttonH">暂停</button>
+    </div>
+
+    <!-- 暂停模态框 -->
+    <div class=" suspend mask">
+      <button onclick="suspendGame(false)" class="centerDiv finger">开始</button>
+    </div>
+
+    <!-- 游戏设置模态框 -->
+    <div class="setGame mask">
+      <div class="centerDiv setGameContent">
+        <button id="closeSet" class="finger" onclick="closeModal()">关闭</button>
+        <h3>设置</h3>
+        <h4>游戏难度: </h4>
+        <div class="levelGame">
+          <label for="esay" class="finger">简单:</label>
+          <input type="radio" id='esay' name="level" value="0" checked class="finger">
+          <br />
+          <label for="medium" class="finger">中等:</label>
+          <input type="radio" id="medium" name="level" value="1" class="finger">
+          <br />
+          <label for="difficult" class="finger">困难:</label>
+          <input type="radio" id="difficult" name="level" value="2" class="finger">
+          <button id="saveSet" class="finger bottomEnd" onclick="saveSet()">保存</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 过关模态框 -->
+    <div class="mask pass ">
+      <div class="centerDiv passGame">
+        <h2>恭喜过关!</h2>
+        <img id="passImg" src="./img/puzzle/img1.jpg" alt="">
+        <p id="passCount">总步数: 00:00</p>
+        <p id="passTime">用时: 0</p>
+        <button class="bottomEnd" onclick="closeModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/puzzle.js"></script>
+</body>
+
+</html>

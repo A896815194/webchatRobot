@@ -133,7 +133,7 @@ public class SystemInit {
             return;
         }
         //通过全开着的过滤掉得到开启了魔法天气的列表
-        List<FunctionRoleEntity> magicWeatherRoomIds = functionRoleRole.stream().filter(item -> Objects.equals(item.getFunctionType(), FunctionType.MagicWeather.name()) && Objects.equals(item.getChatType(), "EventGroupMsg")).collect(Collectors.toList());
+        List<FunctionRoleEntity> magicWeatherRoomIds = functionRoleRole.stream().filter(item -> Objects.equals(item.getFunctionType(), FunctionType.MagicWeather.name()) && Objects.equals(item.getChatType(), "EventGroupMsg") && Objects.equals(item.getIsOpen(), 1)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(magicWeatherRoomIds)) {
             logger.info("没有开启魔法天气的群里");
             return;

@@ -58,6 +58,7 @@ public abstract class ChatBase {
 
     public boolean open(RequestDto request, String functionType) {
         logger.info("开启功能命令.");
+        // 开关有bug 以后再改
         if ("tiaotiaoxiaoshuai".equals(request.getFrom_wxid()) || "tiaotiaoxiaoshuai".equals(request.getFinal_from_wxid())) {
             if (getVerificationByType(request.getEvent().name(), functionType, request, 1)) {
                 return true;
@@ -140,8 +141,9 @@ public abstract class ChatBase {
         }
         return false;
     }
-
+    // 如果开启某个类型功能需要初始化，写在这里
     private void functionTypeHandle(String functionType, RequestDto request) {
+
         if (Objects.equals(functionType, FunctionType.BlindDate.name())) {
             logger.info(functionType + ":要创建配置文件");
             try {
@@ -245,7 +247,7 @@ public abstract class ChatBase {
                     saveFunction = FunctionRoleEntity.builder()
                             .functionType(functionType)
                             .chatType(request.getEvent().name())
-                            .chatroomName(request.getFinal_from_name())
+                            .chatroomName(request.getFrom_name())
                             .chatroomId(request.getFrom_wxid())
                             .isOpen(0)
                             .robotId(request.getRobot_wxid()).build();
@@ -276,6 +278,7 @@ public abstract class ChatBase {
         // 判断是否是开关命令
         logger.info("发布物品特性事件");
         pubLisher.pushAutoThingListener(request);
+        // 开关有关的逻辑
         if (msg.startsWith("开启")) {
             String ml = msg.substring(2);
             if (FunctionType.isFuncationValue(ml)) {

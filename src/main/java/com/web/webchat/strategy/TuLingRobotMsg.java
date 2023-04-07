@@ -28,14 +28,14 @@ public class TuLingRobotMsg implements Handler {
     private PropertiesEntity properties;
 
     @Override
-    public List<String> createMessage(RequestDto request, PropertiesEntity propertiesEntity) {
-        this.properties = propertiesEntity;
-        return getTuLingResponseMsg(request.getMsg());
+    public void afterPropertiesSet() throws Exception {
+        StrategyFactory.register(FunctionType.TuLingRobot.name(), this);
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        StrategyFactory.register(FunctionType.TuLingRobot.name(), this);
+    public List<String> createMessage(RequestDto request, PropertiesEntity propertiesEntity) {
+        this.properties = propertiesEntity;
+        return getTuLingResponseMsg(request.getMsg());
     }
 
     public List<String> getTuLingResponseMsg(String msg) {

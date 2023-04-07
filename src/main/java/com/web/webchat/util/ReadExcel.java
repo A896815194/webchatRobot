@@ -237,6 +237,19 @@ public class ReadExcel {
         return values;
     }
 
+    public static String getValueStringByKey(List<String> result, String key) {
+        if (CollectionUtils.isEmpty(result)) {
+            return null;
+        }
+        String content = result.stream().filter(data -> {
+            return data.startsWith(key + "=");
+        }).collect(Collectors.joining());
+        if (StringUtils.isBlank(content) || !content.contains("=")) {
+            return "";
+        }
+        return content.split("=")[1];
+    }
+
     public static List<List<Object>> readExcelData(String filePath, List<String> colmuns, Class classzz
     ) {
         List<List<Object>> list = new ArrayList<>();

@@ -1,0 +1,73 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.input-box button {
+    padding: 10px 20px;
+    background-color: #ff69b4;
+    /*background-color:#1f8bf5;*/
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.message-box {
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    height: 100px;
+    overflow-y: scroll;
+}
+
+.message-box p {
+    margin-bottom: 10px;
+}
+/*系统提示*/
+.message-box .xt {
+    font-size: 2px;
+}
+/*聊天字体*/
+.message-box .lt {
+    font-size: 10px;
+}
+/*聊天字体*/
+.message-box .rm {
+    font-size: 4px;
+    color: #ff69b4;
+}
+
+/*聊天字体*/
+.message-box .nr {
+    font-size: 10px;
+}
+

@@ -1,0 +1,262 @@
+* {
+  /* 去除移动端点击高亮效果 */
+  -webkit-tap-hight-color: transparent;
+  margin: 0;
+}
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #3e6c8e;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading img {
+  width: 80%;
+  max-width: 300px;
+}
+#newImg div{
+  cursor:pointer;
+
+}
+
+#newImg canvas{
+  cursor:pointer;
+
+}
+
+#passImg{
+  width:175px;
+  height:175px;
+}
+#app{
+  margin: auto;
+  background: url('../img/background/background.png') no-repeat;
+  background-size:100% 100%;
+  /* height: 100vh; */
+  width: 100vw;
+}
+.title h1{
+  font-family: Arial, sans-serif;
+  color: #fff;
+  font-size: 25px;
+  width:350px;
+}
+.newImg {
+  margin: auto;
+  width: 70vw;
+  height: 70vw;
+  border: 2px solid #999;
+  border-radius: 10px;
+  padding: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  margin-top: 50px;
+  background-color: #F7F4F4;
+}
+
+
+
+button{
+  background-color: #1F8BF5;
+  border: 0;
+  border-radius: 10px;
+  color: #F7F4F4;
+}
+
+#speedSuccess{
+  display: none;
+}
+.head,.end {
+  padding: 5px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  color: #F7F4F4;
+}
+.puzzleImg{
+  margin-left: 5px;
+}
+.end {
+  margin-top: 20px;
+  justify-content: space-around
+}
+.end button{
+  height: 30px;
+}
+#startImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(5, 5, 5, .8);
+  display:none;
+}
+
+.suspend button {
+  background-color: #489FF5;
+  box-shadow: 0px 3px 8px 3px rgba(255, 255, 255, 0.2);
+  width: 100px;
+  height: 30px;
+  border: 0px;
+  border-radius: 10px;
+}
+
+.finger{
+  cursor: pointer;
+}
+.disable{
+  cursor: not-allowed;
+  color: #010;
+  background-color: #CECED1;
+}
+.centerDiv{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #F7F4F4;
+}
+
+.setGameContent{
+  box-shadow: 0px 3px 8px 3px rgba(5, 5, 5, 0.2);
+  width: 50vw;
+  height: 80vw;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+#closeSet{
+  position: absolute;
+  right: 0;
+  margin-right: 5px;
+  
+}
+.setGameContent h3{
+  margin: 10px 0;
+  text-align: center;
+}
+.bottomEnd{
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 10px;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 80px;
+}
+
+.setGameContent h4{
+  margin: 0;
+  margin-bottom: 5px;
+}
+.levelGame{
+  margin-left: 10px;
+}
+
+.passGame{
+  width: 200px;
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 10px;
+  text-align: center;
+  color: #FA0606;
+}
+.passGame img{
+  width: 100%;
+  border-radius: 10px;
+}
+
+.selectImg{
+  margin: auto;
+  margin-top: 30px;
+  width: 80vw;
+  height: 100px;
+  border: 1px solid #F7F4F4;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 5px;
+  overflow: hidden;
+}
+.selectImgMsg{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+}
+.selectImgMsg img{
+  width: 100px;
+  height: 100%;
+  background-color: antiquewhite;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar
+{
+	width: 5px;
+	height: 8px;
+	background-color: transparent;
+  border-radius:20px;
+}
+ 
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track
+{
+	box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius:20px;
+	background-color: transparent;
+}
+ 
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb
+{
+	border-radius: 20px;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+@media screen and (min-width:400px) {
+  .selectImg{
+    width: 350px;
+  }
+  #app{
+  width: 400px;
+  }
+  .container_zhezhao{
+    width: 400px;
+  }
+  .newImg {
+    margin: auto;
+    width: 300px;
+    height: 300px;
+    border: 2px solid #999;
+    border-radius: 10px;
+    padding: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    margin-top: 50px;
+    background-color: #F7F4F4;
+  }
+
+  .setGameContent{
+    width: 200px;
+    height: 300px;
+  }
+}
