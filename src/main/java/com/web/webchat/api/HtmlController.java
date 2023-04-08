@@ -3,6 +3,7 @@ package com.web.webchat.api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,8 +18,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HtmlController {
 
-    @GetMapping("")
-    public String wxauth1() {
+    @GetMapping("/index")
+    public String index() {
+
+        return "welcome";
+    }
+
+    @GetMapping("/pt")
+    public String pintu(@RequestParam("id")String id) {
         return "pintu";
     }
 

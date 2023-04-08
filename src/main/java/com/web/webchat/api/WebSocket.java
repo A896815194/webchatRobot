@@ -4,24 +4,25 @@ import com.google.gson.Gson;
 import com.web.webchat.dto.websocket.Message;
 import com.web.webchat.dto.websocket.ServerEncoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
-@ServerEndpoint(value = "/websocket/", encoders = {ServerEncoder.class})
+@ServerEndpoint(value = "/websocket/{userName}", encoders = {ServerEncoder.class})
 public class WebSocket {
 
     private static AtomicInteger onlineCount = new AtomicInteger(0);
 
-    private static ConcurrentHashMap<String, WebSocket> serverMap = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, WebSocket> serverMap = new ConcurrentHashMap<>();
 
     private Session session;
 
@@ -30,10 +31,12 @@ public class WebSocket {
     private static AtomicInteger num = new AtomicInteger(0);
 
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session, @PathParam(value = "userName") String userId) {
         this.session = session;
-        Map<String, Object> userProperties = session.getUserProperties();
-        this.ipAddr = "游客" + num.incrementAndGet();
+        log.info(userId + "链接进来");
+        String name = checkName(userId);
+        log.info("登陆人为:" + name);
+        this.ipAddr = name;
         //this.ipAddr = (String) userProperties.get(WebSocketConfigurator.IP_ADDR);
         if (serverMap.containsKey(this.ipAddr)) {
             serverMap.remove(this.ipAddr);
@@ -62,23 +65,47 @@ public class WebSocket {
     public void onMessage(String message, Session session) {
         log.info("服务器收到了用户" + ipAddr + "发来的消息：" + message);
         Message reciver = new Gson().fromJson(message, Message.class);
-        if(Objects.equals("heartBeat",reciver.getAction())) {
+        if (Objects.equals("heartBeat", reciver.getAction())) {
             try {
+                String userId = reciver.getUserId();
+                String userName = checkName(userId);
+                reciver.setUserName(userName);
                 reciver.setOnlineCount(String.valueOf(getOnlineCount()));
                 session.getBasicRemote().sendObject(reciver);
             } catch (Exception e) {
                 log.error("心跳检测发送异常");
+                throw new RuntimeException("心跳检测异常",e);
             }
             return;
         }
+
         //方便前端测试
-        Message msg = new Message();
-        msg.setMsg(reciver.getMsg());
-        msg.setUserName(ipAddr);
-        msg.setOnlineCount(String.valueOf(getOnlineCount()));
-        msg.setType("2");
-        msg.setAction("broadcast");
-        groupSendingWithOutSelf(msg, session);
+        if(("gxGame").equals(reciver.getAction())){
+            Message msg = new Message();
+            msg.setMsg(reciver.getMsg());
+            msg.setUserName(ipAddr);
+            msg.setOnlineCount(String.valueOf(getOnlineCount()));
+            msg.setType("2");
+            msg.setAction(reciver.getAction());
+            groupSending(msg, session);
+        }else {
+            Message msg = new Message();
+            msg.setMsg(reciver.getMsg());
+            msg.setUserName(ipAddr);
+            msg.setOnlineCount(String.valueOf(getOnlineCount()));
+            msg.setType("2");
+            msg.setAction("broadcast");
+            groupSendingWithOutSelf(msg, session);
+        }
+    }
+
+    private String checkName(String userId) {
+        String name = gameController.getUserNameById(userId);
+        if(StringUtils.isBlank(name)){
+            log.error("没有找到对应人名");
+            throw new RuntimeException("非法id");
+        }
+        return name;
     }
 
     /**
@@ -107,7 +134,8 @@ public class WebSocket {
             }
         }
     }
-   // 群发不发自己
+
+    // 群发不发自己
     public void groupSendingWithOutSelf(Message message, Session exIncludeSession) {
         for (String name : serverMap.keySet()) {
             try {
@@ -150,25 +178,26 @@ public class WebSocket {
             subOnlineCount();
             log.info(ipAddr + "，已下线！");
             Message message = new Message();
-            message.setMsg( ipAddr + "离开了游戏");
+            message.setMsg(ipAddr + "离开了游戏");
             message.setUserName(ipAddr);
             message.setOnlineCount(String.valueOf(getOnlineCount()));
             message.setType("2");
             message.setAction("baby");
-            groupSending(message,null);
+            groupSending(message, null);
         }
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
         log.error("用户" + ipAddr + "发生了错误，具体如下：" + throwable.getMessage());
+        serverMap.remove(ipAddr);
         Message message = new Message();
-        message.setMsg( ipAddr + "离开了游戏");
+        message.setMsg(ipAddr + "离开了游戏");
         message.setUserName(ipAddr);
         message.setOnlineCount(String.valueOf(getOnlineCount()));
         message.setType("2");
         message.setAction("baby");
-        groupSending(message,null);
+        groupSending(message, null);
     }
 
     private static synchronized void subOnlineCount() {

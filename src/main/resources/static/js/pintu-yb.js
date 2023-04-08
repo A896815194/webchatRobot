@@ -2,15 +2,16 @@ let num = 3;//难度 3 * 3
 let step = 0;//记录步数
 let time = 1; //记录时间
 let setIntervalTime = ''; //定时器
-let puzzleImgsSrc = ["./img/puzzle/1.png", "./img/puzzle/2.png", "./img/puzzle/3.png", "./img/puzzle/4.png", "./img/puzzle/5.png", "./img/puzzle/6.png", "./img/puzzle/7.png", "./img/puzzle/9.jpg", "./img/puzzle/10.png","./img/puzzle/11.png","./img/puzzle/12.png"] //所有拼图地址
+let puzzleImgsSrc = ["/img/puzzle/1.png", "/img/puzzle/2.png", "/img/puzzle/3.png", "/img/puzzle/4.png", "/img/puzzle/5.png", "/img/puzzle/6.png", "/img/puzzle/7.png", "/img/puzzle/9.jpg", "/img/puzzle/10.png", "/img/puzzle/11.png", "/img/puzzle/12.png"] //所有拼图地址
 let puzzleImgsNode = [];
-let puzzleImgSrc = '' ;//拼图地址
+let puzzleImgSrc = '';//拼图地址
 let ptImg = {};
 let newImg = {} //拼图区域
 // 二维数组
 let ewsz = [];
 let spcanvas = [];
-
+// 游戏难度
+let level = 0;
 
 //存储开始和结束循序，以此来判断是否过关
 let gameStart = [];//开始循序
@@ -23,19 +24,15 @@ var emptyRow = num - 1, emptyCol = num - 1;
 let mewImgWidth = 0;
 // 通关url
 let successUrl = "";
-let timeHours ="";
+let timeHours = "";
 $(function () {
-    if ("WebSocket" in window){
-    }else{
-        alert("你的设备不支持在线聊天功能，只能自娱自乐咯")
-    }
     newImg = $("#newImg")[0];
     let selectImgDiv = $(".selectImg")[0];
     $(selectImgDiv).append("<div class=\"selectImgMsg\"></div>");
     let selectImgMsg = $(".selectImgMsg")[0];
     for (let i = 0; i < puzzleImgsSrc.length; i++) {
         if (i === 0) {
-            successUrl = puzzleImgsSrc[i] ;
+            successUrl = puzzleImgsSrc[i];
             $("#passImg").attr("src", successUrl);
         }
         let img = "<img class=\"puzzleImg\" src=" + puzzleImgsSrc[i] + " alt=\"\">";
@@ -53,7 +50,7 @@ $(function () {
                 alert("正在游戏中");
                 return;
             }
-            puzzleImgSrc = this.src ;
+            puzzleImgSrc = this.src;
             successUrl = puzzleImgSrc;
             $("#passImg").attr("src", successUrl);
             $("#startImg").attr("src", puzzleImgSrc);
@@ -62,13 +59,12 @@ $(function () {
         })
         puzzleImgsNode.push(imgs[i]);
     }
-    imgsLoad(puzzleImgsNode,function(){
-       $(".loading").hide();
+    imgsLoad(puzzleImgsNode, function () {
+        $(".loading").hide();
     });
 
 
 });
-
 
 
 //计时
@@ -112,6 +108,7 @@ function closeTimer() {
 var seconds = 0;
 var minutes = 0;
 var hours = 0;
+
 function startTimer() {
     setInterval(function () {
         seconds++;
@@ -142,7 +139,7 @@ function startGame() {
     $('#startImg').css("display", 'none'); //原图隐藏
     $("#startGame").attr('disabled', "disabled")//开始按钮禁用
     $("#startGame").attr('class', 'disable');//开启禁用标志
-    if($("#speedSuccess")) {
+    if ($("#speedSuccess")) {
         document.getElementById("speedSuccess").removeAttribute('disabled')//移除禁用标志
         document.getElementById("speedSuccess").className = 'finger'//添加手指标志
     }
@@ -192,7 +189,7 @@ function shuffle() {
 
 
 function InitPuzzle() {
-    imgLoad(ptImg,function(){
+    imgLoad(ptImg, function () {
         let w = ptImg.width / num //计算每一个切图大小 宽
         let h = ptImg.height / num//计算每一个切图大小 高
         mewImgWidth = newImg.clientWidth / num - 5 //保证所有切图可以在盒子中放下
@@ -276,6 +273,20 @@ function check() {
 }
 
 
+function gameSuccessEvent() {
+    $("#passImg").attr("src", $("#startImg").src);
+    document.querySelector(".pass").style.display = 'block'//显示模态框
+    $("#passCount").html("总步数:" + step);
+    $("#passTime").html($("#time").html());
+    let gxMsg = createTGMsg();
+    let sendMsg = {
+        "msg": gxMsg,
+        "type": "2",
+        "action": "gxGame"
+    }
+    ws.send(JSON.stringify(sendMsg));
+}
+
 //移动元素
 function move(row, col) {
     if ((row === emptyRow && Math.abs(col - emptyCol) === 1) ||
@@ -290,13 +301,28 @@ function move(row, col) {
         }
         if (check()) {
             //设置过关提示
-            $("#passImg").attr("src", successUrl);
-            document.querySelector(".pass").style.display = 'block'//显示模态框
-            $("#passCount").html("总步数:" + step);
-            $("#passTime").html("用时: " + timeHours);
+            gameSuccessEvent();
+
             resetGame();
         }
     }
+}
+
+function createTGMsg() {
+    return "恭喜【" + gameUser + "】在" + getLevelString() + "难度下使用"+step+"步完成了游戏," + document.getElementById('time').innerHTML;
+}
+
+function getLevelString() {
+    if (level == 0) {
+        return "简单";
+    }
+    if (level == 1) {
+        return "中等";
+    }
+    if (level == 2) {
+        return "困难";
+    }
+
 }
 
 // 更新拼图界面
@@ -310,7 +336,7 @@ function update() {
             $("#div" + divid).css("margin", "1px");  //设置 切图间隙
             $("#div" + divid).append($(ewsz[i][j]));
             // var div = document.getElementById("div" + divid);
-            $("#div" + divid).on("click  touchstart",(function (row, col) {
+            $("#div" + divid).on("click  touchstart", (function (row, col) {
                 return function () {
                     move(row, col);
                 };
@@ -330,10 +356,8 @@ function update() {
 function speedPass() {
     clearImgDiv();
     refillImg();
-    $("#passCount").html("总步数:" + step);
-    $("#passTime").html("用时: " + timeHours);
-    document.querySelector(".pass").style.display = 'block'//显示模态框
     alert("爱栗表示很急！！");
+    gameSuccessEvent();
 
 }
 
@@ -345,7 +369,7 @@ function refillImg() {
             $("#div" + index).css("height", mewImgWidth + "px");
             $("#div" + index).css("margin", "1px");  //设置 切图间隙
             $("#div" + index).append(spcanvas[index]);
-            $("#div" + index).on("click  touchstart",(function (row, col) {
+            $("#div" + index).on("click  touchstart", (function (row, col) {
                 return function () {
                     move(row, col);
                 };
@@ -359,7 +383,7 @@ function clearImgDiv() {
     for (let index = 0; index < ids.length; index++) {
         $("#div" + index).remove();
     }
-    $("#startImg").remove();
+    $("#startImg").css("display","none");
 
 }
 
@@ -383,17 +407,17 @@ function closeModal() {
 //保存游戏设置
 function saveSet() {
     let mj = $("#miji").val();
-    if(mj ==='9435222'){
-        $("#speedSuccess").css("display","block");
+    if (mj === '9435222') {
+        $("#speedSuccess").css("display", "block");
         $("#speedSuccess").attr('disabled', "disabled")//开始按钮禁用
         $("#speedSuccess").attr('class', 'disable');//开启禁用标志
-        $("#speedSuccess").bind("click touchstart",function(){
+        $("#speedSuccess").bind("click touchstart", function () {
             speedPass();
         });
     }
     document.querySelector('.setGame').style.display = 'none'
 
-    let level = 0
+    level = 0
     //获取级别设置结果
     let radios = document.getElementsByName('level')
     for (let i = 0; i < radios.length; i++) {
@@ -444,7 +468,7 @@ function resetGame(currentFlag) {
                 break;
             }
         }
-        puzzleImgSrc = element ;
+        puzzleImgSrc = element;
     }
     successUrl = puzzleImgSrc;
     spcanvas = [];
@@ -456,7 +480,7 @@ function resetGame(currentFlag) {
     $("#newImg").html("");
     let newImg = document.createElement('img')
     newImg.setAttribute("id", "startImg")
-    newImg.setAttribute("src", puzzleImgSrc );
+    newImg.setAttribute("src", puzzleImgSrc);
     $("#newImg").append(newImg);
     ptImg = $("#startImg")[0];
     document.getElementById("startGame").removeAttribute('disabled')//移除禁用标志

@@ -62,7 +62,7 @@ public class ReadExcel {
         return result;
     }
 
-    public static void outFile(String filePath, String content) {
+    public static synchronized void outFile(String filePath, String content) {
         File f = new File(filePath);
         File pafile = f.getParentFile();
         //不存在父路径就创建
@@ -229,6 +229,34 @@ public class ReadExcel {
             }
             if (value.contains(FGF)) {
                 String[] valuenum = value.split(FGF);
+                values.addAll(Arrays.asList(valuenum));
+            } else {
+                values.add(value);
+            }
+        }
+        return values;
+    }
+
+    public static List<String> getValuesByDhKey(List<String> result, String key) {
+        if (CollectionUtils.isEmpty(result)) {
+            return null;
+        }
+        String content = result.stream().filter(data -> {
+            return data.startsWith(key + "=");
+        }).collect(Collectors.joining());
+        List<String> values = new ArrayList<>();
+        if (StringUtils.isBlank(content) || !content.contains("=")) {
+            return new ArrayList<>();
+        }
+        if (content.split("=").length < 2) {
+            return new ArrayList<>();
+        } else {
+            String value = content.split("=")[1];
+            if (StringUtils.isBlank(value)) {
+                return new ArrayList<>();
+            }
+            if (value.contains(",")) {
+                String[] valuenum = value.split(",");
                 values.addAll(Arrays.asList(valuenum));
             } else {
                 values.add(value);

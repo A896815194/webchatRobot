@@ -1,15 +1,19 @@
 package com.web.webchat.util.baiducommon;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
  * 与连接相关的Util类
  */
+@Slf4j
 public class ConnUtil {
 
     /**
@@ -22,8 +26,18 @@ public class ConnUtil {
         String result = null;
         try {
             result = URLEncoder.encode(str, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("encode error",e);
+        }
+        return result;
+    }
+
+    public static String urlDecode(String str) {
+        String result = null;
+        try {
+            result = URLDecoder.decode(str, "UTF-8");
+        } catch (Exception e) {
+            log.error("decode error",e);
         }
         return result;
     }

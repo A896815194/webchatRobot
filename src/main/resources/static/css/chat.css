@@ -56,6 +56,10 @@ body {
 .message-box .xt {
     font-size: 2px;
 }
+.message-box .xtts {
+    font-size: 2px;
+    color: #ff69b4;
+}
 /*聊天字体*/
 .message-box .lt {
     font-size: 10px;
