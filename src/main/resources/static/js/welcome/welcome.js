@@ -15,6 +15,7 @@ let i = 0;
 let speed = 60;
 let pause = false;
 var player;
+var videoPlay;
 $(function () {
         initIndex();
         if ("WebSocket" in window) {
@@ -35,21 +36,13 @@ function initIndex() {
     contentBox = $(".content p")[0];
     input = $("#username");
     goBtn = document.getElementById('go');
+    videoPlay = document.getElementById('videoPlay');
     video.src = indexVieoUrl;
-    video.play();
+    video.addEventListener("canplaythrough", function() {
+        video.play();
+    });
     goBtn.addEventListener("click", function () {
         checkUser();
-        // JS.post("/api/v1/login", param, function (data) {
-        //      if(data.success){
-        //          // if(data.islogin){
-        //          //     alert("这个昵称已经在游戏中了,请退出或者换一个昵称进入");
-        //          //     return;
-        //          // }
-        //          // JS.jumpIndex("/ali/pt", "get");
-        //          // return;
-        //      }
-        //      alert("注册昵称时候发生了小意外,请稍后再试");
-        // });
     });
 
     musicBtn.addEventListener("click", function () {
@@ -60,6 +53,9 @@ function initIndex() {
             video.muted = true;
             musicBtn.setAttribute("class", "fas fa-volume-up");
         }
+    });
+    videoPlay.addEventListener("click", function () {
+        video.play();
     });
     typeWriter();
 }

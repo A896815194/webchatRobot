@@ -145,6 +145,9 @@ public class gameController {
                 // 名字没被占用
                 //result.put("hasUse", false);
                 updateUserName(loginNames);
+                if (!isjoinChat) {
+                    response.sendRedirect("/ali/pt?id=" + nameIdMap.get(name));
+                }
                 return result;
             }
             result.put("name", name);
