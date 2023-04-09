@@ -11,8 +11,12 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -23,6 +27,8 @@ public class WebSocket {
     private static AtomicInteger onlineCount = new AtomicInteger(0);
 
     public static ConcurrentHashMap<String, WebSocket> serverMap = new ConcurrentHashMap<>();
+
+    public static List<Map<String,Object>> onlineMembers = new CopyOnWriteArrayList<>();
 
     private Session session;
 
@@ -50,6 +56,7 @@ public class WebSocket {
         message.setMsg("欢迎" + ipAddr + "加入游戏");
         message.setUserName(ipAddr);
         message.setOnlineCount(String.valueOf(getOnlineCount()));
+        message.setMembers(getOnlineMembers());
         message.setType("2");
         message.setAction("welcome");
         groupSending(message, session);
@@ -71,6 +78,7 @@ public class WebSocket {
                 String userName = checkName(userId);
                 reciver.setUserName(userName);
                 reciver.setOnlineCount(String.valueOf(getOnlineCount()));
+                reciver.setMembers(getOnlineMembers());
                 session.getBasicRemote().sendObject(reciver);
             } catch (Exception e) {
                 log.error("心跳检测发送异常");
@@ -85,6 +93,7 @@ public class WebSocket {
             msg.setMsg(reciver.getMsg());
             msg.setUserName(ipAddr);
             msg.setOnlineCount(String.valueOf(getOnlineCount()));
+            msg.setMembers(getOnlineMembers());
             msg.setType("2");
             msg.setAction(reciver.getAction());
             groupSending(msg, session);
@@ -93,6 +102,7 @@ public class WebSocket {
             msg.setMsg(reciver.getMsg());
             msg.setUserName(ipAddr);
             msg.setOnlineCount(String.valueOf(getOnlineCount()));
+            msg.setMembers(getOnlineMembers());
             msg.setType("2");
             msg.setAction("broadcast");
             groupSendingWithOutSelf(msg, session);
@@ -181,6 +191,7 @@ public class WebSocket {
             message.setMsg(ipAddr + "离开了游戏");
             message.setUserName(ipAddr);
             message.setOnlineCount(String.valueOf(getOnlineCount()));
+            message.setMembers(getOnlineMembers());
             message.setType("2");
             message.setAction("baby");
             groupSending(message, null);
@@ -191,10 +202,12 @@ public class WebSocket {
     public void onError(Session session, Throwable throwable) {
         log.error("用户" + ipAddr + "发生了错误，具体如下：" + throwable.getMessage());
         serverMap.remove(ipAddr);
+        subOnlineCount();
         Message message = new Message();
         message.setMsg(ipAddr + "离开了游戏");
         message.setUserName(ipAddr);
         message.setOnlineCount(String.valueOf(getOnlineCount()));
+        message.setMembers(getOnlineMembers());
         message.setType("2");
         message.setAction("baby");
         groupSending(message, null);
@@ -220,4 +233,14 @@ public class WebSocket {
         return serverMap.containsKey(ipAddr);
     }
 
+    public List<Map<String,Object>> getOnlineMembers(){
+        List<Map<String,Object>> onlineMembers = new CopyOnWriteArrayList<>();
+        serverMap.forEach((k,v)->{
+            Map<String,Object> memberMap = new HashMap<>();
+            memberMap.put("name",k);
+            memberMap.put("id",gameController.nameIdMap.get(k));
+            onlineMembers.add(memberMap);
+        });
+        return onlineMembers;
+    }
 }

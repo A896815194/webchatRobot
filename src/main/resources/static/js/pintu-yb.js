@@ -61,9 +61,8 @@ $(function () {
     }
     imgsLoad(puzzleImgsNode, function () {
         $(".loading").hide();
+
     });
-
-
 });
 
 

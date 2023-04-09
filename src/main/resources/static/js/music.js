@@ -1,10 +1,11 @@
+
 $(function () {
-    const ap = new APlayer({
+  let ap = new APlayer({
         container: document.getElementById('aplayer'),
         listFolded: true,
         // autoplay:true,
         theme:'purple',
-        preload:true,
+        preload:false,
         //fixed:true,
         audio: [
             {

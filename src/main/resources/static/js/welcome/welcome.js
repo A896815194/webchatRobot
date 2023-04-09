@@ -18,6 +18,7 @@ var player;
 var videoPlay;
 $(function () {
         initIndex();
+
         if ("WebSocket" in window) {
         } else {
             alert("你的设备不支持在线聊天功能,所以无法进入到下一页");
@@ -57,7 +58,15 @@ function initIndex() {
     videoPlay.addEventListener("click", function () {
         video.play();
     });
-    typeWriter();
+    let clickMe = document.getElementById("clickMe");
+    clickMe.addEventListener("click", function () {
+        video.currentTime = 0;
+        $(".blank").css("display","none");
+        typeWriter();
+        video.muted = false;
+        video.play();
+    });
+
 }
 
 

@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -22,5 +25,7 @@ public class Message {
     private String onlineCount;
 
     private String msg;
+
+    private List<Map<String,Object>> members;
 
 }
