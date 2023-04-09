@@ -59,6 +59,9 @@ $(function () {
         })
         puzzleImgsNode.push(imgs[i]);
     }
+    $("#speedSuccess").bind("click touchstart", function () {
+        speedPass();
+    });
     imgsLoad(puzzleImgsNode, function () {
         $(".loading").hide();
 
@@ -155,7 +158,7 @@ function startGame() {
 
 // 打乱拼图数组
 function shuffle() {
-    for (var i = 0; i < num * num * 10; i++) { // 进行10*size*size次交换
+    for (var i = 0; i < num * num * 10 * (level + 1); i++) { // 进行10*size*size次交换
         var dir = Math.floor(Math.random() * 4); // 随机选择方向
         switch (dir) {
             case 0: // 上
@@ -198,7 +201,6 @@ function InitPuzzle() {
             ewsz[i] = new Array();
             for (let j = 0; j < num; j++) {
                 //绘制切图，并用div包裹
-
                 $(newImg).append("<div id='div" + divid + "'></div>")
                 $("#div" + divid).css("width", mewImgWidth + "px");
                 $("#div" + divid).css("height", mewImgWidth + "px");
@@ -273,7 +275,8 @@ function check() {
 
 
 function gameSuccessEvent() {
-    $("#passImg").attr("src", $("#startImg").src);
+    successUrl = $("#startImg").src;
+    $("#passImg").attr("src", successUrl);
     document.querySelector(".pass").style.display = 'block'//显示模态框
     $("#passCount").html("总步数:" + step);
     $("#passTime").html($("#time").html());
@@ -308,7 +311,7 @@ function move(row, col) {
 }
 
 function createTGMsg() {
-    return "恭喜【" + gameUser + "】在" + getLevelString() + "难度下使用"+step+"步完成了游戏," + document.getElementById('time').innerHTML;
+    return "恭喜【" + gameUser + "】在" + getLevelString() + "难度下使用" + step + "步完成了游戏," + document.getElementById('time').innerHTML;
 }
 
 function getLevelString() {
@@ -326,9 +329,16 @@ function getLevelString() {
 
 // 更新拼图界面
 function update() {
+    let ids = $("#newImg").find("div");
+    for (let index = 0; index < ids.length; index++) {
+        $("#div" + index).remove();
+    }
     let divid = 0;
     for (let i = 0; i < num; i++) {
         for (let j = 0; j < num; j++) {
+            if (divid > (num * num)) {
+                break;
+            }
             $(newImg).append("<div id='div" + divid + "'></div>")
             $("#div" + divid).css("width", mewImgWidth + "px");
             $("#div" + divid).css("height", mewImgWidth + "px");
@@ -368,7 +378,7 @@ function refillImg() {
             $("#div" + index).css("height", mewImgWidth + "px");
             $("#div" + index).css("margin", "1px");  //设置 切图间隙
             $("#div" + index).append(spcanvas[index]);
-            $("#div" + index).on("click  touchstart", (function (row, col) {
+            $("#div" + index).bind("click  touchstart", (function (row, col) {
                 return function () {
                     move(row, col);
                 };
@@ -382,7 +392,7 @@ function clearImgDiv() {
     for (let index = 0; index < ids.length; index++) {
         $("#div" + index).remove();
     }
-    $("#startImg").css("display","none");
+    $("#startImg").css("display", "none");
 
 }
 
@@ -410,9 +420,6 @@ function saveSet() {
         $("#speedSuccess").css("display", "block");
         $("#speedSuccess").attr('disabled', "disabled")//开始按钮禁用
         $("#speedSuccess").attr('class', 'disable');//开启禁用标志
-        $("#speedSuccess").bind("click touchstart", function () {
-            speedPass();
-        });
     }
     document.querySelector('.setGame').style.display = 'none'
 
@@ -454,8 +461,6 @@ function resetGame(currentFlag) {
     //关闭定时器
     closeTimer();
     time = 0
-    document.getElementById('count').innerHTML = "步数: " + 0
-    document.getElementById('time').innerHTML = "用时: 00:00";
     if (currentFlag != undefined) {
         puzzleImgSrc = successUrl;
     } else {
@@ -475,12 +480,17 @@ function resetGame(currentFlag) {
     istart = 0;
     step = 0;
     ewsz = [];
+    let ids = $("#newImg").find("div");
+    for (let index = 0; index < ids.length; index++) {
+        $("#div" + index).remove();
+    }
+    $("#startImg").css("display", "block");
+    $("#startImg").src = successUrl;
+    $("#count").html("步数: " + step);
+    $("#time").html("用时: 00:00");
     $("#passImg").attr("src", successUrl);
-    $("#newImg").html("");
-    let newImg = document.createElement('img')
-    newImg.setAttribute("id", "startImg")
-    newImg.setAttribute("src", puzzleImgSrc);
-    $("#newImg").append(newImg);
+    $("#passCount").html("总步数:" + step);
+    $("#passTime").html($("#time").html());
     ptImg = $("#startImg")[0];
     document.getElementById("startGame").removeAttribute('disabled')//移除禁用标志
     document.getElementById("startGame").className = 'finger'//添加手指标志
