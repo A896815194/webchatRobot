@@ -490,7 +490,6 @@ function resetGame(currentFlag) {
     $("#startImg").src = successUrl;
     $("#count").html("步数: " + step);
     $("#time").html("用时: 00:00");
-    $("#passImg").attr("src", successUrl);
     $("#passCount").html("总步数:" + step);
     $("#passTime").html($("#time").html());
     //jstodo
