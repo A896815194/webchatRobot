@@ -7,7 +7,11 @@ var musicBtn;
 // 提交按钮
 var goBtn;
 // 主页视频url
-const indexVieoUrl = "/video/keai.mp4";
+let indexVieoUrl = ["/video/index/1.mp4","/video/index/2.mp4",
+    "/video/index/3.mp4","/video/index/4.mp4",
+    "/video/index/5.mp4","/video/index/6.mp4",
+    "/video/index/7.mp4","/video/index/8.mp4",
+    "/video/index/9.mp4"];
 var contentBox;
 var input;
 const text = "她-拥有一双明亮的大眼睛和一头栗色短发，气质阳光，笑容甜美，总是能够给人带来积极的能量。她-性格开朗、可爱、搞怪，总是能够把气氛带动起来，让人忘记烦恼。她-每天都会积极地给大家带来好看的节目，不管跳舞、唱歌、talk还是打游戏，总能够让人们在她的直播间里度过一段愉快的时光。她-有时也是一个柔弱、爱哭、笨笨的女孩，总会出乎意料的搞砸计划，但这样的她更加真实、可爱。她-希望能够通过自己的直播，为更多的人带来快乐和正能量。同时也期待大家多多支持，一起见证她的成长和进步，守护最好的栗吱。==小栗吱的全体观众=="; // 需要打字的文本
@@ -38,7 +42,7 @@ function initIndex() {
     input = $("#username");
     goBtn = document.getElementById('go');
     videoPlay = document.getElementById('videoPlay');
-    video.src = indexVieoUrl;
+    video.src = indexVieoUrl[Math.floor((Math.random() * indexVieoUrl.length))];
     video.addEventListener("canplaythrough", function() {
         video.play();
     });

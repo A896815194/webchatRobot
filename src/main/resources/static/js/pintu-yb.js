@@ -8,7 +8,6 @@ let puzzleImgsSrc = ["/img/puzzle/9.jpg", "/img/puzzle/10.png",
     "/img/puzzle/6.png", "/img/puzzle/7.png",
      "/img/puzzle/16.jpg",
     "/img/puzzle/17.jpg", "/img/puzzle/15.jpg",
-    "/img/puzzle/11.png",
     "/img/puzzle/13.png", "/img/puzzle/12.jpg",
     "/img/puzzle/1.png", "/img/puzzle/18.jpg",
     "/img/puzzle/19.jpg"
@@ -330,7 +329,7 @@ function move(row, col) {
             //设置过关提示
             gameSuccessEvent();
 
-            resetGame();
+            // resetGame();
         }
     }
 }
