@@ -60,7 +60,9 @@ $(function () {
         puzzleImgsNode.push(imgs[i]);
     }
     $("#speedSuccess").bind("click touchstart", function () {
-        speedPass();
+        if(istart === 1) {
+            speedPass();
+        }
     });
     imgsLoad(puzzleImgsNode, function () {
         $(".loading").hide();
