@@ -2,7 +2,18 @@
 var loginName = '';
 // 失败次数
 var failcount = 0;
-var gameUser='';
+var gameUser = '';
+let finshAudio = '/audio/finish.mp3';
+let levelDuration = [2000,4000,6000];
+let jlImgUrl = ['/img/gif/wang.gif','/img/gif/kiss.gif',
+    '/img/gif/wang.gif','/img/gif/kiss.gif','/img/gif/wang.gif','/img/gif/kiss.gif',
+    '/img/gif/wang.gif','/img/gif/kiss.gif',
+    '/img/gif/1.gif',
+     '/img/gif/3.gif','/img/gif/4.gif','/img/gif/kiss.gif',
+    '/img/gif/6.gif','/img/gif/7.gif',
+    '/img/gif/8.gif','/img/gif/9.gif',
+    '/img/gif/10.gif','/img/gif/11.gif',
+    '/img/gif/16.gif','/img/gif/17.gif','/img/gif/18.gif'];
 $(function () {
     let usrId = getQueryString("id");
     loginName = usrId;
@@ -87,8 +98,15 @@ function initEventHandle() {
         var received_msg = event.data;
         let msg = $.parseJSON(received_msg)
         if (msg.action == "gxGame") {
-            $("#msgBox").append("<p class='xtts'>"+msg.msg+"</p>");
+            $("#msgBox").append("<p class='xtts'>" + msg.msg + "</p>");
             $("#human").html(msg.onlineCount);
+            JS.playAudio(finshAudio, 4000);
+            let gifUrl = jlImgUrl[Math.floor((Math.random() * jlImgUrl.length))];
+            var view2 = new view({
+                isClose: true,
+                duration: levelDuration[level],
+                imgUrl: gifUrl,
+            });
         }
         if (msg.action == "heartBeat") {
             heartCheck.reset().start();

@@ -2,7 +2,18 @@ let num = 3;//难度 3 * 3
 let step = 0;//记录步数
 let time = 1; //记录时间
 let setIntervalTime = ''; //定时器
-let puzzleImgsSrc = ["/img/puzzle/1.png", "/img/puzzle/2.png", "/img/puzzle/3.png", "/img/puzzle/4.png", "/img/puzzle/5.png", "/img/puzzle/6.png", "/img/puzzle/7.png", "/img/puzzle/9.jpg", "/img/puzzle/10.png", "/img/puzzle/11.png", "/img/puzzle/12.png"] //所有拼图地址
+let puzzleImgsSrc = ["/img/puzzle/9.jpg", "/img/puzzle/10.png",
+    "/img/puzzle/11.jpg", "/img/puzzle/2.png",
+    "/img/puzzle/3.png", "/img/puzzle/5.png",
+    "/img/puzzle/6.png", "/img/puzzle/7.png",
+     "/img/puzzle/16.jpg",
+    "/img/puzzle/17.jpg", "/img/puzzle/15.jpg",
+    "/img/puzzle/11.png",
+    "/img/puzzle/13.png", "/img/puzzle/12.jpg",
+    "/img/puzzle/1.png", "/img/puzzle/18.jpg",
+    "/img/puzzle/19.jpg"
+]
+//所有拼图地址
 let puzzleImgsNode = [];
 let puzzleImgSrc = '';//拼图地址
 let ptImg = {};
@@ -11,8 +22,8 @@ let newImg = {} //拼图区域
 let ewsz = [];
 let spcanvas = [];
 // 游戏难度
-let level = 0;
-
+var level = 0;
+var currentLevel = 1;
 //存储开始和结束循序，以此来判断是否过关
 let gameStart = [];//开始循序
 // 所有拼图
@@ -35,7 +46,7 @@ $(function () {
             successUrl = puzzleImgsSrc[i];
             $("#passImg").attr("src", successUrl);
         }
-        let img = "<img class=\"puzzleImg\" src=" + puzzleImgsSrc[i] + " alt=\"\">";
+        let img = "<img class=\"puzzleImg  black\" src=" + puzzleImgsSrc[i] + " alt=\"\">";
         $(selectImgMsg).append(img);
     }
     let newImg1 = document.createElement('img')
@@ -54,13 +65,12 @@ $(function () {
             successUrl = puzzleImgSrc;
             $("#passImg").attr("src", successUrl);
             $("#startImg").attr("src", puzzleImgSrc);
-            $("#passImg").attr("src", puzzleImgSrc);
             ptImg = $("#startImg")[0];
         })
         puzzleImgsNode.push(imgs[i]);
     }
     $("#speedSuccess").bind("click touchstart", function () {
-        if(istart === 1) {
+        if (istart === 1) {
             speedPass();
         }
     });
@@ -160,7 +170,9 @@ function startGame() {
 
 // 打乱拼图数组
 function shuffle() {
-    for (var i = 0; i < num * num * 10 * (level + 1); i++) { // 进行10*size*size次交换
+    // 交换难度
+    let jxcs = num*num*(level+1)*(currentLevel*3);
+    for (var i = 0; i < jxcs; i++) { // 进行10*size*size次交换
         var dir = Math.floor(Math.random() * 4); // 随机选择方向
         switch (dir) {
             case 0: // 上
@@ -275,10 +287,21 @@ function check() {
 
 }
 
+function getPrImgsIndex(imgUrl) {
+    for (let i = 0; i < puzzleImgsNode.length; i++) {
+        if (puzzleImgsNode[i].src === imgUrl) {
+            return i;
+        }
+    }
+}
 
 function gameSuccessEvent() {
-    successUrl = $("#startImg").src;
-    $("#passImg").attr("src", successUrl);
+    currentLevel ++;
+    successUrl = $("#startImg")[0].src;
+    $("#passImg").prop("src", successUrl);
+    // 判断成功的是第几个图，然后把图片点亮
+    let successIndex = getPrImgsIndex(successUrl);
+    $(puzzleImgsNode[successIndex]).removeClass("black");
     document.querySelector(".pass").style.display = 'block'//显示模态框
     $("#passCount").html("总步数:" + step);
     $("#passTime").html($("#time").html());
@@ -486,8 +509,8 @@ function resetGame(currentFlag) {
     for (let index = 0; index < ids.length; index++) {
         $("#div" + index).remove();
     }
+    $("#startImg").prop("src", successUrl);
     $("#startImg").css("display", "block");
-    $("#startImg").src = successUrl;
     $("#count").html("步数: " + step);
     $("#time").html("用时: 00:00");
     $("#passCount").html("总步数:" + step);
