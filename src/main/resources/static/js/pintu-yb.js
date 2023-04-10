@@ -491,11 +491,14 @@ function resetGame(currentFlag) {
     $("#passImg").attr("src", successUrl);
     $("#passCount").html("总步数:" + step);
     $("#passTime").html($("#time").html());
+    //jstodo
     ptImg = $("#startImg")[0];
     document.getElementById("startGame").removeAttribute('disabled')//移除禁用标志
     document.getElementById("startGame").className = 'finger'//添加手指标志
     $("#suspendGame").attr('disabled', "disabled")//开始按钮禁用
     $("#suspendGame").attr('class', 'disable');//开启禁用标志
+    $("#resetGame").attr('disabled', "disabled")//开始按钮禁用
+    $("#resetGame").attr('class', 'disable');//开启禁用标志
     document.getElementById("set").removeAttribute('disabled')//移除禁用标志
     document.getElementById("set").className = 'finger'//添加手指标志
 
