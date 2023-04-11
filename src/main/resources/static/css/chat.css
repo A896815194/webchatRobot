@@ -54,19 +54,19 @@ body {
 }
 /*系统提示*/
 .message-box .xt {
-    font-size: 2px;
+    font-size: 7px;
 }
 .message-box .xtts {
-    font-size: 2px;
+    font-size: 7px;
     color: #ff69b4;
 }
 /*聊天字体*/
 .message-box .lt {
-    font-size: 10px;
+    font-size: 9px;
 }
 /*聊天字体*/
 .message-box .rm {
-    font-size: 4px;
+    font-size: 7px;
     color: #ff69b4;
 }
 

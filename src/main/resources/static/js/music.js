@@ -3,7 +3,7 @@ $(function () {
   let ap = new APlayer({
         container: document.getElementById('aplayer'),
         listFolded: true,
-        // autoplay:true,
+        autoplay:true,
         theme:'purple',
         preload:false,
         //fixed:true,

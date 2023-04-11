@@ -4,16 +4,16 @@ var loginName = '';
 var failcount = 0;
 var gameUser = '';
 let finshAudio = '/audio/finish.mp3';
-let levelDuration = [2000,4000,6000];
-let jlImgUrl = ['/img/gif/wang.gif','/img/gif/kiss.gif',
-    '/img/gif/wang.gif','/img/gif/kiss.gif','/img/gif/wang.gif','/img/gif/kiss.gif',
-    '/img/gif/wang.gif','/img/gif/kiss.gif',
+let levelDuration = [2000, 4000, 6000];
+let jlImgUrl = ['/img/gif/wang.gif', '/img/gif/kiss.gif',
+    '/img/gif/wang.gif', '/img/gif/kiss.gif', '/img/gif/wang.gif', '/img/gif/kiss.gif',
+    '/img/gif/wang.gif', '/img/gif/kiss.gif',
     '/img/gif/1.gif',
-     '/img/gif/3.gif','/img/gif/4.gif','/img/gif/kiss.gif',
-    '/img/gif/6.gif','/img/gif/7.gif',
-    '/img/gif/8.gif','/img/gif/9.gif',
-    '/img/gif/10.gif','/img/gif/11.gif',
-    '/img/gif/16.gif','/img/gif/17.gif','/img/gif/18.gif'];
+    '/img/gif/3.gif', '/img/gif/4.gif', '/img/gif/kiss.gif',
+    '/img/gif/6.gif', '/img/gif/7.gif',
+    '/img/gif/8.gif', '/img/gif/9.gif',
+    '/img/gif/10.gif', '/img/gif/11.gif',
+    '/img/gif/16.gif', '/img/gif/17.gif', '/img/gif/18.gif'];
 $(function () {
     let usrId = getQueryString("id");
     loginName = usrId;
@@ -111,18 +111,32 @@ function initEventHandle() {
         if (msg.action == "heartBeat") {
             heartCheck.reset().start();
             $("#human").html(msg.onlineCount);
+            refreshUserUl(msg);
         }
         if (msg.action == "welcome") {
             $("#msgBox").append("<p class='xt'>欢迎 <span class='rm'>" + msg.userName + "</span> 加入游戏</p>");
             $("#human").html(msg.onlineCount);
+            refreshUserUl(msg);
         }
         if (msg.action == "broadcast") {
             $("#msgBox").append("<p class='lt'><span class='rm'>" + msg.userName + " ：</span><span class='nr'>" + msg.msg + "</span></p>");
             $("#human").html(msg.onlineCount);
+            refreshUserUl(msg);
         }
         if (msg.action == "baby") {
             $("#msgBox").append("<p class='xt'><span class='rm'>" + msg.userName + "</span> 离开了游戏</p>");
             $("#human").html(msg.onlineCount);
+            refreshUserUl(msg);
+        }
+    }
+}
+
+function refreshUserUl(msg) {
+    if (msg.members !== undefined && msg.members.length > 0) {
+        $("#nameUl").html("");
+        for (let i = 0; i < msg.members.length; i++) {
+            let member = msg.members[i];
+            $("#nameUl").append("<li id=" + member.id + ">" + member.name + "</li>");
         }
     }
 }

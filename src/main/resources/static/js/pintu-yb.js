@@ -57,7 +57,7 @@ $(function () {
     for (let i = 0; i < imgs.length; i++) {
         $(imgs[i]).bind("click touchstart", function () {
             if (istart === 1) {
-                alert("正在游戏中");
+                // alert("正在游戏中");
                 return;
             }
             puzzleImgSrc = this.src;
@@ -335,7 +335,7 @@ function move(row, col) {
 }
 
 function createTGMsg() {
-    return "恭喜【" + gameUser + "】在" + getLevelString() + "难度下使用" + step + "步完成了游戏," + document.getElementById('time').innerHTML;
+    return "恭喜【" + gameUser + "】在" + getLevelString() + "难度下使用" + step + "步完成了第"+(currentLevel-1)+"关游戏," + document.getElementById('time').innerHTML;
 }
 
 function getLevelString() {
