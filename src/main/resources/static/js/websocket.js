@@ -1,4 +1,7 @@
-//var ws = null;
+var wsUrl = 'ws://192.168.0.5:8081/websocket/';
+// var wsUrl = 'ws://124.223.2.76:8081/websocket/';
+var ws;//websocket实例
+var lockReconnect = false;//避免重复连接
 var loginName = '';
 // 失败次数
 var failcount = 0;
@@ -55,10 +58,6 @@ function checkLogin() {
         gameUser = result.username;
     });
 }
-
-var ws;//websocket实例
-var lockReconnect = false;//避免重复连接
-var wsUrl = 'ws://192.168.0.5:8081/websocket/';
 
 function createWebSocket(url) {
     try {

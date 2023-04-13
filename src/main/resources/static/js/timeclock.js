@@ -1,6 +1,6 @@
 $(function(){
     // 计算时间差
-    var targetDate = new Date("2023/04/03  00:00:00");
+    var targetDate = new Date("2023/04/13  18:00:00");
     var daysElem = $("#days");
     var hoursElem = $("#hours");
     var minutesElem = $("#minutes");

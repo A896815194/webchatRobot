@@ -1,7 +1,8 @@
 .sidemenu {
     float: left;
-    width: 120px;
+    width: 0px;
     height: 190px;
+    display: none;
     background-color: rgb(255 ,255, 255 , 0.8);
     color: #ff69b4;
     font-size: 14px;
@@ -35,7 +36,7 @@
 .menu-body {
     position: fixed;
     z-index: 9998;
-    width: 200px;
+    width: 0px;
     background-color: rgba(46, 136, 186, 0.51);
     border-radius: 15px 20px 20px 15px;
 

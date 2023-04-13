@@ -14,26 +14,7 @@ $(document).ready(function () {
     $(".menu-btn").click(function () {
         x += 1;
         if (x % 2 == 0) {
-            $("span").css({
-                "display":"initial",
-            });
-            $(".sidemenu,.slidecontent").css({
-                "width": "140",
-                "opacity": "1",
-            });
-            $("span").css({
-                "opacity":"1",
-            });
-            $(".menu-body").css({
-                "width": "200px",
-                // "height":"460px",
-            });
-            $(".menu-body").css({
-                "background-color":"rgba(46, 136, 186, 0.51)",
-            }, 250);
-
-        }
-        else {
+            $(".sidemenu").css("display","none");
             $(".sidemenu span").css({
                 "opacity":"0",
                 "display":"none",
@@ -53,6 +34,28 @@ $(document).ready(function () {
                 "background-color": "rgba(46, 136, 186, 0)",
                 "width":0
             });
+        }
+        else {
+
+            // test
+            $("span").css({
+                "display":"initial",
+            });
+            $(".sidemenu,.slidecontent").css({
+                "width": "140",
+                "opacity": "1",
+            },250);
+            $("span").css({
+                "opacity":"1",
+            });
+            $(".menu-body").css({
+                "width": "200px",
+                // "height":"460px",
+            },500);
+            $(".sidemenu").css("display","block");
+            $(".menu-body").css({
+                "background-color":"rgba(46, 136, 186, 0.51)",
+            }, 250);
         }
 
     });
