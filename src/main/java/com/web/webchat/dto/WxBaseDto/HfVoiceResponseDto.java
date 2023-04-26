@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @XStreamAlias("xml")
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Data
 public class HfVoiceResponseDto extends WxBaseResonseDto {
 

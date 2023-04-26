@@ -38,14 +38,14 @@ $(document).ready(function () {
         else {
 
             // test
-            $("span").css({
+            $(".sidemenu span").css({
                 "display":"initial",
             });
             $(".sidemenu,.slidecontent").css({
                 "width": "140",
                 "opacity": "1",
             },250);
-            $("span").css({
+            $(".sidemenu span").css({
                 "opacity":"1",
             });
             $(".menu-body").css({

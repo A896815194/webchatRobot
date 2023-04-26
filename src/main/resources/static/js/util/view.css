@@ -4,6 +4,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     max-width: 400px;
+    z-index: 9999;
 }
 
 .close-btn{
