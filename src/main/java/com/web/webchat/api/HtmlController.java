@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HtmlController {
 
-    @GetMapping("/index")
+    @GetMapping("")
     public String index() {
 
         return "welcome";
