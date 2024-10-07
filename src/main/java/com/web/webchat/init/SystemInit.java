@@ -3,10 +3,12 @@ package com.web.webchat.init;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.entity.*;
+import com.web.webchat.entity.gzh.CardUserGzhEntity;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.enums.Message;
 import com.web.webchat.repository.*;
+import com.web.webchat.repository.gzh.CardUserGzhRepository;
 import com.web.webchat.strategy.TuLingRobotMsg;
 import com.web.webchat.util.FileUtil;
 import com.web.webchat.util.GifUtil;
@@ -93,7 +95,7 @@ public class SystemInit {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    //  @Scheduled(cron = "0 0 0 * * ?")
     public void initTask() {
         logger.info("每天0点执行,time:{}", new Date());
         List<UserThing> uts = userBagRepository.getUserNoUseCountThings();
@@ -119,13 +121,13 @@ public class SystemInit {
     }
 
 
-    @Scheduled(cron = "0 */10 * * * ?")
-    public void clearTempData() {
-        logger.info("清理临时目录。。path:{}", tempFileDataPath);
-        FileUtil.delFolder(tempFileDataPath, false);
-    }
+//    @Scheduled(cron = "0 */10 * * * ?")
+//    public void clearTempData() {
+//        logger.info("清理临时目录。。path:{}", tempFileDataPath);
+//        FileUtil.delFolder(tempFileDataPath, false);
+//    }
 
-    @Scheduled(cron = "0 00 07 ? * *")
+    //  @Scheduled(cron = "0 00 07 ? * *")
     //@Scheduled(cron = "*/5 * * * * ?")
     public void sendTianQi() {
         logger.info("每天7点执行");
@@ -347,4 +349,31 @@ public class SystemInit {
         return false;
     }
 
+
+    @Autowired
+    private CardUserGzhRepository cardUserGzhRepository;
+
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void initCard() {
+        logger.info("每分钟执行,清理抽卡次数,time:{}", new Date());
+        List<CardUserGzhEntity> userCardSource = cardUserGzhRepository.findByIsDeleteNotOrderByCreateTimeAsc(1);
+        if (CollectionUtils.isEmpty(userCardSource)) {
+            return;
+        }
+        try {
+            userCardSource.forEach(card -> {
+                Date current = new Date();
+                if (current.getTime() > card.getExpireTime().getTime()) {
+                    logger.info("当前card失效,cardName:{},userName:{}", card.getCardName(), card.getUserName());
+                    card.setUpdateTime(new Date());
+                    card.setIsDelete(1);
+                    cardUserGzhRepository.save(card);
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error("清除卡信息失败", e);
+        }
+
+    }
 }

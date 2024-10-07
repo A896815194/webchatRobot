@@ -8,11 +8,12 @@ import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.KunPengRequestDto;
 import com.web.webchat.dto.RequestDto;
 import com.web.webchat.dto.ResponseDto;
-import com.web.webchat.dto.WxBaseDto.HfArticleResponseDto;
 import com.web.webchat.dto.WxBaseDto.HfContentResponseDto;
 import com.web.webchat.dto.WxBaseDto.WxRequestDto;
+import com.web.webchat.enums.gzh.WeChatConstat;
 import com.web.webchat.factory.ServiceFactory;
 import com.web.webchat.util.KunpengToLoveCatUtil;
+import com.web.webchat.util.ReflectionService;
 import com.web.webchat.util.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -24,16 +25,18 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.web.webchat.util.XmlUtil.DtoToXmlString;
@@ -149,6 +152,12 @@ public class WebChatController {
     }
 
 
+    @Autowired
+    private ReflectionService reflectionService;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
     @PostMapping("wx/auth")
     public String wxauth(@RequestBody String xmlString) {
         logger.info("公众号内容:" + xmlString);
@@ -161,40 +170,173 @@ public class WebChatController {
         } catch (Exception e) {
             log.error("转换失败", e);
         }
+        String content = request.getContent();
+        String fromWx = request.getFromUserName();
+        String gzh = request.getToUserName();
         if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("event") && request.getEvent().contains("subscribe")) {
             // 关注
-            String fromWx = request.getFromUserName();
-            String gzh = request.getToUserName();
             HfContentResponseDto dto = new HfContentResponseDto();
             dto.setToUserName(fromWx);
             dto.setFromUserName(gzh);
             dto.setMsgType("text");
-            dto.setContent("点关注不迷路~\r输入关键字 ”帮助” 查看功能列表“");
+            dto.setContent("感谢你的关注！输入【命令帮助】查看命令");
             String result = DtoToXmlString(dto);
             log.info("返回结果：{}", result);
             return result;
         }
         if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("text")) {
-            String fromWx = request.getFromUserName();
-            String gzh = request.getToUserName();
-            HfArticleResponseDto dto = new HfArticleResponseDto();
-            dto.setToUserName(fromWx);
-            dto.setFromUserName(gzh);
-            dto.setMsgType("news");
-            dto.setArticleCount("1");
-            List<HfArticleResponseDto.Article> item = new ArrayList<>();
-            HfArticleResponseDto.Article a = new HfArticleResponseDto.Article();
-            a.setDescription("test");
-            a.setTitle("测试地址");
-            a.setUrl("http://124.223.2.76/50x.html");
-            item.add(a);
-            dto.setArticles(item);
-            String result = DtoToXmlString(dto);
-            log.info("返回结果：{}", result);
-            return result;
+            if (Objects.equals(content, "命令帮助")) {
+                HfContentResponseDto dto = new HfContentResponseDto();
+                dto.setToUserName(fromWx);
+                dto.setFromUserName(gzh);
+                dto.setMsgType("text");
+                dto.setContent(WeChatConstat.HELP);
+                String result = DtoToXmlString(dto);
+                log.info("返回结果：{}", result);
+                return result;
+            }
+        }
+        if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("text")) {
+
+            AtomicReference<String> result = new AtomicReference("");
+            // 如果是抽卡有关的命令
+            if (StringUtils.isNotBlank(content) && WeChatConstat.COMMAND_CARD_LIST.stream().anyMatch(content::startsWith)) {
+                TransactionDefinition definition = new DefaultTransactionDefinition();
+                TransactionStatus status = transactionManager.getTransaction(definition);// 获得事务状态
+                try {
+                    String beanName = WeChatConstat.getBeanNameByKey(WeChatConstat.COMMAND_SAVE_CARD);
+                    String command = getCommandString(content);
+                    String methodName = getMethodString(content);
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("content", content.replace(command + WeChatConstat.COMMAND_SPLIT_JIA, ""));
+                        try {
+                            Object data = reflectionService.invokeService(beanName, methodName, paramMap);
+                            String resultData = (String) data;
+                            if (StringUtils.isBlank(resultData)) {
+                                throw new RuntimeException("异常");
+                            }
+                            HfContentResponseDto dto = new HfContentResponseDto();
+                            dto.setToUserName(fromWx);
+                            dto.setFromUserName(gzh);
+                            dto.setMsgType("text");
+                            dto.setContent(resultData);
+                            result.set(DtoToXmlString(dto));
+                            log.info("返回结果：{}", result);
+                        } catch (Exception e) {
+                            logger.error("反射异常", e);
+                            result.set("操作失败");
+                            throw new RuntimeException("操作异常");
+                        }
+                    transactionManager.commit(status);
+                } catch (Exception e) {
+                    transactionManager.rollback(status);
+                    logger.error("操作失败", e);
+                    result.set("操作失败");
+                }
+                return result.get();
+            }
+            // 每日歌单命令
+            if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("text")) {
+                AtomicReference<String> result1 = new AtomicReference("");
+                // 如果是歌单的命令
+                    TransactionDefinition definition = new DefaultTransactionDefinition();
+                    TransactionStatus status = transactionManager.getTransaction(definition);// 获得事务状态
+                    try {
+                        String beanName = WeChatConstat.getBeanNameByKey(WeChatConstat.COMMAND_SING_DAILY);
+                        String command = getCommandString(content);
+                        String methodName = getMethodString(content);
+                            Map<String, Object> paramMap = new HashMap<>();
+                            paramMap.put("content", content.replace(command + WeChatConstat.COMMAND_SPLIT_JIA, ""));
+                            try {
+                                Object data = reflectionService.invokeService(beanName, methodName, paramMap);
+                                String resultData = (String) data;
+                                if (StringUtils.isBlank(resultData)) {
+                                    throw new RuntimeException("异常");
+                                }
+                                HfContentResponseDto dto = new HfContentResponseDto();
+                                dto.setToUserName(fromWx);
+                                dto.setFromUserName(gzh);
+                                dto.setMsgType("text");
+                                dto.setContent(resultData);
+                                result1.set(DtoToXmlString(dto));
+                                log.info("返回结果：{}", result1);
+                            } catch (Exception e) {
+                                logger.error("反射异常", e);
+                                result1.set("操作失败");
+                                throw new RuntimeException("操作异常");
+                            }
+                        transactionManager.commit(status);
+                    } catch (Exception e) {
+                        transactionManager.rollback(status);
+                        logger.error("操作失败", e);
+                        result1.set("操作失败");
+                    }
+                    return result1.get();
+                }
+
+//            HfArticleResponseDto dto = new HfArticleResponseDto();
+//            dto.setToUserName(fromWx);
+//            dto.setFromUserName(gzh);
+//            dto.setMsgType("news");
+//            dto.setArticleCount("1");
+//            List<HfArticleResponseDto.Article> item = new ArrayList<>();
+//            HfArticleResponseDto.Article a = new HfArticleResponseDto.Article();
+//            a.setDescription("test");
+//            a.setTitle("测试地址");
+//            a.setUrl("http://124.223.2.76/50x.html");
+//            item.add(a);
+//            dto.setArticles(item);
+//            String result = DtoToXmlString(dto);
+//            log.info("返回结果：{}", result);
+//            return result;
+            }
+        return "";
+    }
+
+    private String getCommandString(String content) {
+        if (content.startsWith(WeChatConstat.COMMAND_SAVE_CARD + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.COMMAND_SAVE_CARD;
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_USE_CARD + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.COMMAND_USE_CARD;
+        }
+        if (Objects.equals(content, WeChatConstat.COMMAND_SEARCH_CARD)) {
+            return WeChatConstat.COMMAND_SEARCH_CARD;
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_SING_DAILY + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.COMMAND_SING_DAILY ;
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_SEARCH_SING_DAILY + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.COMMAND_SEARCH_SING_DAILY ;
+        }
+        if (Objects.equals(content, WeChatConstat.COMMAND_SEARCH_SING_DAILY_3)) {
+            return WeChatConstat.COMMAND_SEARCH_SING_DAILY_3;
         }
         return "";
     }
+
+    private String getMethodString(String content) {
+        if (content.startsWith(WeChatConstat.COMMAND_SAVE_CARD + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SAVE_CARD);
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_USE_CARD + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_USE_CARD);
+        }
+        if (Objects.equals(content, WeChatConstat.COMMAND_SEARCH_CARD)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SEARCH_CARD);
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_SING_DAILY + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SING_DAILY);
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_SEARCH_SING_DAILY + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SEARCH_SING_DAILY);
+        }
+        if (Objects.equals(content, WeChatConstat.COMMAND_SEARCH_SING_DAILY_3)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SEARCH_SING_DAILY_3);
+        }
+        return "";
+    }
+
 
     public static class se implements Serializable {
 
