@@ -129,6 +129,18 @@ public class WeChatConstat {
             "2.查+人名+学歌\n" +
             "3.查抽卡\n";
 
+
+    public final static String HELP_NEW="命令汇总\n" +
+            "【一】：抽卡有关的命令\n" +
+            "1.抽卡+人名+卡类别\n" +
+            "2.用卡+人名+卡类别\n" +
+            "【二】：每日歌单命令\n" +
+            "1.每日歌单+歌名 \n" +
+            "2.查歌单+2024年10月6日\n" +
+            "3.查3天歌单\n" +
+            "【三】：查询明细\n" +
+            "1.查抽卡\n";
+
     public final static String MSG_CARD_TOTAL_MODE ="【%s】持卡数:%s\n";
     public final static String MSG_CARD_MODE ="%s  距离%s小时\n";
 

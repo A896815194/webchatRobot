@@ -56,13 +56,13 @@ public class SingDailyGzh {
     private String convertSingDailyMsg(List<SingDailyGzhEntity> daily, String day, boolean range) {
         StringBuilder sb = new StringBuilder();
         if (CollectionUtils.isEmpty(daily)) {
-            if (StringUtils.isBlank(day)) {
+            if (range) {
+                sb.append("最近3天没有唱歌哦");
+            } else if (StringUtils.isBlank(day)) {
                 Date currentDate = new Date();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String formattedDate = sdf.format(currentDate);
                 sb.append(String.format(WeChatConstat.MSG_SING_DAILY_TOTAL_MODE, formattedDate, 0));
-            } else if (range) {
-                sb.append("没有查询到对应的数据");
             } else {
                 sb.append(String.format(WeChatConstat.MSG_SING_DAILY_TOTAL_MODE, day, 0));
             }

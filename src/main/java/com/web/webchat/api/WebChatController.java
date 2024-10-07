@@ -179,18 +179,18 @@ public class WebChatController {
             dto.setToUserName(fromWx);
             dto.setFromUserName(gzh);
             dto.setMsgType("text");
-            dto.setContent("感谢你的关注！输入【命令帮助】查看命令");
+            dto.setContent("感谢你的关注！输入【使用说明】查看命令");
             String result = DtoToXmlString(dto);
             log.info("返回结果：{}", result);
             return result;
         }
         if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("text")) {
-            if (Objects.equals(content, "命令帮助")) {
+            if (Objects.equals(content, "使用说明")) {
                 HfContentResponseDto dto = new HfContentResponseDto();
                 dto.setToUserName(fromWx);
                 dto.setFromUserName(gzh);
                 dto.setMsgType("text");
-                dto.setContent(WeChatConstat.HELP);
+                dto.setContent(WeChatConstat.HELP_NEW);
                 String result = DtoToXmlString(dto);
                 log.info("返回结果：{}", result);
                 return result;
