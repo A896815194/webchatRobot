@@ -12,10 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component("singDailyGzh")
@@ -68,7 +65,8 @@ public class SingDailyGzh {
             }
             return sb.toString();
         }
-        Map<String, List<SingDailyGzhEntity>> dailyByDay = daily.stream().collect(Collectors.groupingBy(SingDailyGzhEntity::getTimeDay));
+        Map<String, List<SingDailyGzhEntity>> dailyByDay = daily.stream().sorted(Comparator.comparing(SingDailyGzhEntity::getCreateTime))
+                .collect(Collectors.groupingBy(SingDailyGzhEntity::getTimeDay, LinkedHashMap::new, Collectors.toList()));
         dailyByDay.forEach((days, singday) -> {
             sb.append(String.format(WeChatConstat.MSG_SING_DAILY_TOTAL_MODE, singday.get(0).getYear() + "-" + singday.get(0).getMonth() + "-" + singday.get(0).getDay(), singday.size()));
             singday.forEach(sing -> {
@@ -84,12 +82,12 @@ public class SingDailyGzh {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (hour >= 6 && hour < 12) {
-            return "AM";
-        } else if (hour >= 12 && hour < 18) {
-            return "PM";
+        if (hour >= 3 && hour < 13) {
+            return "早间";
+        } else if (hour >= 13 && hour < 20) {
+            return "下午";
         } else {
-            return "P.M.";
+            return "晚间";
         }
     }
 
@@ -128,7 +126,7 @@ public class SingDailyGzh {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date threeDaysAgoMidnight = calendar.getTime();
-        List<SingDailyGzhEntity> daily = singDailyGzhRepository.findAllByUpdateTimeBetweenOrderByCreateTimeAsc(threeDaysAgoMidnight, maxTimeOfDay);
+        List<SingDailyGzhEntity> daily = singDailyGzhRepository.findAllByCreateTimeBetweenOrderByCreateTimeAsc(threeDaysAgoMidnight, maxTimeOfDay);
         return convertSingDailyMsg(daily, null, true);
 
     }

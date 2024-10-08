@@ -44,6 +44,8 @@ dependencies {
 	implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.19'
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 	implementation 'com.alibaba:fastjson:2.0.2'
+	// https://mvnrepository.com/artifact/cn.hutool/hutool-all
+	implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.32'
 	compile(
 			'net.sf.json-lib:json-lib:2.4:jdk15'
 	)

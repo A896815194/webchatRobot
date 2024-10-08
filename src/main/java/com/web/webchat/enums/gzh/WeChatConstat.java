@@ -33,6 +33,12 @@ public class WeChatConstat {
 
     public final static String COMMAND_SING_DAILY = "每日歌单";
 
+    public final static String COMMAND_DY_GQ = "歌曲-";
+    // 记录歌单
+    public final static Integer COMMAND_TYPE_GQ = 1;
+    // 监控失败
+    public final static Integer COMMAND_TYPE_JK_FAIL = 2;
+
     public final static String COMMAND_SEARCH_SING_DAILY = "查歌单";
 
     public final static String COMMAND_SEARCH_SING_DAILY_3 = "查3天歌单";
@@ -42,6 +48,8 @@ public class WeChatConstat {
     public final static String COMMAND_SEARCH_MONTH_MEMBER = "查抽会";
     public final static String COMMAND_SEARCH_QUARTER_MEMBER = "查季会";
     public final static String COMMAND_SEARCH_YEAR_MEMBER = "查年会";
+
+    public final static String COMMAND_AUTO_SING_DAILY = "弹幕歌单";
 
     public final static String COMMAND_SPLIT_JIA = "+";
 
@@ -58,6 +66,14 @@ public class WeChatConstat {
     public final static List<String> COMMAND_SING_DAILY_LIST = new ArrayList<>();
 
     public final static String COMMAND_SING_DAILY_BEAN = "singDailyGzh";
+    /** 自动每日歌单 **/
+
+    public final static List<String> COMMAND_SING_DAILY_ZBJ_LIST = new ArrayList<>();
+
+    public final static String COMMAND_SING_DAILY_ZBJ_BEAN = "singDailyZbj";
+
+    public final static String COMMAND_SING_DAILY_OPEN = "监控";
+
 
     static {
         // 抽卡
@@ -72,11 +88,12 @@ public class WeChatConstat {
         COMMAND_SING_DAILY_LIST.add(COMMAND_SEARCH_SING_DAILY);
         // 查三天歌单
         COMMAND_SING_DAILY_LIST.add(COMMAND_SEARCH_SING_DAILY_3);
-
+        // 直播监控
+        COMMAND_SING_DAILY_ZBJ_LIST.add(COMMAND_SING_DAILY_OPEN);
 
         COMMAND_BEAN_MAP.put(COMMAND_SAVE_CARD, COMMAND_CARD_BEAN);
         COMMAND_BEAN_MAP.put(COMMAND_SING_DAILY, COMMAND_SING_DAILY_BEAN);
-
+        COMMAND_BEAN_MAP.put(COMMAND_AUTO_SING_DAILY, COMMAND_SING_DAILY_ZBJ_BEAN);
 
 
         COMMAND_METHOD_MAP.put(COMMAND_SAVE_CARD, "saveCard");
@@ -86,6 +103,8 @@ public class WeChatConstat {
         COMMAND_METHOD_MAP.put(COMMAND_SING_DAILY, "saveSongDaily");
         COMMAND_METHOD_MAP.put(COMMAND_SEARCH_SING_DAILY, "searchSongDaily");
         COMMAND_METHOD_MAP.put(COMMAND_SEARCH_SING_DAILY_3, "searchSongDailyRecent3");
+
+
     }
 
     public static String getBeanNameByKey(String key) {

@@ -13,43 +13,52 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesEntity {
 
-    @Value("${api.tuling-api}")
+    @Value("${api.tuling-api:null}")
     public String tulingApi;
 
-    @Value("${api.tuling-api-key}")
+    @Value("${api.tuling-api-key:null}")
     public String tulingApiKey;
 
-    @Value("${api.tuling-user-id}")
+    @Value("${api.tuling-user-id:null}")
     public String tulingUserId;
 
-    @Value("${api.wechat-url}")
+    @Value("${api.wechat-url:null}")
     public String wechatUrl;
 
-    @Value("${api.Baidu-text-review}")
+    @Value("${api.Baidu-text-review:null}")
     public String BaiduTextReviewUrl;
 
-    @Value("${api.source-voice-root-path}")
+    @Value("${api.source-voice-root-path:null}")
     public String sourceVoiceRootPath;
 
-    @Value("${api.silk-v3-decoder-path}")
+    @Value("${api.silk-v3-decoder-path:null}")
     public String silkV3Path;
 
-    @Value("${api.ffmpeg-path}")
+    @Value("${api.ffmpeg-path:null}")
     public String ffmpegPath;
 
-    @Value("${api.reply-interval}")
+    @Value("${api.reply-interval:null}")
     public Long replyInterval;
 
-    @Value("${api.robotId}")
+    @Value("${api.robotId:null}")
     public String robotId;
 
-    @Value("${api.robotName}")
+    @Value("${api.robotName:null}")
     public String robotName;
 
     public String chatroomId;
 
     public String wxid;
 
-    @Value("${api.appFilePath}")
+    @Value("${api.appFilePath:null}")
     public String appFilePath;
+
+    @Value("${api.minior.liveId:null}")
+    public String liveId;
+
+    @Value("${api.minior.zbId:null}")
+    public String zbId;
+
+    @Value("${api.minior.danmuOpen:false}")
+    public Boolean dmOpen;
 }

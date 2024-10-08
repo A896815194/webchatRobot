@@ -30,6 +30,11 @@ api:
     robotId: "wxid_i5vabkq7vwb222"
     robotName: "Robot"
     appFilePath: "G://test"
+    minior:
+      liveId: 125853211144
+      zbId: Sy980317
+      danmuOpen: false
+
 
 logging:
   config: classpath:log4j-spring.xml

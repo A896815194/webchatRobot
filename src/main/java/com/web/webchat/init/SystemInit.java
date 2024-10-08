@@ -353,9 +353,9 @@ public class SystemInit {
     @Autowired
     private CardUserGzhRepository cardUserGzhRepository;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void initCard() {
-        logger.info("每分钟执行,清理抽卡次数,time:{}", new Date());
+        logger.info("每5分钟执行,清理抽卡次数,time:{}", new Date());
         List<CardUserGzhEntity> userCardSource = cardUserGzhRepository.findByIsDeleteNotOrderByCreateTimeAsc(1);
         if (CollectionUtils.isEmpty(userCardSource)) {
             return;

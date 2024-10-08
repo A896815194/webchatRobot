@@ -15,5 +15,5 @@ public interface SingDailyGzhRepository extends JpaRepository<SingDailyGzhEntity
 
     List<SingDailyGzhEntity>findAllByYearAndMonthAndDayOrderByCreateTimeAsc(Integer year,Integer month,Integer day);
 
-    List<SingDailyGzhEntity>findAllByUpdateTimeBetweenOrderByCreateTimeAsc(Date start, Date end);
+    List<SingDailyGzhEntity>findAllByCreateTimeBetweenOrderByCreateTimeAsc(Date start, Date end);
 }
