@@ -72,7 +72,9 @@ public class WeChatConstat {
 
     public final static String COMMAND_SING_DAILY_ZBJ_BEAN = "singDailyZbj";
 
-    public final static String COMMAND_SING_DAILY_OPEN = "监控";
+    public final static String COMMAND_SING_DAILY_OPEN = "开播";
+
+    public final static String COMMAND_SING_DAILY_CLOSE= "关播";
 
 
     static {
@@ -90,6 +92,7 @@ public class WeChatConstat {
         COMMAND_SING_DAILY_LIST.add(COMMAND_SEARCH_SING_DAILY_3);
         // 直播监控
         COMMAND_SING_DAILY_ZBJ_LIST.add(COMMAND_SING_DAILY_OPEN);
+        COMMAND_SING_DAILY_ZBJ_LIST.add(COMMAND_SING_DAILY_CLOSE);
 
         COMMAND_BEAN_MAP.put(COMMAND_SAVE_CARD, COMMAND_CARD_BEAN);
         COMMAND_BEAN_MAP.put(COMMAND_SING_DAILY, COMMAND_SING_DAILY_BEAN);
@@ -104,7 +107,8 @@ public class WeChatConstat {
         COMMAND_METHOD_MAP.put(COMMAND_SEARCH_SING_DAILY, "searchSongDaily");
         COMMAND_METHOD_MAP.put(COMMAND_SEARCH_SING_DAILY_3, "searchSongDailyRecent3");
 
-
+        COMMAND_METHOD_MAP.put(COMMAND_SING_DAILY_OPEN, "miniorOpen");
+        COMMAND_METHOD_MAP.put(COMMAND_SING_DAILY_CLOSE, "miniorClose");
     }
 
     public static String getBeanNameByKey(String key) {

@@ -7,6 +7,7 @@ import com.web.webchat.entity.gzh.CardUserGzhEntity;
 import com.web.webchat.enums.ApiType;
 import com.web.webchat.enums.FunctionType;
 import com.web.webchat.enums.Message;
+import com.web.webchat.function.gzh.SingDailyZbj;
 import com.web.webchat.repository.*;
 import com.web.webchat.repository.gzh.CardUserGzhRepository;
 import com.web.webchat.strategy.TuLingRobotMsg;
@@ -374,6 +375,17 @@ public class SystemInit {
         } catch (Exception e) {
             logger.error("清除卡信息失败", e);
         }
+
+    }
+
+
+    @Autowired
+    private SingDailyZbj singDailyZbj;
+
+    @Scheduled(cron = "0 0/3 * * * ?")
+    public void miniorCast() {
+        logger.info("每3分钟执行,监控是否开播,time:{}", new Date());
+        singDailyZbj.miniorOpen("开播");
 
     }
 }

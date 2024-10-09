@@ -63,6 +63,17 @@ public class GzhController {
                 }
             }
         }
+        // 自动续接监控
+        if (param.containsKey("type") && Objects.equals(param.get("type"), WeChatConstat.COMMAND_TYPE_JK_FAIL)) {
+            AtomicReference<String> data = new AtomicReference("");
+            String resultData = commandHandle(WeChatConstat.COMMAND_SING_DAILY_OPEN, data, WeChatConstat.COMMAND_AUTO_SING_DAILY);
+            if (StringUtils.isBlank(resultData) || !resultData.contains("完成")) {
+                result.put("success", false);
+            } else {
+                result.put("success", true);
+            }
+        }
+
         return result;
     }
 
@@ -162,7 +173,6 @@ public class GzhController {
             }
         }
         if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("text")) {
-
             AtomicReference<String> result = new AtomicReference("");
             // 如果是抽卡有关的命令
             if (StringUtils.isNotBlank(content) && WeChatConstat.COMMAND_CARD_LIST.stream().anyMatch(content::startsWith)) {
@@ -175,9 +185,10 @@ public class GzhController {
             }
             // 直播间监控
             if (StringUtils.isNotBlank(content) && WeChatConstat.COMMAND_SING_DAILY_ZBJ_LIST.stream().anyMatch(content::startsWith)) {
-                // 如果是歌单的命令
-                return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_SING_DAILY);
+                // 监控直播间
+                return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_AUTO_SING_DAILY);
             }
+
         }
         return "";
     }
@@ -256,10 +267,8 @@ public class GzhController {
         if (content.startsWith(WeChatConstat.COMMAND_SEARCH_SING_DAILY + WeChatConstat.COMMAND_SPLIT_JIA)) {
             return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SEARCH_SING_DAILY);
         }
-        if (Objects.equals(content, WeChatConstat.COMMAND_SEARCH_SING_DAILY_3)) {
-            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SEARCH_SING_DAILY_3);
-        }
-        return "";
+        return WeChatConstat.getBeanMethodByKey(content);
+
     }
 
 

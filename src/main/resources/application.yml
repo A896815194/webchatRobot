@@ -31,11 +31,25 @@ api:
     robotName: "Robot"
     appFilePath: "G://test"
     minior:
-      liveId: 125853211144
-      zbId: Sy980317
       danmuOpen: false
-
-
+      #liveId: 125853211144
+      #zbId: Sy980317
+      liveId: 334834206241
+      zbId: 128165353
+      # 用户集合
+      # 2428182699715406 雪
+      # 109318880836 狐狸
+      # 62474263189 加
+      # 76089173365 bo
+      # 58688615767 三
+      # 71091000991 偏执
+      # 98481654073 剪辑君
+      pythonFilePath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/minior.py"
+      managerDouYId: "2428182699715406,109318880836,62474263189,76089173365,58688615767,71091000991,98481654073"
+      notifyUrl: "https://www.jsdream.club/webChat/gzh/notify"
+      signJsPath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/sign.js"
+      nodeModulesPath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/node_modules"
+      castLogPath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/log"
 logging:
   config: classpath:log4j-spring.xml
 Log4jContextSelector: org.apache.logging.log4j.core.async.AsyncLoggerContextSelector

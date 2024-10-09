@@ -61,4 +61,22 @@ public class PropertiesEntity {
 
     @Value("${api.minior.danmuOpen:false}")
     public Boolean dmOpen;
+
+    @Value("${api.minior.pythonFilePath}")
+    public String pythonScriptPath;
+
+    @Value("${api.minior.managerDouYId}")
+    public String managerDouYIds;
+
+    @Value("${api.minior.notifyUrl}")
+    public String notifyUrl;
+
+    @Value("${api.minior.signJsPath}")
+    public String signJsPath;
+
+    @Value("${api.minior.nodeModulesPath}")
+    public String nodeModulesPath;
+
+    @Value("${api.minior.castLogPath}")
+    public String castLogPath;
 }
