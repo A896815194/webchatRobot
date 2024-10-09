@@ -36,7 +36,8 @@ def patched_popen_encoding(encoding='utf-8'):
         yield
 
 
-def generateSignature(wss, script_file='sign.js'):
+def generateSignature(wss, script_file):
+   
     """
     出现gbk编码问题则修改 python模块subprocess.py的源码中Popen类的__init__函数参数encoding值为 "utf-8"
     """
@@ -77,7 +78,7 @@ def generateMsToken(length=107):
 
 class DouyinLiveWebFetcher:
     
-    def __init__(self, live_id, manage_ids):
+    def __init__(self, live_id, manage_ids,notify_url,signjs_url):
         """
         直播间弹幕抓取对象
         :param live_id: 直播间的直播id，打开直播间web首页的链接如：https://live.douyin.com/261378947940，
@@ -90,7 +91,9 @@ class DouyinLiveWebFetcher:
         self.live_url = "https://live.douyin.com/"
         self.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " \
                           "Chrome/120.0.0.0 Safari/537.36"
-    
+        self.notify_url = notify_url
+        self.script_file = signjs_url
+        
     def start(self):
         self._connectWebSocket()
     
@@ -164,7 +167,7 @@ class DouyinLiveWebFetcher:
                f"&user_unique_id=7319483754668557238&im_path=/webcast/im/fetch/&identity=audience"
                f"&need_persist_msg_count=15&insert_task_id=&live_reason=&room_id={self.room_id}&heartbeatDuration=0")
         
-        signature = generateSignature(wss)
+        signature = generateSignature(wss,self.script_file)
         wss += f"&signature={signature}"
         
         headers = {
@@ -234,6 +237,13 @@ class DouyinLiveWebFetcher:
     
     def _wsOnClose(self, ws, *args):
         print("WebSocket connection closed.")
+        try:
+                response = requests.post(notify_url, json={"type":2})
+                response.raise_for_status()
+                print(f"【直播间链接终端触发命令重试成功】")
+        except requests.exceptions.RequestException as e:
+                print(f"Error during API call: {e}")
+                print(f"【【直播间链接终端触发命令发送失败】")
     
    # def _parseChatMsg(self, payload):
    #     """聊天消息"""
@@ -255,15 +265,17 @@ class DouyinLiveWebFetcher:
         content = message.content
         #print(f"【聊天msg】[{user_id}]{user_name}: {content}")
         manage_ids = self.manage_ids
+        notify_url = self.notify_url
         if user_id in manage_ids and content.startswith("歌曲-"):
             print(f"【聊天msg】[{user_id}]{user_name}: {content}")
-            print(f"【触发命令】[{user_id}]{user_name}要发送记歌请求")
+            print(f"【[{user_id}]{user_name}触发命令】要发送记歌请求")
             try:
-                response = requests.post("http://127.0.0.1:8081/webChat/gzh/notify", json={"content": content,"type":1})
+                response = requests.post(notify_url, json={"content": content,"type":1})
                 response.raise_for_status()
+                print(f"【[{user_id}]{user_name}触发命令】操作成功")
             except requests.exceptions.RequestException as e:
                 print(f"Error during API call: {e}")
-                print(f"【触发命令】[{user_id}]{user_name}要发送失败")
+                print(f"【[{user_id}]{user_name}触发命令发送失败】")
         else:
             print(f"【聊天msg】[{user_id}]{user_name}: {content}")
                   

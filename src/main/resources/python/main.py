@@ -20,4 +20,6 @@ if __name__ == '__main__':
     # 71091000991 偏执
     # 98481654073 剪辑君
     manager_user = [2428182699715406, 109318880836, 62474263189, 76089173365,58688615767,71091000991,98481654073]
-    DouyinLiveWebFetcher(live_id,manager_user).start()
+    notify_url = 'https://www.jsdream.club/webChat/gzh/notify';
+    signjs_url = 'M:\爬抖音\DouyinLiveWebFetcher-main\DouyinLiveWebFetcher-main\sign.js';
+    DouyinLiveWebFetcher(live_id,manager_user,notify_url,signjs_url).start()

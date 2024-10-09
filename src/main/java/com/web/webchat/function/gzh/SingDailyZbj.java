@@ -133,6 +133,9 @@ public class SingDailyZbj {
                 logger.info(liveId + "直播间,存在正在执行的监控任务");
                 return;
             }
+            if(chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && !chatroomProccessMap.get(liveId).isAlive()){
+                chatroomProccessMap.remove(liveId);
+            }
 //            String filePath = castLogPath + File.separator +  DateUtil.format(new Date(), "yyyy-MM-dd_HH:mm:ss") + ".txt";
 //            File file = new File(filePath);
 //            if (!file.exists()) {
@@ -155,12 +158,12 @@ public class SingDailyZbj {
 //               // writer.write(line + "\n"); // 写入文件并换行
 //                System.out.println(line + "\n");
 //            }
-//            // 获取进程的错误流，用于读取Python脚本的错误信息
-//            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"));
-//            String errorLine;
-//            while ((errorLine = errorReader.readLine()) != null) {
-//                writer.write(errorLine + "\n"); // 写入文件并换行
-//            }
+            // 获取进程的错误流，用于读取Python脚本的错误信息
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"));
+            String errorLine;
+            while ((errorLine = errorReader.readLine()) != null) {
+                logger.info(errorLine + "\n"); // 写入文件并换行
+            }
             int exitCode = process.waitFor();
             process.destroy();
             chatroomProccessMap.remove(liveId);
