@@ -13,7 +13,10 @@ public interface SingDailyGzhRepository extends JpaRepository<SingDailyGzhEntity
 
     List<SingDailyGzhEntity> findAll();
 
-    List<SingDailyGzhEntity>findAllByYearAndMonthAndDayOrderByCreateTimeAsc(Integer year,Integer month,Integer day);
+    List<SingDailyGzhEntity> findAllByYearAndMonthAndDayOrderByCreateTimeAsc(Integer year, Integer month, Integer day);
 
-    List<SingDailyGzhEntity>findAllByCreateTimeBetweenOrderByCreateTimeAsc(Date start, Date end);
+    List<SingDailyGzhEntity> findAllByCreateTimeBetweenOrderByCreateTimeAsc(Date start, Date end);
+
+    List<SingDailyGzhEntity> findAllByYearAndMonthAndDayAndSongName(Integer year, Integer month, Integer day, String songName);
+
 }

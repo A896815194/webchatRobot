@@ -35,16 +35,20 @@ public class SingDailyGzh {
         int year = currentDate.getYear();
         int month = currentDate.getMonthValue();
         int day = currentDate.getDayOfMonth();
-        SingDailyGzhEntity singDailyGzhEntity = new SingDailyGzhEntity();
-        singDailyGzhEntity.setYear(year);
-        singDailyGzhEntity.setMonth(month);
-        singDailyGzhEntity.setDay(day);
-        singDailyGzhEntity.setSongName(songName);
-        singDailyGzhEntity.setTimeDay(year + "-" + month + "-" + day);
-        singDailyGzhEntity.setTimeType(timeType);
-        singDailyGzhEntity.setCreateTime(new Date());
-        singDailyGzhEntity.setUpdateTime(new Date());
-        singDailyGzhRepository.save(singDailyGzhEntity);
+        // 查询当天有没有存入
+        List<SingDailyGzhEntity> currentSongs = singDailyGzhRepository.findAllByYearAndMonthAndDayAndSongName(year, month, day, songName);
+        if (CollectionUtils.isEmpty(currentSongs)) {
+            SingDailyGzhEntity singDailyGzhEntity = new SingDailyGzhEntity();
+            singDailyGzhEntity.setYear(year);
+            singDailyGzhEntity.setMonth(month);
+            singDailyGzhEntity.setDay(day);
+            singDailyGzhEntity.setSongName(songName);
+            singDailyGzhEntity.setTimeDay(year + "-" + month + "-" + day);
+            singDailyGzhEntity.setTimeType(timeType);
+            singDailyGzhEntity.setCreateTime(new Date());
+            singDailyGzhEntity.setUpdateTime(new Date());
+            singDailyGzhRepository.save(singDailyGzhEntity);
+        }
         List<SingDailyGzhEntity> daily = singDailyGzhRepository.findAllByYearAndMonthAndDayOrderByCreateTimeAsc(year, month, day);
         return convertSingDailyMsg(daily, null, false);
 
