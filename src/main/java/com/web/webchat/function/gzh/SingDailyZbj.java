@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 @Component("singDailyZbj")
 public class SingDailyZbj {
 
@@ -134,36 +135,46 @@ public class SingDailyZbj {
 //    }
 
     public static synchronized void pythonProccess(Map<String, Process> chatroomProccessMap, String pythonScriptPath, String command, String liveId, String managerDouYIds, String notifyUrl, String signJsPath, String nodeMoudlePath, String castLogPath) {
-        ProcessBuilder pb = new ProcessBuilder(command, "-u", pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath, castLogPath);
-        try {
-            pb.redirectErrorStream(true);
-            Map<String, String> env = pb.environment();
-            // 配置环境变量
-            env.put("NODE_PATH", nodeMoudlePath);
-            Process process = pb.start();
-            chatroomProccessMap.put(liveId, process);
-            logger.info(liveId + "直播间,开始执行的监控任务");
+//        ProcessBuilder pb = new ProcessBuilder(command, "-u", pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath, castLogPath);
+//        try {
+//            pb.redirectErrorStream(true);
+//            Map<String, String> env = pb.environment();
+//            // 配置环境变量
+//            env.put("NODE_PATH", nodeMoudlePath);
+//            Process process = pb.start();
+//            chatroomProccessMap.put(liveId, process);
+//            logger.info(liveId + "直播间,开始执行的监控任务");
             executor.submit(() -> {
+                ProcessBuilder pb = new ProcessBuilder(command, "-u", pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath, castLogPath);
+                pb.redirectErrorStream(true);
+                Map<String, String> env = pb.environment();
+                // 配置环境变量
+                env.put("NODE_PATH", nodeMoudlePath);
+
                 try {
+                    Process process = pb.start();
+                    chatroomProccessMap.put(liveId, process);
+                    logger.info(liveId + "直播间,开始执行的监控任务");
                     BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
                     String inputLine;
                     while ((inputLine = inputReader.readLine()) != null) {
                         //System.out.println(inputLine + "\n"); // 写入文件并换行
-                        //logger.info(inputLine + "\n");
-                        writeLogToFile(inputLine, castLogPath, liveId);
+                        logger.info(inputLine + "\n");
+                        //writeLogToFile(inputLine, castLogPath, liveId);
                     }
                     int exitCode = process.waitFor();
+                    process.destroy();
                     logger.info("Python script execution finished with exit code: " + exitCode);
                 } catch (Exception e) {
                     logger.error("记录log失败", e);
                 } finally {
-                    process.destroy();
+
                     chatroomProccessMap.remove(liveId);
                 }
             });
-        } catch (Exception e) {
-            logger.error("执行python 异常", e);
-        }
+//        } catch (Exception e) {
+//            logger.error("执行python 异常", e);
+//        }
     }
 
     public static void writeLogToFile(String logContent, String logPath, String liveId) {

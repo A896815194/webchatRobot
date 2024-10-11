@@ -10,7 +10,7 @@ from liveMan import DouyinLiveWebFetcher
 
 if __name__ == '__main__':
     # 直播间id
-    live_id = '125853211144'
+    live_id = '486917578416'
     # 用户集合
     # 2428182699715406 雪
     # 109318880836 狐狸

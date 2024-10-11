@@ -125,7 +125,7 @@ public class SingDailyGzh {
         Date maxTimeOfDay = calendar.getTime();
 
         // 获取当前时间3天前0时时间
-        calendar.add(Calendar.DAY_OF_MONTH, -3);
+        calendar.add(Calendar.DAY_OF_MONTH, -2);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
