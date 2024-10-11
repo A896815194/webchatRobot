@@ -10,8 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class SingDailyZbj {
 
     //private static final Map<String, Boolean> chatroomStateMap = new ConcurrentHashMap<>();
 
-    private static final Map<String, Process> chatroomProccessMap = new ConcurrentHashMap<>();
+    public static final Map<String, Process> chatroomProccessMap = new ConcurrentHashMap<>();
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(1);
 
@@ -50,9 +51,15 @@ public class SingDailyZbj {
             return "主播现在没有开播,不能开启监控直播间弹幕";
         }
         //chatroomStateMap.put(liveId, true);
-        executor.submit(() -> {
-            pythonProccess(chatroomProccessMap, propertiesEntity.getPythonScriptPath(), "python", liveId, propertiesEntity.getManagerDouYIds(), propertiesEntity.getNotifyUrl(), propertiesEntity.getSignJsPath(), propertiesEntity.nodeModulesPath, propertiesEntity.getCastLogPath());
-        });
+        // 如果当前直播间监控脚本，有且还存在,则不进行处理
+        if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && chatroomProccessMap.get(liveId).isAlive()) {
+            logger.info(liveId + "直播间,存在正在执行的监控任务");
+            return liveId + "直播间,存在正在执行的监控任务";
+        }
+        if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && !chatroomProccessMap.get(liveId).isAlive()) {
+            chatroomProccessMap.remove(liveId);
+        }
+        pythonProccess(chatroomProccessMap, propertiesEntity.getPythonScriptPath(), "python", liveId, propertiesEntity.getManagerDouYIds(), propertiesEntity.getNotifyUrl(), propertiesEntity.getSignJsPath(), propertiesEntity.nodeModulesPath, propertiesEntity.getCastLogPath());
         return "操作完成";
     }
 
@@ -92,7 +99,7 @@ public class SingDailyZbj {
         HttpResponse response = HttpRequest.get(url)
                 .execute();
         String content = response.body();
-        logger.info("接口返回：" + content);
+        //logger.info("接口返回：" + content);
         JSONObject result = JSONUtil.toBean(content, JSONObject.class);
         Map<String, Object> map = new HashMap<>();
         if (result.containsKey("status_code") && Objects.equals(0, result.getInt("status_code"))) {
@@ -127,50 +134,51 @@ public class SingDailyZbj {
 //    }
 
     public static synchronized void pythonProccess(Map<String, Process> chatroomProccessMap, String pythonScriptPath, String command, String liveId, String managerDouYIds, String notifyUrl, String signJsPath, String nodeMoudlePath, String castLogPath) {
+        ProcessBuilder pb = new ProcessBuilder(command, "-u", pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath, castLogPath);
         try {
-            // 如果当前直播间监控脚本，有且还存在,则不进行处理
-            if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && chatroomProccessMap.get(liveId).isAlive()) {
-                logger.info(liveId + "直播间,存在正在执行的监控任务");
-                return;
-            }
-            if(chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && !chatroomProccessMap.get(liveId).isAlive()){
-                chatroomProccessMap.remove(liveId);
-            }
-//            String filePath = castLogPath + File.separator +  DateUtil.format(new Date(), "yyyy-MM-dd_HH:mm:ss") + ".txt";
-//            File file = new File(filePath);
-//            if (!file.exists()) {
-//                file.getParentFile().mkdirs(); // 创建父目录
-//                file.createNewFile(); // 创建文件
-//            }
-            ProcessBuilder pb = new ProcessBuilder(command, pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath);
+            pb.redirectErrorStream(true);
             Map<String, String> env = pb.environment();
             // 配置环境变量
             env.put("NODE_PATH", nodeMoudlePath);
             Process process = pb.start();
-            logger.info(liveId + "直播间,开始执行的监控任务");
             chatroomProccessMap.put(liveId, process);
-//            FileWriter writer = new FileWriter(filePath, true); // 设置为追加写入模式
-//            不输出所有log
-//            InputStream inputStream = process.getInputStream();
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "GBK"));
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//               // writer.write(line + "\n"); // 写入文件并换行
-//                System.out.println(line + "\n");
-//            }
-            // 获取进程的错误流，用于读取Python脚本的错误信息
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"));
-            String errorLine;
-            while ((errorLine = errorReader.readLine()) != null) {
-                logger.info(errorLine + "\n"); // 写入文件并换行
-            }
-            int exitCode = process.waitFor();
-            process.destroy();
-            chatroomProccessMap.remove(liveId);
-            //           writer.close(); // 关闭写入流
-            logger.info("Python script execution finished with exit code: " + exitCode);
+            logger.info(liveId + "直播间,开始执行的监控任务");
+            executor.submit(() -> {
+                try {
+                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
+                    String inputLine;
+                    while ((inputLine = inputReader.readLine()) != null) {
+                        //System.out.println(inputLine + "\n"); // 写入文件并换行
+                        //logger.info(inputLine + "\n");
+                        writeLogToFile(inputLine, castLogPath, liveId);
+                    }
+                    int exitCode = process.waitFor();
+                    logger.info("Python script execution finished with exit code: " + exitCode);
+                } catch (Exception e) {
+                    logger.error("记录log失败", e);
+                } finally {
+                    process.destroy();
+                    chatroomProccessMap.remove(liveId);
+                }
+            });
         } catch (Exception e) {
             logger.error("执行python 异常", e);
+        }
+    }
+
+    public static void writeLogToFile(String logContent, String logPath, String liveId) {
+        File directory = new File(logPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String fileName = liveId + "-" + sdf.format(new Date()) + ".txt";
+        File file = new File(logPath + File.separator + fileName);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            writer.write(logContent);
+            writer.newLine();
+        } catch (Exception e) {
+            logger.info("记录直播间log失败", e);
         }
     }
 
