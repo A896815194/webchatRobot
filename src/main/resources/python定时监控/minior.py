@@ -10,11 +10,6 @@ app = Flask(__name__)
 from liveManWeb import DouyinLiveWebFetcher
 import requests
 import time
-import os
-import asyncio
-from functools import partial
-from functools import wraps
-from multiprocessing import Pool
 import multiprocessing
 import psutil
  
@@ -84,9 +79,3 @@ def fetch_live_config(live_cast_state_url):
     
 if __name__ == '__main__':
     app.run()
-   
-    
-    
-    
-    
-   
