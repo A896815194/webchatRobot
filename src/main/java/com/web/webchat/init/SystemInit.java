@@ -389,7 +389,7 @@ public class SystemInit {
     @Autowired
     private SingDailyZbj singDailyZbj;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/3 * * * ?")
     public void miniorCast() {
         logger.info("每3分钟执行,监控是否开播,time:{}", new Date());
         singDailyZbj.miniorOpen("开播");
