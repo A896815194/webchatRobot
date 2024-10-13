@@ -43,11 +43,9 @@ api:
       # 58688615767 三
       # 71091000991 偏执
       # 98481654073 剪辑君
-      pythonFilePath: "M://爬抖音/DouyinLiveWebFetcher-main/ouyinLiveWebFetcher-main/定时监控"
       managerDouYId: "2428182699715406,109318880836,62474263189,76089173365,58688615767,71091000991,98481654073"
       notifyUrl: "http://localhost:8081/webChat/gzh/notify"
       signJsPath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/sign.js"
-      nodeModulesPath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/node_modules"
       PID: 20280
       pythonUrl: http://localhost:5000/miniorLive
 

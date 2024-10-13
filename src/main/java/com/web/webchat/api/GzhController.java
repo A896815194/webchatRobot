@@ -228,7 +228,7 @@ public class GzhController {
             if (content.startsWith(WeChatConstat.COMMAND_COVER_PID)) {
                 logger.info("重置pid:" + content);
                 String resultContent = "";
-                String pid = content.split(WeChatConstat.COMMAND_ADD_PID)[1];
+                String pid = content.split(WeChatConstat.COMMAND_COVER_PID)[1];
                 SystemInit.pythonPID.clear();
                 SystemInit.pythonPID.add(pid);
                 resultContent = "重置成功,目前不被杀掉的PID是:" + pid;

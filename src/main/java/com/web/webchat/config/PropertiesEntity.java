@@ -59,8 +59,8 @@ public class PropertiesEntity {
     @Value("${api.minior.zbId:null}")
     public String zbId;
 
-    @Value("${api.minior.pythonFilePath:null}")
-    public String pythonScriptPath;
+//    @Value("${api.minior.pythonFilePath:null}")
+//    public String pythonScriptPath;
 
     @Value("${api.minior.managerDouYId:null}")
     public String managerDouYIds;
@@ -70,9 +70,6 @@ public class PropertiesEntity {
 
     @Value("${api.minior.signJsPath:null}")
     public String signJsPath;
-
-    @Value("${api.minior.nodeModulesPath:null}")
-    public String nodeModulesPath;
 
     @Value("${api.minior.castLogPath:null}")
     public String castLogPath;
