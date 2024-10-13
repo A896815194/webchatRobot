@@ -210,6 +210,7 @@ public class GzhController {
                     logger.info(resultContent);
                 }
                 if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && !SystemInit.pythonPID.contains(pid)) {
+                    SystemInit.pythonPID.add(pid);
                     resultContent = "PID" + pid + "追加成功";
                     logger.info(resultContent);
                 }
