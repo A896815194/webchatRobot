@@ -78,7 +78,7 @@ public class SystemInit {
     @Autowired
     private TuLingRobotMsg robotMsg;
     // python 的pid 再杀进程的时候 在里面的 id不杀掉
-    public static List<String> pythonPID = new ArrayList<>();
+    public final static List<String> pythonPID = new ArrayList<>();
 
     //获取初始化功能列表
     @PostConstruct
@@ -99,7 +99,9 @@ public class SystemInit {
         }
         logger.info("初始化python 不被杀掉的 pid");
         if (!StringUtils.isEmpty(propertiesEntity.getPid())) {
-            pythonPID = Arrays.asList(propertiesEntity.getPid().split(","));
+            List<String> pids = Arrays.asList(propertiesEntity.getPid().split(","));
+            pythonPID.clear();
+            pythonPID.addAll(pids);
         }
     }
 
