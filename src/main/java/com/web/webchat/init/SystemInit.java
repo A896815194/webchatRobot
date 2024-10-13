@@ -28,6 +28,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -76,6 +77,8 @@ public class SystemInit {
 
     @Autowired
     private TuLingRobotMsg robotMsg;
+    // python 的pid 再杀进程的时候 在里面的 id不杀掉
+    public static List<String> pythonPID = new ArrayList<>();
 
     //获取初始化功能列表
     @PostConstruct
@@ -93,6 +96,10 @@ public class SystemInit {
         logger.info("初始化物品名字映射");
         for (ThingEntity thing : thingNoAutoUse) {
             nameThingMap.put(thing.getThingName(), thing);
+        }
+        logger.info("初始化python 不被杀掉的 pid");
+        if (!StringUtils.isEmpty(propertiesEntity.getPid())) {
+            pythonPID = Arrays.asList(propertiesEntity.getPid().split(","));
         }
     }
 
@@ -382,7 +389,7 @@ public class SystemInit {
     @Autowired
     private SingDailyZbj singDailyZbj;
 
-    //@Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void miniorCast() {
         logger.info("每3分钟执行,监控是否开播,time:{}", new Date());
         singDailyZbj.miniorOpen("开播");

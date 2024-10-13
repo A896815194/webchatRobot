@@ -59,24 +59,27 @@ public class PropertiesEntity {
     @Value("${api.minior.zbId:null}")
     public String zbId;
 
-    @Value("${api.minior.danmuOpen:false}")
-    public Boolean dmOpen;
-
-    @Value("${api.minior.pythonFilePath}")
+    @Value("${api.minior.pythonFilePath:null}")
     public String pythonScriptPath;
 
-    @Value("${api.minior.managerDouYId}")
+    @Value("${api.minior.managerDouYId:null}")
     public String managerDouYIds;
 
-    @Value("${api.minior.notifyUrl}")
+    @Value("${api.minior.notifyUrl:null}")
     public String notifyUrl;
 
-    @Value("${api.minior.signJsPath}")
+    @Value("${api.minior.signJsPath:null}")
     public String signJsPath;
 
-    @Value("${api.minior.nodeModulesPath}")
+    @Value("${api.minior.nodeModulesPath:null}")
     public String nodeModulesPath;
 
-    @Value("${api.minior.castLogPath}")
+    @Value("${api.minior.castLogPath:null}")
     public String castLogPath;
+
+    @Value("${api.minior.PID:null}")
+    public String pid;
+
+    @Value("${api.minior.pythonUrl:null}")
+    public String pythonUrl;
 }

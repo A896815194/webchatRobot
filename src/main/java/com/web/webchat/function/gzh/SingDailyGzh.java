@@ -95,7 +95,6 @@ public class SingDailyGzh {
         }
     }
 
-
     //查询某天歌单
     public String searchSongDaily(String content) {
         logger.info("查询歌单:content{}", content);
@@ -108,7 +107,6 @@ public class SingDailyGzh {
         List<SingDailyGzhEntity> daily = singDailyGzhRepository.findAllByYearAndMonthAndDayOrderByCreateTimeAsc(Integer.valueOf(yearS), Integer.valueOf(monthS), Integer.valueOf(dayS));
         return convertSingDailyMsg(daily, yearS + "-" + monthS + "-" + dayS, false);
     }
-
 
     //3天歌单
     public String searchSongDailyRecent3(String content) {

@@ -68,7 +68,7 @@ public class DyStateDemo {
     public static void main(String[] args) {
         try {
             // 指定Python解释器路径和要执行的Python脚本文件路径
-            String pythonPath = "python";
+            String pythonPath = "python_hand_shell";
             String scriptPath = "src/main/resources/python/main.py";
 
             // 构建命令行参数

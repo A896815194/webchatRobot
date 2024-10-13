@@ -5,6 +5,8 @@ import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.dto.WxBaseDto.HfContentResponseDto;
 import com.web.webchat.dto.WxBaseDto.WxRequestDto;
 import com.web.webchat.enums.gzh.WeChatConstat;
+import com.web.webchat.function.gzh.SingDailyZbj;
+import com.web.webchat.init.SystemInit;
 import com.web.webchat.util.ReflectionService;
 import com.web.webchat.util.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,6 +41,24 @@ public class GzhController {
 
     @Autowired
     private PropertiesEntity propertiesEntity;
+
+    @GetMapping("fetch/config")
+    public Map<String, Object> wxauth() {
+        logger.info("调用获取配置");
+        Map<String, Object> result = new HashMap<>();
+        result.put("live_id", propertiesEntity.getLiveId());
+        result.put("zb_id", propertiesEntity.getZbId());
+        String[] strArray = propertiesEntity.getManagerDouYIds().split(",");
+        long[] intArray = new long[strArray.length];
+        for (int i = 0; i < strArray.length; i++) {
+            intArray[i] = Long.valueOf(strArray[i]);
+        }
+        result.put("manager_user", intArray);
+        result.put("notify_url", propertiesEntity.getNotifyUrl());
+        result.put("signjs_url", propertiesEntity.getSignJsPath());
+        logger.info("调用获取配置成功:" + result);
+        return result;
+    }
 
 
     @PostMapping("gzh/notify")
@@ -66,6 +87,11 @@ public class GzhController {
         // 自动续接监控
         if (param.containsKey("type") && Objects.equals(param.get("type"), WeChatConstat.COMMAND_TYPE_JK_FAIL)) {
             AtomicReference<String> data = new AtomicReference("");
+            SingDailyZbj.chatroomProccessMap.put(propertiesEntity.getLiveId(), false);
+            // python 后台服务 一个进程a  ，调用接口时 执行了监听直播间 是  进程a的子进程b
+            // 如果失败了，有可能是b子进程没结束呢，然后调过来了，所以得杀掉非服务的进程,不杀掉再调用python服务时发现多余1个进程不会再调用
+            SingDailyZbj.killPythonPID(propertiesEntity.getLiveId());
+            // 杀掉除了python本身保护进程，然后重新拉起一个新的，
             String resultData = commandHandle(WeChatConstat.COMMAND_SING_DAILY_OPEN, data, WeChatConstat.COMMAND_AUTO_SING_DAILY);
             if (StringUtils.isBlank(resultData) || !resultData.contains("完成")) {
                 result.put("success", false);
@@ -73,7 +99,6 @@ public class GzhController {
                 result.put("success", true);
             }
         }
-
         return result;
     }
 
@@ -174,6 +199,56 @@ public class GzhController {
         }
         if (StringUtils.isNotBlank(request.getMsgType()) && request.getMsgType().contains("text")) {
             AtomicReference<String> result = new AtomicReference("");
+            // 输入PID+  就是直接追加，如果没有就加，有就不做处理   应对可能有多个人要启动这个python脚本
+            if (content.startsWith(WeChatConstat.COMMAND_ADD_PID)) {
+                logger.info("添加pid:" + content);
+                String resultContent = "";
+                String pid = content.split(WeChatConstat.COMMAND_ADD_PID)[1];
+                if (CollectionUtils.isEmpty(SystemInit.pythonPID)) {
+                    SystemInit.pythonPID.add(pid);
+                    resultContent = "PID" + pid + "追加成功";
+                    logger.info(resultContent);
+                }
+                if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && !SystemInit.pythonPID.contains(pid)) {
+                    resultContent = "PID" + pid + "追加成功";
+                    logger.info(resultContent);
+                }
+                if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && SystemInit.pythonPID.contains(pid)) {
+                    resultContent = "PID" + pid + "已经存在不追加";
+                    logger.info(resultContent);
+                }
+                HfContentResponseDto dto = new HfContentResponseDto();
+                dto.setToUserName(fromWx);
+                dto.setFromUserName(gzh);
+                dto.setMsgType("text");
+                dto.setContent(resultContent);
+                return DtoToXmlString(dto);
+            }
+            // 输入PID-  直接替换PID 应对python服务坏了,重启python服务了，这样java不用重启
+            if (content.startsWith(WeChatConstat.COMMAND_COVER_PID)) {
+                logger.info("重置pid:" + content);
+                String resultContent = "";
+                String pid = content.split(WeChatConstat.COMMAND_ADD_PID)[1];
+                SystemInit.pythonPID.clear();
+                SystemInit.pythonPID.add(pid);
+                resultContent = "重置成功,目前不被杀掉的PID是:" + pid;
+                logger.info(resultContent);
+                HfContentResponseDto dto = new HfContentResponseDto();
+                dto.setToUserName(fromWx);
+                dto.setFromUserName(gzh);
+                dto.setMsgType("text");
+                dto.setContent(resultContent);
+                return DtoToXmlString(dto);
+            }
+            // 查pid
+            if (content.startsWith(WeChatConstat.COMMAND_SEARCH_PID)) {
+                HfContentResponseDto dto = new HfContentResponseDto();
+                dto.setToUserName(fromWx);
+                dto.setFromUserName(gzh);
+                dto.setMsgType("text");
+                dto.setContent(SystemInit.pythonPID.toString());
+                return DtoToXmlString(dto);
+            }
             // 如果是抽卡有关的命令
             if (StringUtils.isNotBlank(content) && WeChatConstat.COMMAND_CARD_LIST.stream().anyMatch(content::startsWith)) {
                 return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_SAVE_CARD);
@@ -188,7 +263,6 @@ public class GzhController {
                 // 监控直播间
                 return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_AUTO_SING_DAILY);
             }
-
         }
         return "";
     }

@@ -5,14 +5,15 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.web.webchat.config.PropertiesEntity;
+import com.web.webchat.init.SystemInit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,7 +36,10 @@ public class SingDailyZbj {
 
     //private static final Map<String, Boolean> chatroomStateMap = new ConcurrentHashMap<>();
 
-    public static final Map<String, Process> chatroomProccessMap = new ConcurrentHashMap<>();
+    public static final Map<String, Boolean> chatroomProccessMap = new ConcurrentHashMap<>();
+
+    public static final Map<String, Process> chatroomProccessMapOld = new ConcurrentHashMap<>();
+
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(1);
 
@@ -48,19 +52,19 @@ public class SingDailyZbj {
         // 先判断主播是否开播,开播了才能监控
         boolean castOpen = miniorCastState(castUserId);
         if (!castOpen) {
-            //chatroomStateMap.put(liveId, false);
+            chatroomProccessMap.put(liveId, false);
             return "主播现在没有开播,不能开启监控直播间弹幕";
         }
         //chatroomStateMap.put(liveId, true);
         // 如果当前直播间监控脚本，有且还存在,则不进行处理
-        if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && chatroomProccessMap.get(liveId).isAlive()) {
+        if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && chatroomProccessMap.get(liveId)) {
             logger.info(liveId + "直播间,存在正在执行的监控任务");
             return liveId + "直播间,存在正在执行的监控任务";
         }
-        if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && !chatroomProccessMap.get(liveId).isAlive()) {
+        if (chatroomProccessMap.containsKey(liveId) && chatroomProccessMap.get(liveId) != null && !chatroomProccessMap.get(liveId)) {
             chatroomProccessMap.remove(liveId);
         }
-        pythonProccess(chatroomProccessMap, propertiesEntity.getPythonScriptPath(), "python", liveId, propertiesEntity.getManagerDouYIds(), propertiesEntity.getNotifyUrl(), propertiesEntity.getSignJsPath(), propertiesEntity.nodeModulesPath, propertiesEntity.getCastLogPath());
+        pythonProccess(chatroomProccessMap, liveId, propertiesEntity);
         return "操作完成";
     }
 
@@ -75,14 +79,28 @@ public class SingDailyZbj {
             return "操作完成";
         }
         if (chatroomProccessMap.get(liveId) != null) {
-            logger.info("当前任务执行状态：" + chatroomProccessMap.get(liveId).isAlive());
-            chatroomProccessMap.get(liveId).destroy();
+            killPythonPID(liveId);
             chatroomProccessMap.remove(liveId);
             return "当前监控在进行中,关闭完成";
         }
         return "操作完成";
     }
 
+
+    public static boolean execPythonMinior(String url) {
+        logger.info("调用python服务url:" + url);
+        HttpResponse response = HttpRequest.get(url)
+                .execute();
+        if (response.getStatus() == 200) {
+            // 请求成功
+            logger.info("python服务调用成功");
+            return true;
+        } else {
+            // 请求失败
+            logger.info("python服务调用失败:" + response.body());
+            return false;
+        }
+    }
 
     public static boolean miniorCastState(String userId) {
         // 发起GET请求并设置请求头
@@ -134,7 +152,20 @@ public class SingDailyZbj {
 //        pythonProccess(chatroomProccessMap,pythonScriptPath,command,liveId,managerDouYIds,notifyUrl,signJsPath,nodeMoudlePath,logPath);
 //    }
 
-    public static synchronized void pythonProccess(Map<String, Process> chatroomProccessMap, String pythonScriptPath, String command, String liveId, String managerDouYIds, String notifyUrl, String signJsPath, String nodeMoudlePath, String castLogPath) {
+    public static void pythonProccess(Map<String, Boolean> chatroomProccessMap, String liveId, PropertiesEntity propertiesEntity) {
+        try {
+
+            boolean success = execPythonMinior(propertiesEntity.getPythonUrl());
+            if (success) {
+                chatroomProccessMap.put(liveId, true);
+            }
+        } catch (Exception e) {
+            logger.error("执行异常", e);
+            chatroomProccessMap.remove(liveId);
+        }
+    }
+
+//    public static void pythonProccess(Map<String, Process> chatroomProccessMap, String pythonScriptPath, String command, String liveId, String managerDouYIds, String notifyUrl, String signJsPath, String nodeMoudlePath, String castLogPath) {
 //        ProcessBuilder pb = new ProcessBuilder(command, "-u", pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath, castLogPath);
 //        try {
 //            pb.redirectErrorStream(true);
@@ -144,58 +175,49 @@ public class SingDailyZbj {
 //            Process process = pb.start();
 //            chatroomProccessMap.put(liveId, process);
 //            logger.info(liveId + "直播间,开始执行的监控任务");
-            executor.submit(() -> {
-                ProcessBuilder pb = new ProcessBuilder(command, "-u", pythonScriptPath, liveId, managerDouYIds, notifyUrl, signJsPath, castLogPath);
-                pb.redirectErrorStream(true);
-                Map<String, String> env = pb.environment();
-                // 配置环境变量
-                env.put("NODE_PATH", nodeMoudlePath);
-
-                try {
-                    Process process = pb.start();
-                    chatroomProccessMap.put(liveId, process);
-                    logger.info(liveId + "直播间,开始执行的监控任务");
-                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
-                    String inputLine;
-                    while ((inputLine = inputReader.readLine()) != null) {
-                        //System.out.println(inputLine + "\n"); // 写入文件并换行
-                        logger.info(inputLine + "\n");
-                        //writeLogToFile(inputLine, castLogPath, liveId);
-                    }
-                    int exitCode = process.waitFor();
-                    process.destroy();
-                    logger.info("Python script execution finished with exit code: " + exitCode);
-                } catch (Exception e) {
-                    logger.error("记录log失败", e);
-                } finally {
-
-                    chatroomProccessMap.remove(liveId);
-                }
-            });
+//            try {
+//                logger.info(liveId + "直播间,开始执行的监控任务");
+//                BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
+//                String inputLine;
+//                while ((inputLine = inputReader.readLine()) != null) {
+//                    //System.out.println(inputLine + "\n"); // 写入文件并换行
+//                    //logger.info(inputLine + "\n");
+//                    writeLogToFile(inputLine, castLogPath, liveId);
+//                }
+//                int exitCode = process.waitFor();
+//                process.destroy();
+//                logger.info("Python script execution finished with exit code: " + exitCode);
+//            } catch (Exception e) {
+//                logger.error("记录log失败", e);
+//            } finally {
+//
+//                chatroomProccessMap.remove(liveId);
+//            }
 //        } catch (Exception e) {
 //            logger.error("执行python 异常", e);
 //        }
-    }
+//    }
 
-    public static void writeLogToFile(String logContent, String logPath, String liveId) {
-        File directory = new File(logPath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String fileName = liveId + "-" + sdf.format(new Date()) + ".txt";
-        File file = new File(logPath + File.separator + fileName);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-            writer.write(logContent);
-            writer.newLine();
-        } catch (Exception e) {
-            logger.info("记录直播间log失败", e);
-        }
-    }
+//    public static void writeLogToFile(String logContent, String logPath, String liveId) {
+//        File directory = new File(logPath);
+//        if (!directory.exists()) {
+//            directory.mkdirs();
+//        }
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        String fileName = liveId + "-" + sdf.format(new Date()) + ".txt";
+//        File file = new File(logPath + File.separator + fileName);
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+//            writer.write(logContent);
+//            writer.newLine();
+//        } catch (Exception e) {
+//            logger.info("记录直播间log失败", e);
+//        }
+//    }
 
     // 杀所有python进程，目前用不到
-    public static void killPythonPID() {
+    public static void killPythonPID(String liveId) {
         try {
+            logger.info("查询进程杀掉所有python进程");
             Process process = Runtime.getRuntime().exec("tasklist /FI \"IMAGENAME eq python.exe\"");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -203,9 +225,23 @@ public class SingDailyZbj {
                 if (line.contains("python.exe")) {
                     String[] tokens = line.split("\\s+");
                     String pid = tokens[1];
-                    Process killProcess = Runtime.getRuntime().exec("taskkill /F /PID " + pid);
-                    killProcess.waitFor();
-                    logger.info("Killed Python process with PID: " + pid);
+                    if (!CollectionUtils.isEmpty(SystemInit.pythonPID)) {
+                        // 如果有值，不在里面就杀，在里面啥也不干
+                        if (!SystemInit.pythonPID.contains(pid)) {
+                            Process killProcess = Runtime.getRuntime().exec("taskkill /F /PID " + pid);
+                            killProcess.waitFor();
+                            logger.info("Killed Python process with PID: " + pid);
+                            chatroomProccessMap.remove(liveId);
+                        } else {
+                            logger.info("只剩下保护进程的PID,所以啥也不干");
+                        }
+                    } else {
+                        // 如果没有值就直接杀
+                        Process killProcess = Runtime.getRuntime().exec("taskkill /F /PID " + pid);
+                        killProcess.waitFor();
+                        logger.info("Killed Python process with PID: " + pid);
+                        chatroomProccessMap.remove(liveId);
+                    }
                 }
             }
             reader.close();

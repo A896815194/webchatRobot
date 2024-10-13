@@ -34,6 +34,12 @@ public class WeChatConstat {
     public final static String COMMAND_SING_DAILY = "每日歌单";
 
     public final static String COMMAND_DY_GQ = "歌曲-";
+    // pid 添加
+    public final static String COMMAND_ADD_PID = "PID+";
+    // pid 覆盖
+    public final static String COMMAND_COVER_PID = "PID-";
+    // pid 添加
+    public final static String COMMAND_SEARCH_PID = "查PID";
     // 记录歌单
     public final static Integer COMMAND_TYPE_GQ = 1;
     // 监控失败
