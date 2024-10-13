@@ -203,21 +203,8 @@ public class GzhController {
             if (content.startsWith(WeChatConstat.COMMAND_ADD_PID)) {
                 logger.info("添加pid:" + content);
                 String resultContent = "";
-                String pid = content.split(WeChatConstat.COMMAND_ADD_PID)[1];
-                if (CollectionUtils.isEmpty(SystemInit.pythonPID)) {
-                    SystemInit.pythonPID.add(pid);
-                    resultContent = "PID" + pid + "追加成功";
-                    logger.info(resultContent);
-                }
-                if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && !SystemInit.pythonPID.contains(pid)) {
-                    SystemInit.pythonPID.add(pid);
-                    resultContent = "PID" + pid + "追加成功";
-                    logger.info(resultContent);
-                }
-                if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && SystemInit.pythonPID.contains(pid)) {
-                    resultContent = "PID" + pid + "已经存在不追加";
-                    logger.info(resultContent);
-                }
+                String pid = content.substring(4);
+                resultContent = handlePid(resultContent, pid);
                 HfContentResponseDto dto = new HfContentResponseDto();
                 dto.setToUserName(fromWx);
                 dto.setFromUserName(gzh);
@@ -229,7 +216,7 @@ public class GzhController {
             if (content.startsWith(WeChatConstat.COMMAND_COVER_PID)) {
                 logger.info("重置pid:" + content);
                 String resultContent = "";
-                String pid = content.split(WeChatConstat.COMMAND_COVER_PID)[1];
+                String pid = content.substring(4);;
                 SystemInit.pythonPID.clear();
                 SystemInit.pythonPID.add(pid);
                 resultContent = "重置成功,目前不被杀掉的PID是:" + pid;
@@ -266,6 +253,26 @@ public class GzhController {
             }
         }
         return "";
+    }
+
+    private String handlePid(String resultContent, String pid) {
+        if (CollectionUtils.isEmpty(SystemInit.pythonPID)) {
+            SystemInit.pythonPID.add(pid);
+            resultContent = "PID" + pid + "追加成功";
+            logger.info(resultContent);
+            return resultContent;
+        }
+        if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && !SystemInit.pythonPID.contains(pid)) {
+            SystemInit.pythonPID.add(pid);
+            resultContent = "PID" + pid + "追加成功";
+            logger.info(resultContent);
+            return resultContent;
+        }
+        if (!CollectionUtils.isEmpty(SystemInit.pythonPID) && SystemInit.pythonPID.contains(pid)) {
+            resultContent = "PID" + pid + "已经存在不追加";
+            logger.info(resultContent);
+        }
+        return resultContent;
     }
 
     private String commandHandle(String content, String fromWx, String gzh, AtomicReference<String> result, String commandBeanKey) {
