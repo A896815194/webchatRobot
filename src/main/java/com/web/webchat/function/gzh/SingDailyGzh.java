@@ -111,6 +111,8 @@ public class SingDailyGzh {
     //3天歌单
     public String searchSongDailyRecent3(String content) {
         logger.info("查询最近3天歌单:content{}", content);
+        String countS =  content.split("查")[1].split("天")[0];
+        int count = Integer.parseInt(countS);
         // 获取当前时间
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -123,7 +125,7 @@ public class SingDailyGzh {
         Date maxTimeOfDay = calendar.getTime();
 
         // 获取当前时间3天前0时时间
-        calendar.add(Calendar.DAY_OF_MONTH, -2);
+        calendar.add(Calendar.DAY_OF_MONTH, -(count-1));
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);

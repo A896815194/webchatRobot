@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>萝卜地</title>
+    <style>
+        body {
+            background-color: pink;
+            text-align: center;
+            margin: 0;
+            padding: 0px;
+            width: 80em;
+        }
+
+        .avatar {
+            width: 37em;
+            height: 37em;
+            background-color: white;
+            margin: 20px auto;
+            background: url(./carrot.jpg) no-repeat;
+            background-size: cover;
+            overflow: scroll;
+            scroll-y: auto;
+        }
+
+        .inputContent {
+            width: 33%;
+            height: 5vh;
+            margin-bottom: 2vh;
+        }
+
+        .btn {
+            width: 30%;
+            height: 5vh;
+            background-color: #ff69b4;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 2vh;
+            border: 1px solid #ccc;
+        }
+
+        .c-title {
+            width: 80em;
+            margin: 0 auto;
+            color: white;
+        }
+
+        .c-top {
+            width: 80em;
+            margin: 0 auto;
+        }
+
+        .c-img {
+            width: 80em;
+        }
+
+        .c-table {
+            width: 80em;
+            margin: 0 auto;
+        }
+
+        table-content {
+            width: 33%;
+            height: 3vh;
+            color: white;
+        }
+
+        .mininputContent {
+            width: 5%;
+            height: 3vh;
+            margin-bottom: 2vh;
+        }
+
+        .massage {
+            font-size: 1.5em;
+            width: 12em;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="c-title">
+    <h1>🥕地的小菜农</h1>
+</div>
+<div class="c-img">
+    <div class="avatar" id="msg"></div>
+</div>
+<div class="c-top">
+    <input class="inputContent" type="text" placeholder="按照公众号端使用命令" id="gzh">
+    <button class="btn" id="gzhSend">发送</button>
+    <button class="btn" id="clear">清屏</button>
+</div>
+
+<div class="c-table">
+    <table>
+        <tr>
+            <td>
+                <span style="color:rgb(118, 118, 118),"><b>抽卡信息</b></span>
+            </td>
+            <td>
+                <span style="color:rgb(118, 118, 118),"><b>每日歌单</b></span>
+            </td>
+            <td>
+                <span style="color:rgb(118, 118, 118),"><b>监控管理</b></span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="inputContent" type="text" placeholder="添加抽卡的人名" id="addCard">
+                <button class="btn" id="abj">暴击卡</button>
+                <button class="btn" id="amw">迷雾卡</button>
+                <button class="btn" id="ajl">接力卡</button>
+            </td>
+            <td>
+                <input class="inputContent" type="text" placeholder="每日歌单" id="singDaily">
+                <button class="btn" id="singSend">发送</button>
+            </td>
+            <td>
+                <button class="btn" id='kb'>开播</button>
+                <button class="btn" id='gb'>关播</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="inputContent" type="text" placeholder="消耗抽卡的人名" id="reduceCard">
+                <button class="btn" id="jbj">暴击卡</button>
+                <button class="btn" id="jmw">迷雾卡</button>
+                <button class="btn" id="jjl">接力卡</button>
+            </td>
+            <td>
+                <div class="table-content">
+                    <input class="mininputContent" type="text" placeholder="年" id="year">年
+                    <input class="mininputContent" type="text" placeholder="月" id="month">月
+                    <input class="mininputContent" type="text" placeholder="日" id="day">日
+                </div>
+                <button class="btn" id="cgd">查歌单</button>
+            </td>
+            <td>
+                <input class="inputContent" type="text" placeholder="增加PID" id="addPID">
+                <button class="btn" id="zjPid">发送</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="btn" id="cck">查抽卡</button>
+            </td>
+            <td>
+                <button class="btn" id="cdt">查当天</button>
+                <button class="btn" id="cst">查3天</button>
+            </td>
+            <td>
+                <input class="inputContent" type="text" placeholder="重置PID" id="resetPID">
+                <button class="btn" id="czPID">发送</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+
+
+    document.querySelectorAll('.btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            // 公众号命令
+            if (btn.id == 'gzhSend') {
+                let value = document.getElementById("gzh").value;
+                if (value == "") {
+                    alert("公众号命令不能为空");
+                    return;
+                }
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + value);
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                sendMsgToweb(value);
+            }
+            // 加暴击
+            if (btn.id == 'abj') {
+                cardFunction('addCard','抽卡','暴击卡')
+            }
+            // 加迷雾
+            if (btn.id == 'amw') {
+                cardFunction('addCard','抽卡','迷雾卡');
+            }
+            // 加借力
+            if (btn.id == 'ajl') {
+                cardFunction('addCard','抽卡','借力卡');
+            }
+            // 剪暴击
+            if (btn.id == 'jbj') {
+                cardFunction('reduceCard','用卡','暴击卡')
+            }
+            // 剪迷雾
+            if (btn.id == 'jmw') {
+                cardFunction('reduceCard','用卡','迷雾卡');
+            }
+            // 剪借力
+            if (btn.id == 'jjl') {
+                cardFunction('reduceCard','用卡','借力卡');
+            }
+            // 查抽卡
+            if (btn.id == 'cck') {
+                clickBtnFunction('查抽卡');
+            }
+            // 每日歌单
+            if (btn.id == 'singSend') {
+                let value = document.getElementById("singDaily").value;
+                if (value == "") {
+                    alert("每日歌单歌名不能为空");
+                    return;
+                }
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "添加【每日歌单】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "每日歌单"+"+"+value;
+                sendMsgToweb(data);
+            }
+            // 查日期歌单
+            if (btn.id == 'cgd') {
+                let year = document.getElementById("year").value;
+                let month = document.getElementById("month").value;
+                let day = document.getElementById("day").value;
+                if (year == ""||month == ""||day == "") {
+                    alert("年月日每一项都不能为空");
+                    return;
+                }
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "查询【每日歌单】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "查歌单"+"+"+year+"年"+month+"月"+day+"日";
+                sendMsgToweb(data);
+            }
+            // 查当天歌单
+            if (btn.id == 'cdt') {
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth() + 1; // 月份从0开始，所以需要加1
+                const day = currentDate.getDate();
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "查询【每日歌单】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "查歌单"+"+"+year+"年"+month+"月"+day+"日";
+                sendMsgToweb(data);
+            }
+            // 查当天歌单
+            if (btn.id == 'cst') {
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth() + 1; // 月份从0开始，所以需要加1
+                const day = currentDate.getDate();
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "查询【每日歌单】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "查3天歌单";
+                sendMsgToweb(data);
+            }
+            // 开播
+            if (btn.id == 'kb') {
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "操作【弹幕监控】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "开播";
+                sendMsgToweb(data);
+            }
+            // 关播
+            if (btn.id == 'gb') {
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "操作【弹幕监控】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "关播";
+                sendMsgToweb(data);
+            }
+            // 整加pid
+            if (btn.id == 'zjPid') {
+                let value = document.getElementById("addPID").value;
+                if (value == "") {
+                    alert("增PID不能为空");
+                    return;
+                }
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "添加【PID】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "PID+"+value;
+                sendMsgToweb(data);
+            }
+            // 重置PID
+            if (btn.id == 'czPID') {
+                let value = document.getElementById("resetPID").value;
+                if (value == "") {
+                    alert("重置PID不能为空");
+                    return;
+                }
+                var para = document.createElement("pre");
+                para.classList.add("massage");
+                var node = document.createTextNode("【我】" + "重置【PID】");
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+                let data = "PID-"+value;
+                sendMsgToweb(data);
+            }
+            if (btn.id == 'clear') {
+                document.getElementById("msg").innerHTML = "";
+            }
+        });
+    });
+
+    function clickBtnFunction(command){
+        var para = document.createElement("pre");
+        para.classList.add("massage");
+        var node = document.createTextNode("【我】" + command);
+        para.appendChild(node);
+        var element = document.getElementById("msg");
+        element.appendChild(para);
+        sendMsgToweb(command);
+    }
+
+    function cardFunction(inputid,action,cardType){
+        let value = document.getElementById(inputid).value;
+        if (value == "") {
+            alert("持卡人不能为空");
+            return;
+        }
+        var para = document.createElement("pre");
+        para.classList.add("massage");
+        var node = document.createTextNode("【我】" + value+"【"+action+"】");
+        para.appendChild(node);
+        var element = document.getElementById("msg");
+        element.appendChild(para);
+        let data = action+"+"+value+"+"+cardType;
+        sendMsgToweb(data);
+    }
+
+    function sendMsgToweb(value) {
+        let data = "<xml>\n" +
+            "  <MsgType>text</MsgType>" +
+            "  <Content>" + value + "</Content>" +
+            "</xml>";
+        // 发送post请求访问http接口
+        fetch('http://localhost:8081/webChat/wx/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        })
+            .then(response => response.text())
+            .then(xmlString => {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+                console.log(xmlDoc);
+                let content = xmlDoc.getElementsByTagName('Content')[0].textContent;
+                var para = document.createElement("pre");
+                para.classList.add("massage")
+                if (content == "") {
+                    content = "未识别到命令";
+                }
+                var node = document.createTextNode("【🥕】" + content);
+                para.appendChild(node);
+                var element = document.getElementById("msg");
+                element.appendChild(para);
+            })
+            .catch(error => console.error(error));
+
+
+    }
+</script>
+</body>
+</html>

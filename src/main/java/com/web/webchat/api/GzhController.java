@@ -252,7 +252,12 @@ public class GzhController {
                 return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_AUTO_SING_DAILY);
             }
         }
-        return "";
+        HfContentResponseDto dto = new HfContentResponseDto();
+        dto.setToUserName(fromWx);
+        dto.setFromUserName(gzh);
+        dto.setMsgType("text");
+        dto.setContent("");
+        return DtoToXmlString(dto);
     }
 
     private String handlePid(String resultContent, String pid) {
