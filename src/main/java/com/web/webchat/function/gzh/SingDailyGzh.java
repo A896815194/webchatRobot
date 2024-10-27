@@ -86,12 +86,12 @@ public class SingDailyGzh {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (hour >= 3 && hour < 13) {
-            return "早间";
-        } else if (hour >= 13 && hour < 20) {
-            return "下午";
-        } else {
+        if (hour >= 9 && hour < 19) {
+            return "白天";
+        } else if (hour >= 19 && hour < 24) {
             return "晚间";
+        } else {
+            return "凌晨";
         }
     }
 
