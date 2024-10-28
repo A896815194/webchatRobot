@@ -79,4 +79,7 @@ public class PropertiesEntity {
 
     @Value("${api.minior.pythonUrl:null}")
     public String pythonUrl;
+
+    @Value("${api.minior.videoUrl:null}")
+    public String videoUrl;
 }

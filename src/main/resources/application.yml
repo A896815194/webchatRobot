@@ -48,6 +48,7 @@ api:
       signJsPath: "M://爬抖音/DouyinLiveWebFetcher-main/DouyinLiveWebFetcher-main/sign.js"
       PID: 20280
       pythonUrl: http://localhost:5000/miniorLive
+      videoUrl: "M://biliBli/bilibili-master/bilibili-master"
 
 logging:
   config: classpath:log4j-spring.xml

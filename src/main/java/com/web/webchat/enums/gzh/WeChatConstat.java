@@ -81,8 +81,10 @@ public class WeChatConstat {
     public final static String COMMAND_SING_DAILY_OPEN = "开播";
 
     public final static String COMMAND_SING_DAILY_CLOSE= "关播";
+    // 弹幕
+    public final static List<String> COMMAND_DANMU_LIST = new ArrayList<>();
 
-
+    public final static String COMMAND_DANMU = "弹幕";
     static {
         // 抽卡
         COMMAND_CARD_LIST.add(COMMAND_SAVE_CARD);
@@ -99,12 +101,15 @@ public class WeChatConstat {
         // 直播监控
         COMMAND_SING_DAILY_ZBJ_LIST.add(COMMAND_SING_DAILY_OPEN);
         COMMAND_SING_DAILY_ZBJ_LIST.add(COMMAND_SING_DAILY_CLOSE);
+        // 弹幕
+        COMMAND_DANMU_LIST.add(COMMAND_DANMU);
 
         COMMAND_BEAN_MAP.put(COMMAND_SAVE_CARD, COMMAND_CARD_BEAN);
         COMMAND_BEAN_MAP.put(COMMAND_SING_DAILY, COMMAND_SING_DAILY_BEAN);
         COMMAND_BEAN_MAP.put(COMMAND_AUTO_SING_DAILY, COMMAND_SING_DAILY_ZBJ_BEAN);
+        COMMAND_BEAN_MAP.put(COMMAND_DANMU,"videoFunction");
 
-
+        COMMAND_METHOD_MAP.put(COMMAND_DANMU, "initVideoDanmu");
         COMMAND_METHOD_MAP.put(COMMAND_SAVE_CARD, "saveCard");
         COMMAND_METHOD_MAP.put(COMMAND_USE_CARD, "useCard");
         COMMAND_METHOD_MAP.put(COMMAND_SEARCH_CARD, "searchCard");

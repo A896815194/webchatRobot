@@ -11,7 +11,6 @@ import com.web.webchat.function.gzh.SingDailyZbj;
 import com.web.webchat.repository.*;
 import com.web.webchat.repository.gzh.CardUserGzhRepository;
 import com.web.webchat.strategy.TuLingRobotMsg;
-import com.web.webchat.util.FileUtil;
 import com.web.webchat.util.GifUtil;
 import com.web.webchat.util.RestTemplateUtil;
 import com.web.webchat.util.WeChatUtil;
@@ -386,7 +385,6 @@ public class SystemInit {
         }
 
     }
-
 
     @Autowired
     private SingDailyZbj singDailyZbj;

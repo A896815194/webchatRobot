@@ -251,6 +251,11 @@ public class GzhController {
                 // 监控直播间
                 return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_AUTO_SING_DAILY);
             }
+            // 弹幕
+            if (StringUtils.isNotBlank(content) && WeChatConstat.COMMAND_DANMU_LIST.stream().anyMatch(content::startsWith)) {
+                // 监控直播间
+                return commandHandle(content, fromWx, gzh, result, WeChatConstat.COMMAND_DANMU);
+            }
         }
         HfContentResponseDto dto = new HfContentResponseDto();
         dto.setToUserName(fromWx);
@@ -335,6 +340,9 @@ public class GzhController {
         if (Objects.equals(content, WeChatConstat.COMMAND_SEARCH_SING_DAILY_3)) {
             return WeChatConstat.COMMAND_SEARCH_SING_DAILY_3;
         }
+        if (content.startsWith(WeChatConstat.COMMAND_DANMU + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.COMMAND_DANMU;
+        }
         return "";
     }
 
@@ -353,6 +361,9 @@ public class GzhController {
         }
         if (content.startsWith(WeChatConstat.COMMAND_SEARCH_SING_DAILY + WeChatConstat.COMMAND_SPLIT_JIA)) {
             return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_SEARCH_SING_DAILY);
+        }
+        if (content.startsWith(WeChatConstat.COMMAND_DANMU + WeChatConstat.COMMAND_SPLIT_JIA)) {
+            return WeChatConstat.getBeanMethodByKey(WeChatConstat.COMMAND_DANMU);
         }
         return WeChatConstat.getBeanMethodByKey(content);
 
