@@ -64,7 +64,7 @@ public class VideoFunction {
 
         List<DanmuEntity> danmuEntities = new ArrayList<>();
         fileName = fileName.split("\\.")[0];
-        Long videoStartTime = convertTimeStringToSeconds(fileName);
+        double videoStartTime = convertTimeStringToSeconds(fileName);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -81,7 +81,7 @@ public class VideoFunction {
         return danmuEntities;
     }
 
-    public Long convertTimeStringToSeconds(String timeString) {
+    public double convertTimeStringToSeconds(String timeString) {
         long time = 0l;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -93,7 +93,7 @@ public class VideoFunction {
         return time / 1000;
     }
 
-    private DanmuEntity fillDanmuString(String mid, String msg, Long startTime, Long index) {
+    private DanmuEntity fillDanmuString(String mid, String msg, Double startTime, Long index) {
         DanmuEntity danmuEntity = new DanmuEntity();
         if (msg.startsWith("【礼物msg】")) {
             danmuEntity.setId(mid);
@@ -105,7 +105,7 @@ public class VideoFunction {
             String curTimeStr = msg.split("】")[1].split("【")[1];
             BigDecimal curTimeB = new BigDecimal(curTimeStr);
             curTimeB.setScale(6, RoundingMode.HALF_UP);
-            BigDecimal startB = new BigDecimal(startTime);
+            BigDecimal startB = new BigDecimal(String.valueOf(startTime));
             startB.setScale(6, RoundingMode.HALF_UP);
             BigDecimal result = curTimeB.subtract(startB);
             result.setScale(3, RoundingMode.HALF_UP);
@@ -122,11 +122,15 @@ public class VideoFunction {
             danmuEntity.setColor("rgb(128, 138, 135)");
             danmuEntity.setSize("27.5px");
             String curTimeStr = msg.split("】")[1].split("【")[1];
-            float num = Float.parseFloat(curTimeStr);
-            double roundedNum = Math.round(num * 1000.0) / 1000.0;
-            danmuEntity.setVideotime((float) (roundedNum - startTime));
+            BigDecimal curTimeB = new BigDecimal(curTimeStr);
+            curTimeB.setScale(6, RoundingMode.HALF_UP);
+            BigDecimal startB = new BigDecimal(String.valueOf(startTime));
+            startB.setScale(6, RoundingMode.HALF_UP);
+            BigDecimal result = curTimeB.subtract(startB);
+            result.setScale(3, RoundingMode.HALF_UP);
+            danmuEntity.setVideotime(result.floatValue());
             danmuEntity.setIp("127.0.0.1");
-            danmuEntity.setTime((int) roundedNum);
+            danmuEntity.setTime(Integer.valueOf(startB.toString()));
             return danmuEntity;
         }
         return null;
