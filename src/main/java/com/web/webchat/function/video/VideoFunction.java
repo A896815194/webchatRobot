@@ -1,5 +1,6 @@
 package com.web.webchat.function.video;
 
+import cn.hutool.json.JSONUtil;
 import com.web.webchat.config.PropertiesEntity;
 import com.web.webchat.entity.video.DanmuEntity;
 import com.web.webchat.repository.gzh.DanmuRepository;
@@ -36,6 +37,7 @@ public class VideoFunction {
         String directiory = propertiesEntity.getVideoUrl();
         String path = content.split("\\+")[0];
         String uid = content.split("\\+")[1];
+        logger.info("读取地址:content{}", directiory + "/" + path);
         File directory = new File(directiory + "/" + path);
         File[] files = directory.listFiles();
         Long Index = 1L;
@@ -46,11 +48,9 @@ public class VideoFunction {
             }
         }
         if (!CollectionUtils.isEmpty(entities)) {
-            danmuRepository.saveAll(entities);
-//            entities.forEach(item->{
-//                logger.error(JSONUtil.toJsonStr(item));
-//                danmuRepository.save(item);
-//            });
+            entities.forEach(item->{
+                danmuRepository.save(item);
+            });
 
         }
         return "操作成功";
