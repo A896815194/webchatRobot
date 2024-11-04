@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +43,7 @@ public class VideoFunction {
         File directory = new File(directiory + "/" + path);
         File[] files = directory.listFiles();
         Long Index = 1L;
+        danmuRepository.deleteAllById(uid);
         List<DanmuEntity> entities = new ArrayList<>();
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".txt")) {
@@ -61,7 +64,7 @@ public class VideoFunction {
 
         List<DanmuEntity> danmuEntities = new ArrayList<>();
         fileName = fileName.split("\\.")[0];
-        long videoStartTime = convertTimeStringToSeconds(fileName);
+        Long videoStartTime = convertTimeStringToSeconds(fileName);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -78,7 +81,7 @@ public class VideoFunction {
         return danmuEntities;
     }
 
-    public long convertTimeStringToSeconds(String timeString) {
+    public Long convertTimeStringToSeconds(String timeString) {
         long time = 0l;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -90,7 +93,7 @@ public class VideoFunction {
         return time / 1000;
     }
 
-    private DanmuEntity fillDanmuString(String mid, String msg, long startTime, Long index) {
+    private DanmuEntity fillDanmuString(String mid, String msg, Long startTime, Long index) {
         DanmuEntity danmuEntity = new DanmuEntity();
         if (msg.startsWith("【礼物msg】")) {
             danmuEntity.setId(mid);
@@ -100,11 +103,15 @@ public class VideoFunction {
             danmuEntity.setColor("rgb(255, 0, 255)");
             danmuEntity.setSize("27.5px");
             String curTimeStr = msg.split("】")[1].split("【")[1];
-            float num = Float.parseFloat(curTimeStr);
-            double roundedNum = Math.round(num * 1000.0) / 1000.0;
-            danmuEntity.setVideotime((float) (roundedNum - startTime));
+            BigDecimal curTimeB = new BigDecimal(curTimeStr);
+            curTimeB.setScale(6, RoundingMode.HALF_UP);
+            BigDecimal startB = new BigDecimal(startTime);
+            startB.setScale(6, RoundingMode.HALF_UP);
+            BigDecimal result = curTimeB.subtract(startB);
+            result.setScale(3, RoundingMode.HALF_UP);
+            danmuEntity.setVideotime(result.floatValue());
             danmuEntity.setIp("127.0.0.1");
-            danmuEntity.setTime((int) roundedNum);
+            danmuEntity.setTime(Integer.valueOf(startB.toString()));
             return danmuEntity;
         }
         if (msg.startsWith("【聊天msg】")) {

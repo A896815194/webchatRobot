@@ -11,4 +11,5 @@ import java.util.List;
 public interface DanmuRepository extends JpaRepository<DanmuEntity, Long> {
     List<DanmuEntity> findAll();
 
+    void deleteAllById(String id);
 }
