@@ -10,3 +10,7 @@ CREATE TABLE webchat.birth_card (
                                     `content` varchar(100) DEFAULT NULL COMMENT '祝福描述',
                                     PRIMARY KEY (`id`)
 );
+
+-- INSERT INTO webchat.shop
+-- (id, thing_id, thing_count, create_time, start_time, end_time, is_delete, thing_price, is_one, thing_name)
+-- VALUES(999, '999', 100, '2025-03-08 22:04:49', '2025-03-08 22:04:49', '2025-03-08 22:04:49', 0, 100, 1, '石头');
