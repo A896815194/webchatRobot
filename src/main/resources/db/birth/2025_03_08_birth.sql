@@ -8,6 +8,9 @@ CREATE TABLE webchat.birth_card (
                                     `head_url` varchar(100) DEFAULT NULL COMMENT '头像地址',
                                     `card_type` varchar(100) DEFAULT NULL COMMENT '1:礼物，2：祝福',
                                     `content` varchar(100) DEFAULT NULL COMMENT '祝福描述',
+                                    `picf_url` varchar(100) DEFAULT NULL COMMENT '图片翻面',
+                                    `zf_type` varchar(100) DEFAULT NULL COMMENT '祝福类型',
+                                    `sfsl` varchar(100) DEFAULT NULL COMMENT '是否送礼',
                                     PRIMARY KEY (`id`)
 );
 
