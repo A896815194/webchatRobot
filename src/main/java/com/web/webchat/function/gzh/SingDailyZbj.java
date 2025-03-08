@@ -121,6 +121,7 @@ public class SingDailyZbj {
         //logger.info("接口返回：" + content);
         JSONObject result = JSONUtil.toBean(content, JSONObject.class);
         Map<String, Object> map = new HashMap<>();
+        logger.info("result:"+result);
         if (result.containsKey("status_code") && Objects.equals(0, result.getInt("status_code"))) {
             JSONObject data = result.getJSONObject("data").getJSONArray("data").getJSONObject(0);
             map.put("state", data.getInt("status"));
